@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.TalkBackGroupMemberMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.TalkBackGroupMember">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="business_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="group_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, business_id, group_id
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from talk_back_group_member
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from talk_back_group_member
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.TalkBackGroupMember">
+        insert into talk_back_group_member (id, business_id, group_id
+        )
+        values (#{id,jdbcType=BIGINT}, #{businessId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.TalkBackGroupMember">
+        insert into talk_back_group_member
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="businessId != null">
+                business_id,
+            </if>
+            <if test="groupId != null">
+                group_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="businessId != null">
+                #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="groupId != null">
+                #{groupId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.TalkBackGroupMember">
+        update talk_back_group_member
+        <set>
+            <if test="businessId != null">
+                business_id = #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="groupId != null">
+                group_id = #{groupId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.TalkBackGroupMember">
+        update talk_back_group_member
+        set business_id = #{businessId,jdbcType=BIGINT},
+        group_id = #{groupId,jdbcType=BIGINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <delete id="deleteByGroupId" parameterType="java.lang.Long">
+        delete from talk_back_group_member
+        where group_id = #{groupId,jdbcType=BIGINT}
+    </delete>
+
+    <delete id="deleteByBid" parameterType="java.lang.Long">
+        delete from talk_back_group_member
+        where business_id = #{bid,jdbcType=BIGINT}
+    </delete>
+
+
+    <!--<select id="findByGroupId" resultType="com.wyfx.business.app.vo.ContactsVo">
+      select b.bid as id,b.user_name,b.`name` as full_name,b.mobile,b.`online_status` as status,b.user_type as type,z.`name` as work_name,z.color
+      from business_user b,zidian_setting z,talk_back_group_member m
+      where b.bid=m.business_id and b.zidian_id=z.zid and m.group_id=#{groupId} and user_type in (1,2) order by b.user_type,convert(b.name using gbk) asc
+    </select>-->
+    <select id="findByGroupId" resultType="com.wyfx.business.app.vo.ContactsVo">
+        select id,user_name,full_name,mobile,A.status,type,z.`name` as work_name,z.color from (
+        select b.bid as id,b.user_name,b.`name` as full_name,b.mobile,b.`online_status` as status,b.user_type as
+        type,b.zidian_id
+        from business_user b,talk_back_group_member m
+        where b.bid=m.business_id and m.group_id=#{groupId} and user_type in (1,2) order by b.user_type,convert(b.name
+        using gbk) asc) A
+        left join zidian_setting z on A.zidian_id=z.zid
+    </select>
+
+    <select id="findByGroupIdAndProjectId" resultType="com.wyfx.business.app.vo.ContactsVo">
+        select A.id,A.user_name,A.full_name,A.mobile,A.status,A.type,z.`name` as work_name,z.color from (
+        select b.bid as id,b.user_name,b.`name` as full_name,b.mobile,b.`online_status` as status,b.user_type as
+        type,b.zidian_id
+        from business_user b,talk_back_group_member m
+        where b.bid=m.business_id and b.project_id=#{projectId} and m.group_id=#{groupId} and user_type in (1,2) order
+        by b.user_type,convert(b.name using gbk) asc
+        ) A
+        left join zidian_setting z on A.zidian_id=z.zid
+    </select>
+
+    <select id="findByProjectIdFromBusinessUser" resultType="com.wyfx.business.app.vo.ContactsVo">
+        select b.bid as id,b.user_name,b.`name` as full_name,b.mobile,b.`online_status` status,b.user_type as
+        type,z.`name` as work_name,z.color
+        from business_user b,zidian_setting z
+        where not exists(select * from talk_back_group_member m where m.business_id=b.bid and m.group_id=#{groupId})
+        and b.zidian_id=z.zid and b.project_id=#{projectId} and user_type in (1,2)
+        order by b.user_type,convert(b.name using gbk) asc
+    </select>
+
+    <select id="findActivateMemberByProjectId" resultType="com.wyfx.business.app.vo.ContactsVo">
+        select id,user_name,full_name,mobile,A.`status`,type,z.`name` as work_name,z.color from (
+        select b.bid as id,b.user_name,b.`name` as full_name,b.mobile,b.`online_status` as status,b.user_type as
+        type,b.zidian_id
+        from business_user b,talk_back_group_member m,talk_back_group t
+        where b.bid=m.business_id and m.group_id=t.id and user_type in (1,2) and t.is_activate=1 and
+        t.project_id=#{projectId} order by b.user_type,convert(b.name using gbk) asc
+        ) A
+        left join zidian_setting z on A.zidian_id=z.zid
+    </select>
+
+    <select id="selectByBidAndGroupId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from talk_back_group_member
+        where business_id = #{bid,jdbcType=BIGINT} and group_id=#{groupId}
+    </select>
+</mapper>

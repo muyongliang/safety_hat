@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.AlarmTypeMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.AlarmType">
+        <constructor>
+            <idArg column="aid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="type" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="tip_message" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        aid, type,tip_message
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from alarm_type
+        where aid = #{aid,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from alarm_type
+        where aid = #{aid,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.AlarmType">
+        insert into alarm_type (aid, type,tip_message)
+        values (#{aid,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, #{tipMessage,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.AlarmType">
+        insert into alarm_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="aid != null">
+                aid,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="tipMessage != null">
+                tip_message,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="aid != null">
+                #{aid,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="tipMessage != null">
+                #{tipMessage,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.AlarmType">
+        update alarm_type
+        <set>
+            <if test="type != null">
+                type = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="tipMessage != null">
+                tip_message = #{tipMessage,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where aid = #{aid,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.AlarmType">
+        update alarm_type
+        set type = #{type,jdbcType=VARCHAR},tip_message = #{tipMessage,jdbcType=VARCHAR}
+        where aid = #{aid,jdbcType=BIGINT}
+    </update>
+</mapper>

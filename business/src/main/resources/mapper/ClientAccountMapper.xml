@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.ClientAccountMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.ClientAccount">
+        <constructor>
+            <idArg column="client_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="account" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="password" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="tel" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="work_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="resolution" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="min_kps" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="max_kps" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="device_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="project_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="business_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="diy_flag" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="bid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        client_id, account, password, name, tel, work_id, resolution, min_kps, max_kps, device_id,
+        project_id, business_id,diy_flag,status,bid
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from client_account
+        where client_id = #{clientId,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByBid" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from client_account
+        where bid = #{bid,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByDeviceId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from client_account
+        where device_id = #{deviceId,jdbcType=BIGINT}
+    </select>
+
+    <!--2019-11-21 create by wsm -->
+    <select id="selectByDeviceIds" resultMap="BaseResultMap">
+        Select
+        <include refid="Base_Column_List"/>
+        from client_account
+        where
+        client_id
+        in
+        <foreach item="ids" index="index" collection="list" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from client_account
+        where client_id = #{clientId,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.ClientAccount">
+        insert into client_account (client_id, account, password,
+        name, tel, work_id, resolution,
+        min_kps, max_kps, device_id,
+        project_id, business_id,diy_flag,status,bid)
+        values (#{clientId,jdbcType=BIGINT}, #{account,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+        #{name,jdbcType=VARCHAR}, #{tel,jdbcType=VARCHAR}, #{workId,jdbcType=BIGINT}, #{resolution,jdbcType=VARCHAR},
+        #{minKps,jdbcType=INTEGER}, #{maxKps,jdbcType=INTEGER}, #{deviceId,jdbcType=BIGINT},
+        #{projectId,jdbcType=BIGINT},
+        #{businessId,jdbcType=BIGINT},#{diy_flag,jdbcType=INTEGER},#{status,jdbcType=INTEGER},#{bid,jdbcType=BIGINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.ClientAccount">
+        insert into client_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">
+                client_id,
+            </if>
+            <if test="account != null">
+                account,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="tel != null">
+                tel,
+            </if>
+            <if test="workId != null">
+                work_id,
+            </if>
+            <if test="resolution != null">
+                resolution,
+            </if>
+            <if test="minKps != null">
+                min_kps,
+            </if>
+            <if test="maxKps != null">
+                max_kps,
+            </if>
+            <if test="deviceId != null">
+                device_id,
+            </if>
+            <if test="projectId != null">
+                project_id,
+            </if>
+            <if test="businessId != null">
+                business_id,
+            </if>
+            <if test="diyFlag != null">
+                diy_flag,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="bid != null">
+                bid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">
+                #{clientId,jdbcType=BIGINT},
+            </if>
+            <if test="account != null">
+                #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="tel != null">
+                #{tel,jdbcType=VARCHAR},
+            </if>
+            <if test="workId != null">
+                #{workId,jdbcType=BIGINT},
+            </if>
+            <if test="resolution != null">
+                #{resolution,jdbcType=VARCHAR},
+            </if>
+            <if test="minKps != null">
+                #{minKps,jdbcType=INTEGER},
+            </if>
+            <if test="maxKps != null">
+                #{maxKps,jdbcType=INTEGER},
+            </if>
+            <if test="deviceId != null">
+                #{deviceId,jdbcType=BIGINT},
+            </if>
+            <if test="projectId != null">
+                #{projectId,jdbcType=BIGINT},
+            </if>
+            <if test="businessId != null">
+                #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="diyFlag != null">
+                #{diyFlag,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="bid != null">
+                #{bid,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.ClientAccount">
+        update client_account
+        <set>
+            <if test="account != null">
+                account = #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="tel != null">
+                tel = #{tel,jdbcType=VARCHAR},
+            </if>
+            <if test="workId != null">
+                work_id = #{workId,jdbcType=BIGINT},
+            </if>
+            <if test="resolution != null">
+                resolution = #{resolution,jdbcType=VARCHAR},
+            </if>
+            <if test="minKps != null">
+                min_kps = #{minKps,jdbcType=INTEGER},
+            </if>
+            <if test="maxKps != null">
+                max_kps = #{maxKps,jdbcType=INTEGER},
+            </if>
+            <if test="deviceId != null">
+                device_id = #{deviceId,jdbcType=BIGINT},
+            </if>
+            <if test="projectId != null">
+                project_id = #{projectId,jdbcType=BIGINT},
+            </if>
+            <if test="businessId != null">
+                business_id = #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="diy_flag != null">
+                diy_flag= #{diyFlag,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status= #{status,jdbcType=INTEGER},
+            </if>
+            <if test="bid != null">
+                bid= #{bid,jdbcType=INTEGER},
+            </if>
+        </set>
+        where client_id = #{clientId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.ClientAccount">
+        update client_account
+        set account = #{account,jdbcType=VARCHAR},
+        password = #{password,jdbcType=VARCHAR},
+        name = #{name,jdbcType=VARCHAR},
+        tel = #{tel,jdbcType=VARCHAR},
+        work_id = #{workId,jdbcType=BIGINT},
+        resolution = #{resolution,jdbcType=VARCHAR},
+        min_kps = #{minKps,jdbcType=INTEGER},
+        max_kps = #{maxKps,jdbcType=INTEGER},
+        device_id = #{deviceId,jdbcType=BIGINT},
+        project_id = #{projectId,jdbcType=BIGINT},
+        business_id = #{businessId,jdbcType=BIGINT},
+        diy_flag= #{diyFlag,jdbcType=INTEGER},
+        status= #{status,jdbcType=INTEGER},
+        bid = #{bid,jdbcType=BIGINT}
+        where client_id = #{clientId,jdbcType=BIGINT}
+    </update>
+
+
+    <select id="findByStatus" resultType="com.wyfx.business.entity.vo.ClientAccountSelectVo">
+        select A.bid,A.name,A.user_name,A.password,A.mobile,A.`status`,A.`workType`,d.number,A.online_status as
+        onlineStatus,A.diy_flag,A.resolution
+        from (select b.bid,b.`name`,b.user_name,b.password,b.mobile,b.`status`,z.`name`
+        workType,c.device_id,b.online_status,c.resolution,diy_flag
+        from business_user b,zidian_setting z,client_account c
+        <where>
+            b.bid=c.bid and c.work_id=z.zid and b.user_type=2
+            <if test="projectId!=null">
+                and b.project_id=#{projectId,jdbcType=BIGINT}
+            </if>
+            and b.online_status != 0
+        </where>
+        ) A
+        left join device_info d
+        on A.device_id=d.did order by bid desc
+    </select>
+    <!--<select id="findByStatus" resultType="com.wyfx.business.entity.vo.ClientAccountSelectVo">
+        select A.bid,A.name,A.user_name,A.mobile,A.`status`,A.`workType`,d.number
+        from (select b.bid,b.`name`,b.user_name,b.mobile,b.`status`,z.`name` workType,c.device_id
+        from business_user b,zidian_setting z,client_account c
+        where b.bid=c.bid and c.work_id=z.zid and b.user_type=2 and b.project_id=#{projectId,jdbcType=BIGINT} and b.status=#{status,jdbcType=INTEGER}) A
+        left join device_info d
+        on A.device_id=d.did
+    </select>-->
+
+    <!--通过 bids 即business_user 的id查询终端列表 2019-11-22 wsm    /*collection 传入集合对象的参数名如果参数没有通过@param("bids") 者默认填入list
+        item 遍历每一项的名称自定义 一般使用item */-->
+    <select id="findByBids" resultType="com.wyfx.business.entity.vo.ClientAccountSelectVo">
+        select A.bid,A.name,A.user_name,A.password,A.mobile,A.`status`,A.`workType`,d.number
+        from
+        (select b.bid,b.`name`,b.user_name,b.password,b.mobile,b.`status`,z.`name` workType,c.device_id
+        from business_user b,zidian_setting z,client_account c
+        where b.bid=c.bid
+        and c.work_id=z.zid
+        and b.user_type=2
+        and b.project_id=#{projectId,jdbcType=BIGINT}
+        and b.bid
+        in
+        <foreach item="bid" index="index" collection="bids" open="(" separator="," close=")">
+            #{bid}
+        </foreach>)
+        as A
+        left join device_info d
+        on A.device_id=d.did
+    </select>
+
+    <!--总后台终端账号查询 create by wsm on 2019-12-3-->
+    <select id="findClientByCondition" resultType="com.wyfx.business.entity.vo.MyClientAccountVo">
+        select
+        A.clientId,A.name,A.user_name,A.mobile,A.online_status,A.`workType`,d.number,A.client_status,A.bname,A.bid
+        from (
+        select b.bid,b.`name`,b.user_name,b.mobile,b.online_status ,z.`name` as workType,
+        c.device_id,b.`status` as client_status ,info.business_name as bname,c.client_id as clientId
+        from business_user b,zidian_setting z,client_account c,business_info info
+        where b.bid=c.bid and c.work_id=z.zid
+        and b.business_id=info.business_id and b.user_type=2
+        ) A left join device_info d on A.device_id=d.did
+        <where>
+            <if test="number != null">
+                and d.number like concat('%',#{number,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="onlineStatus != null">
+                and A.online_status=#{onlineStatus}
+            </if>
+            <if test="clientStatus != null">
+                and A.client_status =#{clientStatus}
+            </if>
+            <if test="username != null">
+                and A.user_name like concat('%',#{username,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="name != null">
+                and A.name like concat('%',#{name,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="mobile != null">
+                and A.mobile like concat('%',#{mobile,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="bname != null">
+                and A.bname like concat('%',#{bname,jdbcType=VARCHAR},'%')
+            </if>
+        </where>
+
+    </select>
+
+    <!--通过在线离线状态查询终端信息-->
+    <select id="selectClientByOnLineStatus" resultType="com.wyfx.business.entity.vo.MyClientAccountVo">
+        select A.name,A.user_name,A.mobile,A.online_status,A.`workType`,d.number
+        from (select b.bid,b.`name`,b.user_name,b.mobile,b.online_status ,z.`name` workType,c.device_id
+        from business_user b,zidian_setting z,client_account c
+        where b.bid=c.bid and c.work_id=z.zid and b.user_type=2 and b.project_id=#{projectId,jdbcType=BIGINT}
+        and b.online_status=#{onlineStatus,jdbcType=INTEGER}) A
+        left join device_info d
+        on A.device_id=d.did
+    </select>
+
+    <!--总后台查询某企业的终端在线状况-->
+    <select id="selectCount" resultType="java.lang.Integer">
+        select
+        count(*)
+        from business_user as u JOIN business_info binfo
+        on u.business_id=binfo.business_id
+        <where>
+            <if test="userType!=null">
+                u.user_type=#{userType,jdbcType=INTEGER}
+            </if>
+            <if test="onlineStatus!=null">
+                and u.online_status=#{onlineStatus,jdbcType=INTEGER}
+            </if>
+            <if test="token!=null and token!='' ">
+                and u.token=#{token,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+
+    <!--总后台通过地址查询企业统计  具体通过项目id集合查询项目下的所有终端和调度员  -->
+    <select id="selectStatisticsByProjectIdList" resultType="java.lang.Integer">
+        select
+        count(*)
+        from business_user u
+        <where>
+            u.user_type=#{userType,jdbcType=INTEGER}
+            <if test="onlineStatus!=null">
+                and u.online_status=#{onlineStatus,jdbcType=INTEGER}
+            </if>
+            and u.project_id
+            in
+            <foreach item="bid" index="index" collection="projectIdList" open="(" separator="," close=")">
+                #{bid}
+            </foreach>
+
+        </where>
+    </select>
+
+
+    <select id="findAllAccount" resultType="com.wyfx.business.entity.vo.ClientAccountSelectVo">
+        select A.bid,A.name,A.user_name,A.password,A.mobile,A.`status`,A.`workType`,d.number,A.resolution,A.diy_flag
+        from (select b.bid,b.`name`,b.user_name,b.password,b.mobile,b.`status`,z.`name`
+        workType,c.device_id,c.diy_flag,c.resolution
+        from business_user b,zidian_setting z,client_account c
+        where b.bid=c.bid and c.work_id=z.zid and b.user_type=2
+        <if test="projectId != null">
+            and b.project_id=#{projectId}
+        </if>
+        ) A
+        left
+        join device_info d
+        on A.device_id=d.did order by bid desc
+    </select>
+
+    <!--<select id="findAllAccount" resultType="com.wyfx.business.entity.vo.ClientAccountSelectVo">
+        select A.bid,A.name,A.user_name,A.mobile,A.`status`,A.`workType`,d.number
+        from (select b.bid,b.`name`,b.user_name,b.mobile,b.`status`,z.`name` workType,c.device_id
+        from business_user b,zidian_setting z,client_account c
+        where b.bid=c.bid and c.work_id=z.zid and b.user_type=2 and b.project_id=#{projectId,jdbcType=BIGINT}) A
+        left join device_info d
+        on A.device_id=d.did
+    </select>-->
+
+
+    <select id="findByName" resultType="com.wyfx.business.entity.vo.ClientAccountFindVo">
+        select A.bid,A.name,A.user_name as account,A.mobile,A.`status`,A.`workType`,d.number,A.resolution,A.diy_flag
+        from (select b.bid,b.`name`,b.user_name,b.mobile,b.`status`,z.`name`
+        workType,c.device_id,c.diy_flag,c.resolution
+        from business_user b,zidian_setting z,client_account c
+        <where>b.bid=c.bid and c.work_id=z.zid and b.user_type=2
+            <if test="projectId!=null">
+                and b.project_id=#{projectId,jdbcType=BIGINT}
+            </if>
+            and b.name=#{name,jdbcType=VARCHAR}
+        </where>
+        ) A
+        left join device_info d
+        on A.device_id=d.did
+    </select>
+    <!--<select id="findByName" resultType="com.wyfx.business.entity.vo.ClientAccountFindVo">
+        /*select A.bid,A.name,A.user_name,A.mobile,A.`status`,A.`workType`,d.number
+        from (select b.bid,b.`name`,b.user_name,b.mobile,b.`status`,z.`name` workType,c.device_id
+        from business_user b,zidian_setting z,client_account c
+        where b.bid=c.bid and c.work_id=z.zid and b.user_type=2 and b.project_id=#{projectId,jdbcType=BIGINT} and b.name=#{name,jdbcType=VARCHAR}) A
+        left join device_info d
+        on A.device_id=d.did*/
+    </select>-->
+    <select id="findByTel" resultType="com.wyfx.business.entity.vo.ClientAccountFindVo">
+        select A.bid,A.name,A.user_name as account,A.mobile,A.`status`,A.`workType`,d.number,A.resolution,A.diy_flag
+        from (select b.bid,b.`name`,b.user_name,b.mobile,b.`status`,z.`name`
+        workType,c.device_id,c.diy_flag,c.resolution
+        from business_user b,zidian_setting z,client_account c
+        <where>
+            b.bid=c.bid and c.work_id=z.zid and b.user_type=2
+            <if test="projectId!=null">
+                and b.project_id=#{projectId,jdbcType=BIGINT}
+            </if>
+            and b.mobile=#{tel,jdbcType=VARCHAR}
+        </where>
+        ) A
+        left join device_info d
+        on A.device_id=d.did
+    </select>
+
+    <!--<select id="findByTel" resultType="com.wyfx.business.entity.vo.ClientAccountFindVo">
+        select A.bid,A.name,A.user_name,A.mobile,A.`status`,A.`workType`,d.number
+        from (select b.bid,b.`name`,b.user_name,b.mobile,b.`status`,z.`name` workType,c.device_id
+        from business_user b,zidian_setting z,client_account c
+        where b.bid=c.bid and c.work_id=z.zid and b.user_type=2 and b.project_id=#{projectId,jdbcType=BIGINT} and b.mobile=#{tel,jdbcType=VARCHAR}) A
+        left join device_info d
+        on A.device_id=d.did
+    </select>-->
+
+    <select id="findByAccount" resultType="com.wyfx.business.entity.vo.ClientAccountFindVo">
+        select A.bid,A.name,A.user_name as account,A.mobile,A.`status`,A.`workType`,d.number,A.resolution,A.diy_flag
+        from (select b.bid,b.`name`,b.user_name,b.mobile,b.`status`,z.`name`
+        workType,c.device_id,c.diy_flag,c.resolution
+        from business_user b,zidian_setting z,client_account c
+        <where>
+            b.bid=c.bid and c.work_id=z.zid and b.user_type=2
+            <if test="projectId!=null">
+                and b.project_id=#{projectId,jdbcType=BIGINT}
+            </if>
+            and b.user_name=#{account,jdbcType=VARCHAR}
+        </where>
+        ) A
+        left join device_info d
+        on A.device_id=d.did
+    </select>
+
+    <!--<select id="findByAccount" resultType="com.wyfx.business.entity.vo.ClientAccountFindVo">
+        select A.bid,A.name,A.user_name,A.mobile,A.`status`,A.`workType`,d.number
+        from (select b.bid,b.`name`,b.user_name,b.mobile,b.`status`,z.`name` workType,c.device_id
+                from business_user b,zidian_setting z,client_account c
+                where b.bid=c.bid and c.work_id=z.zid and b.user_type=2 and b.project_id=#{projectId,jdbcType=BIGINT} and b.user_name=#{account,jdbcType=VARCHAR}) A
+        left join device_info d
+        on A.device_id=d.did
+    </select>-->
+
+
+    <select id="findByNumber" resultType="com.wyfx.business.entity.vo.ClientAccountFindVo">
+        select b.bid,b.`name`,b.user_name as account,b.mobile,b.`status`,z.`name`
+        workType,d.number,c.diy_flag,c.resolution
+        from business_user b,zidian_setting z,client_account c,device_info d
+        <where>
+            b.bid=c.bid and b.zidian_id=z.zid and b.user_type=2 and c.device_id=d.did
+            <if test="projectId!=null">
+                and b.project_id=#{projectId,jdbcType=BIGINT}
+            </if>
+            and c.device_id=(select did from device_info where number=#{number,jdbcType=VARCHAR})
+        </where>
+    </select>
+
+    <select id="findByOnlineStatus" resultType="map">
+        select A.bid as clientId,A.name,A.user_name as account,A.mobile as
+        tel,A.`status`,A.`workType`,d.number,A.online_status
+        from (select b.bid,b.`name`,b.user_name,b.mobile,b.`status`,z.`name` workType,c.device_id,b.online_status
+        from business_user b,zidian_setting z,client_account c
+        <where>
+            b.bid=c.bid and c.work_id=z.zid and b.user_type=2
+            <if test="onlineStatus!=null">
+                and b.online_status=#{onlineStatus}
+            </if>
+            <if test="businessId!=null">
+                and b.business_id=#{businessId}
+            </if>
+        </where>
+        ) A
+        left join device_info d
+        on A.device_id=d.did
+    </select>
+
+    <select id="findByAccountName" resultType="com.wyfx.business.entity.BusinessUser">
+        select bid, user_name, password, name, mobile, create_person, create_time, modify_time,
+        modify_person, last_login_time, status, project_id, token,business_id,user_type,online_status,zidian_id
+        from business_user
+        where user_name = #{account,jdbcType=VARCHAR}
+    </select>
+
+    <!--<select id="selectCurrentClientInfo" parameterType="java.lang.Long" resultType="java.util.Map">
+        select b.`name`,d.number,t.`name` as talk_back_name,t.id from business_user b,device_info d,talk_back_group t,client_account c,talk_back_group_member m
+    where b.user_type=2 and t.is_activate=1 and b.bid=c.bid and c.device_id=d.did and t.project_id=b.project_id and b.bid=#{bid,jdbcType=BIGINT} and t.id=m.group_id and m.business_id=b.bid
+    </select>-->
+    <select id="selectCurrentClientInfo" parameterType="java.lang.Long" resultType="java.util.Map">
+        select b.`name`,d.number,t.`name` as talk_back_name,t.id from talk_back_group_member m
+        left join business_user b on m.business_id=b.bid
+        left join talk_back_group t on t.id=m.group_id
+        left join client_account c on b.bid=c.bid
+        left join device_info d on c.device_id=d.did
+        where b.user_type=2 and t.is_activate=1 and t.project_id=b.project_id and b.bid=#{bid,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectIMEIByBid" parameterType="java.lang.Long" resultType="java.lang.String">
+        select d.IMEI from client_account c,device_info d where c.device_id=d.did and c.bid=#{bid}
+    </select>
+
+
+    <!--<select id="findByStatus" resultType="com.wyfx.business.entity.vo.ClientAccountFindVo">
+      select A.client_id,A.name,A.account,A.tel,A.`status`,A.`workType`,d.number from (select c.client_id,c.name,c.account,c.tel,c.`status`,z.`name` workType,c.device_id
+        from client_account c,zidian_setting z where c.work_id=z.zid and c.project_id=#{projectId,jdbcType=BIGINT} and c.status=#{status,jdbcType=INTEGER}) A
+        left join device_info d
+        on A.device_id=d.did
+    </select>-->
+
+    <!--<select id="findAllAccount" resultType="com.wyfx.business.entity.vo.ClientAccountFindVo">
+      select A.client_id,A.name,A.account,A.tel,A.`status`,A.`workType`,d.number from (select c.client_id,c.name,c.account,c.tel,c.`status`,z.`name` workType,c.device_id
+        from client_account c,zidian_setting z where c.work_id=z.zid and c.project_id=#{projectId,jdbcType=BIGINT}) A
+        left join device_info d
+        on A.device_id=d.did
+    </select>-->
+
+    <!--<select id="findByName" resultType="com.wyfx.business.entity.vo.ClientAccountFindVo">
+      select A.client_id,A.name,A.account,A.tel,A.`status`,A.`workType`,d.number from (select c.client_id,c.name,c.account,c.tel,c.`status`,z.`name` workType,c.device_id
+        from client_account c,zidian_setting z where c.work_id=z.zid and c.project_id=#{projectId,jdbcType=BIGINT} and c.name=#{name,jdbcType=VARCHAR}) A
+        left join device_info d
+        on A.device_id=d.did
+    </select>
+
+    <select id="findByTel" resultType="com.wyfx.business.entity.vo.ClientAccountFindVo">
+      select A.client_id,A.name,A.account,A.tel,A.`status`,A.`workType`,d.number from (select c.client_id,c.name,c.account,c.tel,c.`status`,z.`name` workType,c.device_id
+        from client_account c,zidian_setting z where c.work_id=z.zid and c.project_id=#{projectId,jdbcType=BIGINT} and c.tel=#{tel,jdbcType=VARCHAR}) A
+        left join device_info d
+        on A.device_id=d.did
+    </select>
+
+    <select id="findByAccount" resultType="com.wyfx.business.entity.vo.ClientAccountFindVo">
+      select A.client_id,A.name,A.account,A.tel,A.`status`,A.`workType`,d.number from (select c.client_id,c.name,c.account,c.tel,c.`status`,z.`name` workType,c.device_id
+        from client_account c,zidian_setting z where c.work_id=z.zid and c.project_id=#{projectId,jdbcType=BIGINT} and c.account=#{account,jdbcType=VARCHAR}) A
+        left join device_info d
+        on A.device_id=d.did
+    </select>
+
+
+    <select id="findByNumber" resultType="com.wyfx.business.entity.vo.ClientAccountFindVo">
+      select c.client_id,c.name,c.account,c.tel,c.`status`,z.`name` workType,d.number
+      from client_account c,zidian_setting z,device_info d
+      where c.work_id=z.zid and c.device_id=(select did from device_info where number=#{number,jdbcType=VARCHAR})
+    </select>-->
+
+    <!--<select id="findByAccountName" resultType="com.wyfx.business.entity.ClientAccount">
+      select
+      <include refid="Base_Column_List" />
+      from client_account
+      where account = #{account,jdbcType=VARCHAR}
+    </select>-->
+
+    <update id="updateByBid" parameterType="com.wyfx.business.entity.ClientAccount">
+        update client_account
+        <set>
+            <if test="account != null">
+                account = #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="tel != null">
+                tel = #{tel,jdbcType=VARCHAR},
+            </if>
+            <if test="workId != null">
+                work_id = #{workId,jdbcType=BIGINT},
+            </if>
+            <if test="resolution != null">
+                resolution = #{resolution,jdbcType=VARCHAR},
+            </if>
+            <if test="minKps != null">
+                min_kps = #{minKps,jdbcType=INTEGER},
+            </if>
+            <if test="maxKps != null">
+                max_kps = #{maxKps,jdbcType=INTEGER},
+            </if>
+            <if test="deviceId != null">
+                device_id = #{deviceId,jdbcType=BIGINT},
+            </if>
+            <if test="projectId != null">
+                project_id = #{projectId,jdbcType=BIGINT},
+            </if>
+            <if test="businessId != null">
+                business_id = #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="diyFlag != null">
+                diy_flag= #{diyFlag,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status= #{status,jdbcType=INTEGER},
+            </if>
+        </set>
+        where bid = #{bid,jdbcType=INTEGER}
+    </update>
+    <update id="updateClientVideoSetting">
+        update client_account set resolution = #{resolution,jdbcType=VARCHAR},diy_flag= #{diyFlag,jdbcType=INTEGER}
+        where business_id = #{businessId,jdbcType=BIGINT}
+    </update>
+</mapper>

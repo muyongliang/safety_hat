@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.AlarmTrackPointMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.AlarmTrackPoint">
+        <constructor>
+            <idArg column="tid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="longitude" javaType="java.lang.Double" jdbcType="DOUBLE"/>
+            <arg column="latitude" javaType="java.lang.Double" jdbcType="DOUBLE"/>
+            <arg column="radius" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="coord_type" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="loc_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        tid, longitude, latitude, radius, coord_type, loc_time, create_time
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from alarm_track_point
+        where tid = #{tid,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from alarm_track_point
+        where tid = #{tid,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.AlarmTrackPoint" keyProperty="tid"
+            useGeneratedKeys="true">
+        insert into alarm_track_point (tid, longitude, latitude,
+        radius, coord_type, loc_time,
+        create_time)
+        values (#{tid,jdbcType=BIGINT}, #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE},
+        #{radius,jdbcType=INTEGER}, #{coordType,jdbcType=VARCHAR}, #{locTime,jdbcType=TIMESTAMP},
+        #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.AlarmTrackPoint">
+        insert into alarm_track_point
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tid != null">
+                tid,
+            </if>
+            <if test="longitude != null">
+                longitude,
+            </if>
+            <if test="latitude != null">
+                latitude,
+            </if>
+            <if test="radius != null">
+                radius,
+            </if>
+            <if test="coordType != null">
+                coord_type,
+            </if>
+            <if test="locTime != null">
+                loc_time,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tid != null">
+                #{tid,jdbcType=BIGINT},
+            </if>
+            <if test="longitude != null">
+                #{longitude,jdbcType=DOUBLE},
+            </if>
+            <if test="latitude != null">
+                #{latitude,jdbcType=DOUBLE},
+            </if>
+            <if test="radius != null">
+                #{radius,jdbcType=INTEGER},
+            </if>
+            <if test="coordType != null">
+                #{coordType,jdbcType=VARCHAR},
+            </if>
+            <if test="locTime != null">
+                #{locTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.AlarmTrackPoint">
+        update alarm_track_point
+        <set>
+            <if test="longitude != null">
+                longitude = #{longitude,jdbcType=DOUBLE},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude,jdbcType=DOUBLE},
+            </if>
+            <if test="radius != null">
+                radius = #{radius,jdbcType=INTEGER},
+            </if>
+            <if test="coordType != null">
+                coord_type = #{coordType,jdbcType=VARCHAR},
+            </if>
+            <if test="locTime != null">
+                loc_time = #{locTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where tid = #{tid,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.AlarmTrackPoint">
+        update alarm_track_point
+        set longitude = #{longitude,jdbcType=DOUBLE},
+        latitude = #{latitude,jdbcType=DOUBLE},
+        radius = #{radius,jdbcType=INTEGER},
+        coord_type = #{coordType,jdbcType=VARCHAR},
+        loc_time = #{locTime,jdbcType=TIMESTAMP},
+        create_time = #{createTime,jdbcType=TIMESTAMP}
+        where tid = #{tid,jdbcType=BIGINT}
+    </update>
+</mapper>

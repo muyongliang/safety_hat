@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.total.mapper.BusinessOtherSettingMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.total.entity.BusinessOtherSetting">
+        <constructor>
+            <idArg column="other_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="sid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="bid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="size" javaType="java.lang.Double" jdbcType="DOUBLE"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        other_id, sid, bid, type, size
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from business_other_setting
+        where other_id = #{otherId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from business_other_setting
+        where other_id = #{otherId,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.total.entity.BusinessOtherSetting">
+        insert into business_other_setting (other_id, sid, bid,
+        type, size)
+        values (#{otherId,jdbcType=BIGINT}, #{sid,jdbcType=BIGINT}, #{bid,jdbcType=BIGINT},
+        #{type,jdbcType=INTEGER}, #{size,jdbcType=DOUBLE})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.total.entity.BusinessOtherSetting">
+        insert into business_other_setting
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="otherId != null">
+                other_id,
+            </if>
+            <if test="sid != null">
+                sid,
+            </if>
+            <if test="bid != null">
+                bid,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="size != null">
+                size,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="otherId != null">
+                #{otherId,jdbcType=BIGINT},
+            </if>
+            <if test="sid != null">
+                #{sid,jdbcType=BIGINT},
+            </if>
+            <if test="bid != null">
+                #{bid,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="size != null">
+                #{size,jdbcType=DOUBLE},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.total.entity.BusinessOtherSetting">
+        update business_other_setting
+        <set>
+            <if test="sid != null">
+                sid = #{sid,jdbcType=BIGINT},
+            </if>
+            <if test="bid != null">
+                bid = #{bid,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="size != null">
+                size = #{size,jdbcType=DOUBLE},
+            </if>
+        </set>
+        where other_id = #{otherId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.total.entity.BusinessOtherSetting">
+        update business_other_setting
+        set sid = #{sid,jdbcType=BIGINT},
+        bid = #{bid,jdbcType=BIGINT},
+        type = #{type,jdbcType=INTEGER},
+        size = #{size,jdbcType=DOUBLE}
+        where other_id = #{otherId,jdbcType=BIGINT}
+    </update>
+</mapper>

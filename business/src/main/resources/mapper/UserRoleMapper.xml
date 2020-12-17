@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.UserRoleMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.UserRole">
+        <constructor>
+            <arg column="user_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="role_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        </constructor>
+    </resultMap>
+    <insert id="insert" parameterType="com.wyfx.business.entity.UserRole">
+        insert into user_role (user_id, role_id)
+        values (#{userId,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.UserRole">
+        insert into user_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="roleId != null">
+                role_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="roleId != null">
+                #{roleId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="findByUserId" resultMap="BaseResultMap">
+        select user_id,role_id from user_role
+        where user_id = #{userId}
+    </select>
+
+    <update id="updateUserRole" parameterType="com.wyfx.business.entity.UserRole">
+        update user_role
+        set role_id=#{roleId,jdbcType=BIGINT}
+        where user_id = #{userId,jdbcType=BIGINT}
+    </update>
+
+    <!--通过id删除关联的角色id数据-->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from user_role
+        where user_id = #{user_id,jdbcType=BIGINT}
+    </delete>
+
+    <delete id="deleteByRoleId" parameterType="java.lang.Long">
+        delete from user_role
+        where role_id = #{roleId,jdbcType=BIGINT} and user_id = #{userId}
+    </delete>
+    <delete id="deleteByUserId">
+        delete from user_role where user_id = #{userId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.RoleMenuMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.RoleMenu">
+        <constructor>
+            <arg column="role_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="menu_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        </constructor>
+    </resultMap>
+    <insert id="insert" parameterType="com.wyfx.business.entity.RoleMenu">
+        insert into role_menu (role_id, menu_id)
+        values (#{roleId,jdbcType=BIGINT}, #{menuId,jdbcType=BIGINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.RoleMenu">
+        insert into role_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">
+                role_id,
+            </if>
+            <if test="menuId != null">
+                menu_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">
+                #{roleId,jdbcType=BIGINT},
+            </if>
+            <if test="menuId != null">
+                #{menuId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="updateUserMenuManager">
+        <foreach collection="menus" item="menu" close="" index="index" open="" separator=";">
+            update role_menu
+            <set>
+                menu_id=#{menu}
+            </set>
+            where role_id = #{roleId,jdbcType=BIGINT}
+        </foreach>
+        /*update role_menu
+        set menu_id=#{}
+        where role_id = #{roleId,jdbcType=BIGINT}*/
+    </update>
+
+    <resultMap id="roleMenu" type="com.wyfx.business.entity.vo.RoleMenuVo">
+        <constructor>
+            <arg column="mid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="parent_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="url" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="order_num" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="modify_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="remark" javaType="java.lang.String" jdbcType="LONGVARCHAR"/>
+            <arg column="role_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        </constructor>
+    </resultMap>
+    <select id="findUserPermissions" resultMap="roleMenu">
+        select m.*,r.role_id from meun_manager m,role_menu r where m.mid=r.menu_id and r.role_id=#{roleId}
+    </select>
+    <select id="findPermissionsByRoleIdAndMid" resultMap="BaseResultMap">
+        select r.* from role_menu r where r.role_id=#{roleId} and menu_id=#{mid}
+    </select>
+    <delete id="delete">
+        delete from role_menu where 1=1
+        <if test="roleId != null">
+            and role_id=#{roleId}
+        </if>
+        <if test="menuId != null">
+            and menu_id=#{menuId}
+        </if>
+    </delete>
+</mapper>

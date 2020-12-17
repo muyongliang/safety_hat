@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.FileInfoMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.FileInfo">
+        <constructor>
+            <idArg column="fid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="file_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="upload_by_account" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="upload_by_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="file_size" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="upload_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="project_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="url" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        fid, file_name, upload_by_account, upload_by_name, user_type, file_size, upload_time,
+        type, project_id, url
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fileinfo
+        where fid = #{fid,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from fileinfo
+        where fid = #{fid,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.FileInfo">
+        insert into fileinfo (fid, file_name, upload_by_account,
+        upload_by_name, user_type, file_size,
+        upload_time, type, project_id,
+        url)
+        values (#{fid,jdbcType=BIGINT}, #{fileName,jdbcType=VARCHAR}, #{uploadByAccount,jdbcType=VARCHAR},
+        #{uploadByName,jdbcType=VARCHAR}, #{userType,jdbcType=INTEGER}, #{fileSize,jdbcType=BIGINT},
+        #{uploadTime,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER}, #{projectId,jdbcType=BIGINT},
+        #{url,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.FileInfo">
+        insert into fileinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fid != null">
+                fid,
+            </if>
+            <if test="fileName != null">
+                file_name,
+            </if>
+            <if test="uploadByAccount != null">
+                upload_by_account,
+            </if>
+            <if test="uploadByName != null">
+                upload_by_name,
+            </if>
+            <if test="userType != null">
+                user_type,
+            </if>
+            <if test="fileSize != null">
+                file_size,
+            </if>
+            <if test="uploadTime != null">
+                upload_time,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="projectId != null">
+                project_id,
+            </if>
+            <if test="url != null">
+                url,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fid != null">
+                #{fid,jdbcType=BIGINT},
+            </if>
+            <if test="fileName != null">
+                #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadByAccount != null">
+                #{uploadByAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadByName != null">
+                #{uploadByName,jdbcType=VARCHAR},
+            </if>
+            <if test="userType != null">
+                #{userType,jdbcType=INTEGER},
+            </if>
+            <if test="fileSize != null">
+                #{fileSize,jdbcType=BIGINT},
+            </if>
+            <if test="uploadTime != null">
+                #{uploadTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="projectId != null">
+                #{projectId,jdbcType=BIGINT},
+            </if>
+            <if test="url != null">
+                #{url,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.FileInfo">
+        update fileinfo
+        <set>
+            <if test="fileName != null">
+                file_name = #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadByAccount != null">
+                upload_by_account = #{uploadByAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadByName != null">
+                upload_by_name = #{uploadByName,jdbcType=VARCHAR},
+            </if>
+            <if test="userType != null">
+                user_type = #{userType,jdbcType=INTEGER},
+            </if>
+            <if test="fileSize != null">
+                file_size = #{fileSize,jdbcType=BIGINT},
+            </if>
+            <if test="uploadTime != null">
+                upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="projectId != null">
+                project_id = #{projectId,jdbcType=BIGINT},
+            </if>
+            <if test="url != null">
+                url = #{url,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where fid = #{fid,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.FileInfo">
+        update fileinfo
+        set file_name = #{fileName,jdbcType=VARCHAR},
+        upload_by_account = #{uploadByAccount,jdbcType=VARCHAR},
+        upload_by_name = #{uploadByName,jdbcType=VARCHAR},
+        user_type = #{userType,jdbcType=INTEGER},
+        file_size = #{fileSize,jdbcType=BIGINT},
+        upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+        type = #{type,jdbcType=INTEGER},
+        project_id = #{projectId,jdbcType=BIGINT},
+        url = #{url,jdbcType=VARCHAR}
+        where fid = #{fid,jdbcType=BIGINT}
+    </update>
+
+
+    <update id="updateByName">
+        update fileinfo
+        set file_name = #{fileName,jdbcType=VARCHAR}
+        where fid = #{fid,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectListByType" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fileinfo
+        where project_id = #{projectId} and type=#{type} order by upload_time desc
+    </select>
+
+    <select id="selectListByUserType" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fileinfo
+        where project_id = #{projectId} and type=#{type} and user_type=#{userType} order by upload_time desc
+    </select>
+
+    <select id="selectListByUploadTime" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fileinfo
+        where project_id = #{projectId} and type=#{type} and upload_time between #{begin} and #{end}
+    </select>
+
+    <select id="selectListByFileName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fileinfo
+        where project_id = #{projectId} and type=#{type} and file_name =#{fileName}
+    </select>
+
+    <select id="selectListByAccount" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fileinfo
+        where project_id = #{projectId} and type=#{type} and upload_by_account =#{account}
+    </select>
+
+    <select id="selectListByName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fileinfo
+        where project_id = #{projectId} and type=#{type} and upload_by_name =#{name}
+    </select>
+
+    <!--通过文件类型查询某类文件的数据集合-->
+    <select id="selectListByFileIds" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fileinfo
+        where type=#{type}
+        and fid in
+        <foreach collection="fileIds" item="fid" open="(" separator="," close=")">
+            #{fid}
+        </foreach>
+
+    </select>
+</mapper>

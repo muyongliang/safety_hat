@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.LogMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.Log">
+        <constructor>
+            <idArg column="log_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="account_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="executor" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="action_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="action" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="detail" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="business_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="bid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        log_id, account_type, executor, action_type, action, detail, time, business_id,bid
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from log
+        where log_id = #{logId,jdbcType=BIGINT}
+    </select>
+
+    <!--通过bid查询日志-->
+    <select id="selectByBid" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from log
+        where bid = #{bid,jdbcType=BIGINT}
+    </select>
+
+    <!--通过不同条件查询-->
+    <select id="selectByCondition" resultType="java.util.Map">
+        select
+        log_id,account_type,action_type,executor,action,detail,time,l.bid,b.business_id
+        from log l,business_user b
+        <where>
+            b.bid=l.bid and b.business_id=#{businessId}
+            <if test="accountType!=null">
+                and account_type= #{accountType,jdbcType=INTEGER}
+            </if>
+            <if test="actionType!=null and actionType!=''">
+                and action_type= #{actionType,jdbcType=INTEGER}
+            </if>
+            <if test="executor!=null and executor!=''">
+                and executor= #{executor,jdbcType=VARCHAR}
+            </if>
+            <if test="startTime!=null and endTime!=null">
+                and time between #{startTime,jdbcType=TIMESTAMP} and #{endTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+        order by time desc
+    </select>
+
+    <!--查询id集合的数据-->
+    <select id="selectByLogIds" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from log
+        where log_id
+        in
+        <foreach collection="logIds" item="logId" index="index" open="(" separator="," close=")">
+            #{logId}
+        </foreach>
+
+    </select>
+
+    <!--查询所有-->
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from log where b.business_id=#{businessId} order by time desc
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from log
+        where log_id = #{logId,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.Log">
+        insert into log (log_id, account_type, executor,
+        action_type, action, detail, time, business_id,bid)
+        values (#{logId,jdbcType=BIGINT}, #{accountType,jdbcType=INTEGER}, #{executor,jdbcType=VARCHAR},
+        #{actionType,jdbcType=INTEGER}, #{action,jdbcType=VARCHAR}, #{detail,jdbcType=VARCHAR},
+        #{time,jdbcType=TIMESTAMP}, #{businessId,jdbcType=BIGINT},#{bid,jdbcType=BIGINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.Log">
+        insert into log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="logId != null">
+                log_id,
+            </if>
+            <if test="accountType != null">
+                account_type,
+            </if>
+            <if test="executor != null">
+                executor,
+            </if>
+            <if test="actionType != null">
+                action_type,
+            </if>
+            <if test="action != null">
+                action,
+            </if>
+            <if test="detail != null">
+                detail,
+            </if>
+            <if test="time != null">
+                time,
+            </if>
+            <if test="businessId != null">
+                business_id,
+            </if>
+            <if test="bid != null">
+                bid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="logId != null">
+                #{logId,jdbcType=BIGINT},
+            </if>
+            <if test="accountType != null">
+                #{accountType,jdbcType=INTEGER},
+            </if>
+            <if test="executor != null">
+                #{executor,jdbcType=VARCHAR},
+            </if>
+            <if test="actionType != null">
+                #{actionType,jdbcType=INTEGER},
+            </if>
+            <if test="action != null">
+                #{action,jdbcType=VARCHAR},
+            </if>
+            <if test="detail != null">
+                #{detail,jdbcType=VARCHAR},
+            </if>
+            <if test="time != null">
+                #{time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="businessId != null">
+                #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="bid != null">
+                #{bid,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.Log">
+        update log
+        <set>
+            <if test="accountType != null">
+                account_type = #{accountType,jdbcType=INTEGER},
+            </if>
+            <if test="executor != null">
+                executor = #{executor,jdbcType=VARCHAR},
+            </if>
+            <if test="actionType != null">
+                action_type = #{actionType,jdbcType=INTEGER},
+            </if>
+            <if test="action != null">
+                action = #{action,jdbcType=VARCHAR},
+            </if>
+            <if test="detail != null">
+                detail = #{detail,jdbcType=VARCHAR},
+            </if>
+            <if test="time != null">
+                time = #{time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="businessId != null">
+                business_id = #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="bid != null">
+                bid = #{bid,jdbcType=BIGINT}
+            </if>
+        </set>
+        where log_id = #{logId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.Log">
+        update log
+        set account_type = #{accountType,jdbcType=INTEGER},
+        executor = #{executor,jdbcType=VARCHAR},
+        action_type = #{actionType,jdbcType=INTEGER},
+        action = #{action,jdbcType=VARCHAR},
+        detail = #{detail,jdbcType=VARCHAR},
+        time = #{time,jdbcType=TIMESTAMP},
+        business_id = #{businessId,jdbcType=BIGINT},
+        bid = #{bid,jdbcType=BIGINT}
+        where log_id = #{logId,jdbcType=BIGINT}
+    </update>
+</mapper>

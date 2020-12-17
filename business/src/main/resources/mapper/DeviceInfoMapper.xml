@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.DeviceInfoMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.DeviceInfo">
+        <constructor>
+            <idArg column="did" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="number" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="IMEI" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="record_person" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="record_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="update_person" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="source" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="online_flag" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="business_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        did, number, type, IMEI, status, record_person, record_time, update_person, update_time,
+        source, online_flag, business_id
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from device_info
+        where did = #{did,jdbcType=BIGINT}
+    </select>
+
+    <select id="checkDeviceNumber" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from device_info d
+        where d.business_id=#{businessId} and d.number=#{number} and <![CDATA[ d.status <> -1 ]]>
+    </select>
+
+    <select id="checkDeviceIMEI" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from device_info d
+        where d.business_id=#{businessId} and d.IMEI=#{imei} and <![CDATA[ d.status <> -1 ]]>
+    </select>
+
+    <select id="selectByBusinessId" resultType="com.wyfx.business.entity.vo.DeviceInfoVo">
+        select A.*,c.account,c.`name`
+        from (select d.did,d.number,dt.type,d.IMEI,d.record_time,d.`status` from device_info d,device_type dt where
+        <![CDATA[ d.status <> -1 ]]> and d.business_id=#{businessId} and d.type=dt.id) A
+        left join client_account c
+        on A.did=c.device_id where 1=1 ORDER BY A.record_time desc
+    </select>
+
+    <select id="selectDevicesByStatus" resultType="com.wyfx.business.entity.vo.DeviceInfoVo">
+        select A.*,c.account,c.`name`
+        from (select d.did,d.number,dt.id as tid,dt.type,d.IMEI,d.record_time,d.`status` from device_info d,device_type
+        dt where <![CDATA[ d.status <> -1 ]]> and d.business_id=#{businessId} and d.type=dt.id
+        <if test="status!=null">
+            and d.`status`=#{status}
+        </if>
+        ) A
+        left join client_account c
+        on A.did=c.device_id where 1=1 ORDER BY A.record_time desc
+    </select>
+
+    <select id="selectDevicesByType" resultType="com.wyfx.business.entity.vo.DeviceInfoVo">
+        select A.*,c.account,c.`name`
+        from (select d.did,d.number,dt.id as tid,dt.type,d.IMEI,d.record_time,d.`status` from device_info d,device_type
+        dt where <![CDATA[ d.status <> -1 ]]> and d.business_id=#{businessId} and d.type=dt.id
+        <if test="type!=0">
+            and d.type=#{type}
+        </if>
+        ) A
+        left join client_account c
+        on A.did=c.device_id where 1=1 ORDER BY A.record_time desc
+    </select>
+
+    <select id="selectDevicesByNumber" resultType="com.wyfx.business.entity.vo.DeviceInfoVo">
+        select A.*,c.account,c.`name`
+        from (select d.did,d.number,dt.id as tid,dt.type,d.IMEI,d.record_time,d.`status` from device_info d,device_type
+        dt where <![CDATA[ d.status <> -1 ]]> and d.business_id=#{businessId} and d.type=dt.id and number=#{number}) A
+        left join client_account c
+        on A.did=c.device_id
+    </select>
+
+    <select id="selectDevicesByIMEI" resultType="com.wyfx.business.entity.vo.DeviceInfoVo">
+        select A.*,c.account,c.`name`
+        from (select d.did,d.number,dt.id as tid,dt.type,d.IMEI,d.record_time,d.`status` from device_info d,device_type
+        dt where <![CDATA[ d.status <> -1 ]]> and d.business_id=#{businessId} and d.type=dt.id and IMEI=#{imei}) A
+        left join client_account c
+        on A.did=c.device_id
+    </select>
+
+    <select id="selectDevicesByTime" resultType="com.wyfx.business.entity.vo.DeviceInfoVo">
+        select A.*,c.account,c.`name`
+        from (select d.did,d.number,dt.id as tid,dt.type,d.IMEI,d.record_time,d.`status` from device_info d,device_type
+        dt where <![CDATA[ d.status <> -1 ]]> and d.business_id=#{businessId} and d.type=dt.id and record_time BETWEEN
+        #{beginTime} and #{endTime}) A
+        left join client_account c
+        on A.did=c.device_id where 1=1 ORDER BY A.record_time desc
+    </select>
+
+    <select id="selectDevicesByAccount" resultType="com.wyfx.business.entity.vo.DeviceInfoVo">
+        select d.did,d.number,dt.id as tid,dt.type,d.IMEI,d.record_time,d.`status`,c.account,c.`name`
+        from client_account c,device_info d,device_type dt where <![CDATA[ d.status <> -1 ]]> and c.device_id=d.did and
+        d.type=dt.id and c.account=#{account} and d.business_id=#{businessId}
+    </select>
+
+    <select id="selectDevicesByName" resultType="com.wyfx.business.entity.vo.DeviceInfoVo">
+        select d.did,d.number,dt.id as tid,dt.type,d.IMEI,d.record_time,d.`status`,c.account,c.`name`
+        from client_account c,device_info d,device_type dt where <![CDATA[ d.status <> -1 ]]> and c.device_id=d.did and
+        d.type=dt.id and c.name=#{name} and d.business_id=#{businessId}
+    </select>
+
+    <select id="selectDetailByBid" resultType="com.wyfx.business.entity.DeviceInfo">
+        select d.* from device_info d,business_user b,client_account c
+        where b.bid=#{bid} and b.bid=c.bid and c.device_id=d.did
+    </select>
+
+
+    <!--导出设备列表 2020-1-7-->
+    <select id="selectByDids" resultType="com.wyfx.business.entity.vo.DeviceInfoVo">
+        select A.*,c.account,c.`name`
+        from (select d.did,d.number,dt.id as tid,dt.type,d.IMEI,d.record_time,d.`status` from device_info d,device_type
+        dt where
+        <![CDATA[ d.status <> -1 ]]> and d.business_id=#{businessId} and d.type=dt.id
+        and d.did
+        in
+        <foreach item="did" index="index" collection="dids" open="(" separator="," close=")">
+            #{did}
+        </foreach>
+        ) A
+        left join client_account c
+        on A.did=c.device_id
+
+        <!--        select d.did,d.number,dt.type,d.IMEI,d.record_time,d.`status`,c.account,c.`name`-->
+        <!--        from client_account c,device_info d,device_type dt where c.device_id=d.did and d.type=dt.id-->
+        <!--        <if test="businessId!=null">-->
+        <!--            and d.business_id=#{businessId}-->
+        <!--        </if>-->
+        <!--        and d.did-->
+        <!--        in-->
+        <!--        <foreach item="did" index="index" collection="dids" open="(" separator="," close=")">-->
+        <!--            #{did}-->
+        <!--        </foreach>-->
+    </select>
+
+
+    <!--多id查询-->
+    <select id="selectByIds" resultMap="BaseResultMap">
+        Select
+        <include refid="Base_Column_List"/>
+        from device_info
+        where
+        did
+        in
+        <foreach item="ids" index="index" collection="list" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from device_info
+        where did = #{did,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.DeviceInfo">
+        insert into device_info (did, number, type,
+        IMEI, status, record_person,
+        record_time, update_person, update_time,
+        source, online_flag, business_id
+        )
+        values (#{did,jdbcType=BIGINT}, #{number,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER},
+        #{imei,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{recordPerson,jdbcType=VARCHAR},
+        #{recordTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP},
+        #{source,jdbcType=INTEGER}, #{onlineFlag,jdbcType=INTEGER}, #{businessId,jdbcType=BIGINT}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.DeviceInfo" useGeneratedKeys="true"
+            keyProperty="did">
+        insert into device_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="did != null">
+                did,
+            </if>
+            <if test="number != null">
+                number,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="imei != null">
+                IMEI,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="recordPerson != null">
+                record_person,
+            </if>
+            <if test="recordTime != null">
+                record_time,
+            </if>
+            <if test="updatePerson != null">
+                update_person,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="source != null">
+                source,
+            </if>
+            <if test="onlineFlag != null">
+                online_flag,
+            </if>
+            <if test="businessId != null">
+                business_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="did != null">
+                #{did,jdbcType=BIGINT},
+            </if>
+            <if test="number != null">
+                #{number,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="imei != null">
+                #{imei,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="recordPerson != null">
+                #{recordPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="recordTime != null">
+                #{recordTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="source != null">
+                #{source,jdbcType=INTEGER},
+            </if>
+            <if test="onlineFlag != null">
+                #{onlineFlag,jdbcType=INTEGER},
+            </if>
+            <if test="businessId != null">
+                #{businessId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.DeviceInfo">
+        update device_info
+        <set>
+            <if test="number != null">
+                number = #{number,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="imei != null">
+                IMEI = #{imei,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="recordPerson != null">
+                record_person = #{recordPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="recordTime != null">
+                record_time = #{recordTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                update_person = #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="source != null">
+                source = #{source,jdbcType=INTEGER},
+            </if>
+            <if test="onlineFlag != null">
+                online_flag = #{onlineFlag,jdbcType=INTEGER},
+            </if>
+            <if test="businessId != null">
+                business_id = #{businessId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where did = #{did,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.DeviceInfo">
+        update device_info
+        set number = #{number,jdbcType=VARCHAR},
+        type = #{type,jdbcType=INTEGER},
+        IMEI = #{imei,jdbcType=VARCHAR},
+        status = #{status,jdbcType=INTEGER},
+        record_person = #{recordPerson,jdbcType=VARCHAR},
+        record_time = #{recordTime,jdbcType=TIMESTAMP},
+        update_person = #{updatePerson,jdbcType=VARCHAR},
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        source = #{source,jdbcType=INTEGER},
+        online_flag = #{onlineFlag,jdbcType=INTEGER},
+        business_id = #{businessId,jdbcType=BIGINT}
+        where did = #{did,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectIdByImei" resultType="Long">
+        select did from device_info where IMEI = #{imei,jdbcType=VARCHAR}
+    </select>
+</mapper>

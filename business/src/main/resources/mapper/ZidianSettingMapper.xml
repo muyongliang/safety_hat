@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.ZidianSettingMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.ZidianSetting">
+        <constructor>
+            <idArg column="zid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="zidian_type" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="color" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="order_num" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="business_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        zid, zidian_type, name, status, color, order_num, business_id,update_time
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from zidian_setting
+        where zid = #{zid,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from zidian_setting
+        where zid = #{zid,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.ZidianSetting">
+        insert into zidian_setting (zid, zidian_type, name,
+        status, color, order_num,
+        business_id,update_time)
+        values (#{zid,jdbcType=BIGINT}, #{zidianType,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR},
+        #{status,jdbcType=INTEGER}, #{color,jdbcType=VARCHAR}, #{orderNum,jdbcType=INTEGER},
+        #{businessId,jdbcType=BIGINT},#{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.ZidianSetting">
+        insert into zidian_setting
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="zid != null">
+                zid,
+            </if>
+            <if test="zidianType != null">
+                zidian_type,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="color != null">
+                color,
+            </if>
+            <if test="orderNum != null">
+                order_num,
+            </if>
+            <if test="businessId != null">
+                business_id,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="zid != null">
+                #{zid,jdbcType=BIGINT},
+            </if>
+            <if test="zidianType != null">
+                #{zidianType,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="color != null">
+                #{color,jdbcType=VARCHAR},
+            </if>
+            <if test="orderNum != null">
+                #{orderNum,jdbcType=INTEGER},
+            </if>
+            <if test="businessId != null">
+                #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.ZidianSetting">
+        update zidian_setting
+        <set>
+            <if test="zidianType != null">
+                zidian_type = #{zidianType,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="color != null">
+                color = #{color,jdbcType=VARCHAR},
+            </if>
+            <if test="orderNum != null">
+                order_num = #{orderNum,jdbcType=INTEGER},
+            </if>
+            <if test="businessId != null">
+                business_id = #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where zid = #{zid,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.ZidianSetting">
+        update zidian_setting
+        set zidian_type = #{zidianType,jdbcType=BIGINT},
+        name = #{name,jdbcType=VARCHAR},
+        status = #{status,jdbcType=INTEGER},
+        color = #{color,jdbcType=VARCHAR},
+        order_num = #{orderNum,jdbcType=INTEGER},
+        business_id = #{businessId,jdbcType=BIGINT},
+        update_time=#{updateTime,jdbcType=TIMESTAMP}
+        where zid = #{zid,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateWorkTypeStatus">
+        update zidian_setting
+        set status = #{status,jdbcType=INTEGER},
+        order_num = #{orderNum,jdbcType=INTEGER}
+        where zid = #{zid,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateStatusAndOrderNum">
+        update zidian_setting
+        set status = #{status,jdbcType=INTEGER},
+        order_num=NULL
+        where zid = #{zid,jdbcType=BIGINT}
+    </update>
+
+
+    <select id="findPageByWorkType" resultType="com.wyfx.business.entity.ZidianSetting">
+        select z.*,b.maxOrderNum from zidian_setting z
+        left join (select max(order_num) as maxOrderNum ,business_id from zidian_setting
+        where `status`=0 and business_id = #{businessId,jdbcType=BIGINT} and zidian_type =
+        #{zidianType,jdbcType=BIGINT}) b
+        on b.business_id=z.business_id
+        where zidian_type = #{zidianType,jdbcType=BIGINT} and z.business_id = #{businessId,jdbcType=BIGINT}
+        <if test="status !=null">
+            and <![CDATA[ status <> #{status} ]]>
+        </if>
+        order by status asc,order_num asc,update_time asc
+
+        <!--select
+        <include refid="Base_Column_List" />,
+        from zidian_setting
+        where zidian_type = #{zidianType,jdbcType=BIGINT} and business_id = #{businessId,jdbcType=BIGINT}
+        <if test="status !=null">
+          and <![CDATA[ status <> #{status} ]]>
+        </if>
+        order by status asc,order_num asc,update_time asc-->
+    </select>
+
+    <select id="findMaxOrderNum" resultType="java.lang.Integer">
+        select max(order_num) from zidian_setting
+        where business_id = #{businessId,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from zidian_setting
+        where business_id = #{businessId,jdbcType=BIGINT} and name=#{name}
+    </select>
+
+    <update id="updateByOrderNum">
+        update zidian_setting
+        set order_num = #{orderNum}
+        where <![CDATA[ zid <> #{zid} ]]> and order_num=#{changedNum}
+    </update>
+</mapper>

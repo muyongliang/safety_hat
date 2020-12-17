@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.RecordManagerMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.RecordManager">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="record_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="pid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="send_bid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="send_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="send_to_bid" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="send_to_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="message_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="group_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="parent_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="title" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="record_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.wyfx.business.entity.RecordManager">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="record_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="pid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="send_bid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="send_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="send_to_bid" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="send_to_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="message" javaType="java.lang.String" jdbcType="LONGVARCHAR"/>
+            <arg column="message_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="group_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="parent_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="title" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="record_by" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, record_time, pid, send_bid, send_name ,send_to_bid, send_to_name,message_type,group_id,`type`,parent_id,
+        title,record_by
+    </sql>
+    <sql id="Blob_Column_List">
+        message
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from record_manager
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from record_manager
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <delete id="deleteAll" parameterType="java.lang.Integer">
+        delete from record_manager
+        where `type` = #{type,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteTalkBackRecords" parameterType="java.lang.Long">
+        delete from record_manager
+        where group_id = #{groupId,jdbcType=BIGINT} and pid = #{pid,jdbcType=BIGINT} and `type` = 3
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.RecordManager">
+        insert into record_manager ( id, record_time, pid, send_bid, send_name ,send_to_bid, send_to_name,
+        message,message_type,group_id,`type`,parent_id,title,record_by
+        )
+        values (#{id,jdbcType=BIGINT}, #{recordTime,jdbcType=TIMESTAMP},#{pid,jdbcType=BIGINT},
+        #{sendBid,jdbcType=BIGINT},#{sendName,jdbcType=BIGINT}
+        , #{sendToBid,jdbcType=VARCHAR}, #{sendToName,jdbcType=VARCHAR}, #{message,jdbcType=LONGVARCHAR},
+        #{messageType,jdbcType=INTEGER}
+        ,
+        #{groupId,jdbcType=BIGINT},#{type,jdbcType=INTEGER},#{parentId,jdbcType=BIGINT},#{title,jdbcType=VARCHAR}#{recordBy,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.RecordManager">
+        insert into record_manager
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="recordTime != null">
+                record_time,
+            </if>
+            <if test="pid != null">
+                pid,
+            </if>
+            <if test="sendBid != null">
+                send_bid,
+            </if>
+            <if test="sendName != null">
+                send_name,
+            </if>
+            <if test="sendToBid != null">
+                send_to_bid,
+            </if>
+            <if test="sendToName != null">
+                send_to_name,
+            </if>
+            <if test="message != null">
+                message,
+            </if>
+            <if test="messageType != null">
+                message_type,
+            </if>
+            <if test="groupId != null">
+                group_id,
+            </if>
+            <if test="type != null">
+                `type`,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="recordBy != null">
+                record_by,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="recordTime != null">
+                #{recordTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="pid != null">
+                #{pid,jdbcType=BIGINT},
+            </if>
+            <if test="sendBid != null">
+                #{sendBid,jdbcType=BIGINT},
+            </if>
+            <if test="sendName != null">
+                #{sendName,jdbcType=VARCHAR},
+            </if>
+            <if test="sendToBid != null">
+                #{sendToBid,jdbcType=VARCHAR},
+            </if>
+            <if test="sendToName != null">
+                #{sendToName,jdbcType=VARCHAR},
+            </if>
+            <if test="message != null">
+                #{message,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="messageType != null">
+                #{messageType,jdbcType=INTEGER},
+            </if>
+            <if test="groupId != null">
+                #{groupId,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="parentId != null">
+                #{parentId,jdbcType=BIGINT},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="recordBy != null">
+                #{recordBy,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.RecordManager">
+        update record_manager
+        <set>
+            <if test="recordTime != null">
+                record_time = #{recordTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="pid != null">
+                pid = #{pid,jdbcType=BIGINT},
+            </if>
+            <if test="sendBid != null">
+                send_bid = #{sendBid,jdbcType=BIGINT},
+            </if>
+            <if test="sendName != null">
+                send_name = #{sendName,jdbcType=VARCHAR},
+            </if>
+            <if test="sendToBid != null">
+                send_to_bid = #{sendToBid,jdbcType=VARCHAR},
+            </if>
+            <if test="sendToName != null">
+                send_to_name = #{sendToName,jdbcType=VARCHAR}
+            </if>
+            <if test="message != null">
+                message = #{message,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="messageType != null">
+                message_type = #{messageType,jdbcType=INTEGER}
+            </if>
+            <if test="groupId != null">
+                group_id = #{groupId,jdbcType=BIGINT}
+            </if>
+            <if test="type != null">
+                `type` = #{type,jdbcType=INTEGER}
+            </if>
+            <if test="parentId != null">
+                parent_id = #{parentId,jdbcType=BIGINT}
+            </if>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR}
+            </if>
+            <if test="recordBy != null">
+                record_by = #{recordBy,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.RecordManager">
+        update record_manager
+        set record_time = #{recordTime,jdbcType=TIMESTAMP},
+        pid = #{pid,jdbcType=BIGINT},
+        send_bid = #{sendBid,jdbcType=BIGINT},
+        send_name = #{sendName,jdbcType=VARCHAR},
+        send_to_bid = #{sendToBid,jdbcType=VARCHAR},
+        send_to_name = #{sendToName,jdbcType=VARCHAR},
+        message = #{message,jdbcType=LONGVARCHAR},
+        message_type = #{messageType,jdbcType=INTEGER},
+        group_id = #{groupId,jdbcType=BIGINT},
+        `type` = #{type,jdbcType=INTEGER},
+        parent_id = #{parentId,jdbcType=BIGINT},
+        title = #{title,jdbcType=VARCHAR},
+        record_by = #{recordBy,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectPatrolRecord" resultType="com.wyfx.business.entity.vo.RecordManagerVo">
+        SELECT a.id AS `id`,d.`name` AS sendName,d.user_name AS account,a.message_type AS messageType,a.record_time AS
+        recordTime,a.type AS `type`,a.message,a.pid,a.send_name,a.title,p.project_name
+        FROM record_manager a,business_user d,project_info p
+        WHERE a.send_bid=d.bid and a.pid=d.project_id and d.project_id=p.pid
+        <if test="RecordManager.pid != null">
+            and a.pid = #{RecordManager.pid}
+        </if>
+        <if test="RecordManager.sendBid != null">
+            and a.send_bid = #{RecordManager.sendBid}
+        </if>
+        <if test="RecordManager.sendName != null">
+            and a.send_name like CONCAT('%',#{RecordManager.sendName},'%')
+        </if>
+        <if test="RecordManager.startTime != null">
+            <if test="RecordManager.endTime != null">
+                and a.record_time between #{RecordManager.startTime} and #{RecordManager.endTime}
+            </if>
+        </if>
+        <if test="RecordManager.type != null">
+            and a.type = #{RecordManager.type}
+        </if>
+        <if test="RecordManager.businessId != null">
+            and d.business_id=#{RecordManager.businessId}
+        </if>
+        order by record_time desc
+    </select>
+
+    <!--  todo 如果需要修改sql 务必将以下三个 1）按条件导出对讲记录 2）按条件导出广播记录 3）按条件导出巡检报告一同修改-->
+    <select id="selectRecord" resultType="com.wyfx.business.entity.vo.RecordManagerVo">
+        SELECT a.id AS `id`,d.`name` AS sendName,d.user_name AS account,d.user_type,a.message_type AS
+        messageType,a.record_time AS
+        recordTime,a.type AS `type`,a.message
+        FROM record_manager a,business_user d
+        WHERE a.send_bid=d.bid
+        <if test="RecordManager.pid != null">
+            and a.pid = #{RecordManager.pid}
+        </if>
+        <if test="RecordManager.sendBid != null">
+            and a.send_bid = #{RecordManager.sendBid}
+        </if>
+        <if test="RecordManager.sendToName != null">
+            and a.send_to_name like CONCAT('%',#{RecordManager.sendToName},'%')
+        </if>
+        <if test="RecordManager.startTime != null">
+            <if test="RecordManager.endTime != null">
+                and a.record_time between #{RecordManager.startTime} and #{RecordManager.endTime}
+            </if>
+        </if>
+        <if test="RecordManager.type != null">
+            and a.type = #{RecordManager.type}
+        </if>
+        <if test="RecordManager.businessId != null">
+            and d.business_id=#{RecordManager.businessId}
+        </if>
+        <if test="RecordManager.groupId != null">
+            and group_id=#{RecordManager.groupId}
+        </if>
+        <if test="RecordManager.messageType != null">
+            and message_type=#{RecordManager.messageType}
+        </if>
+        <if test="RecordManager.sendName != null">
+            and a.send_name like CONCAT('%',#{RecordManager.sendName},'%')
+        </if>
+        <if test="RecordManager.userType != null">
+            and d.user_type=#{RecordManager.userType}
+        </if>
+        order by record_time desc
+    </select>
+    <!--and a.send_to_bid = #{RecordManager.sendToBid}
+    and a.send_to_name = #{RecordManager.sendToName}
+    -->
+    <select id="selectPhoneRecord" resultType="com.wyfx.business.entity.vo.RecordManagerVo">
+        SELECT a.id AS `id`,d.`name` AS sendName,d.user_name AS callerAccount,a.message_type AS
+        messageType,a.record_time AS
+        recordTime,b.`name` AS sendToName,b.user_name AS calledAccount,a.title AS title,a.record_by
+        FROM record_manager a,business_user d,business_user b
+        WHERE a.send_bid=d.bid AND a.send_to_bid=b.bid
+        <if test="RecordManager.pid != null">
+            and a.pid = #{RecordManager.pid}
+        </if>
+        <if test="RecordManager.sendBid != null">
+            and a.send_bid = #{RecordManager.sendBid}
+        </if>
+        <if test="RecordManager.sendName != null">
+            and d.`name` = #{RecordManager.sendName}
+        </if>
+        <if test="RecordManager.sendToBid != null">
+            and a.send_to_bid = #{RecordManager.sendToBid}
+        </if>
+        <if test="RecordManager.sendToName != null">
+            and a.send_to_name like CONCAT('%',#{RecordManager.sendToName},'%')
+        </if>
+        <if test="RecordManager.startTime != null">
+            <if test="RecordManager.endTime != null">
+                and a.record_time between #{RecordManager.startTime} and #{RecordManager.endTime}
+            </if>
+        </if>
+        <if test="RecordManager.type != null">
+            and a.type = #{RecordManager.type}
+        </if>
+        <if test="RecordManager.businessId != null">
+            and d.business_id=#{RecordManager.businessId}
+        </if>
+        order by record_time desc
+    </select>
+
+    <!--<select id="selectPatrolRecord" resultType="com.wyfx.business.entity.vo.RecordManagerVo">
+        SELECT a.id AS `id`,a.pid AS pid,d.`name` AS sendName,d.user_name AS account,a.record_time AS recordTime,a.title AS title,c.project_name AS projectName
+        FROM record_manager a,business_user d,project_info c
+        WHERE a.send_bid=d.bid AND a.pid=c.pid
+        <if test="RecordManager.pid != null">
+            and a.pid = #{RecordManager.pid}
+        </if>
+        <if test="RecordManager.sendBid != null">
+            and a.send_bid = #{RecordManager.sendBid}
+        </if>
+        <if test="RecordManager.sendName != null">
+            and a.send_name = #{RecordManager.sendName}
+        </if>
+        <if test="RecordManager.startTime != null">
+            <if test="RecordManager.endTime != null">
+                and a.record_time between #{RecordManager.startTime} and #{RecordManager.endTime}
+            </if>
+        </if>
+        <if test="RecordManager.type != null">
+            and a.type = #{RecordManager.type}
+        </if>
+        order by record_time desc
+    </select>-->
+
+    <select id="selectTalkBackRecord" resultType="com.wyfx.business.entity.vo.TalkBackRecordVo">
+        select a.id,a.pid as pid,a.group_id as groupId,b.project_name as projectName,t.name as groupName,count(*) as
+        countNum,MAX(a.record_time) as recordTime
+        from record_manager a,project_info b,talk_back_group t
+        where a.group_id = t.id and a.pid=b.pid and b.business_id=#{TalkBackRecordVo.businessId}
+        <if test="TalkBackRecordVo.pid != null">
+            and a.pid = #{TalkBackRecordVo.pid}
+        </if>
+        <if test="TalkBackRecordVo.groupId != null">
+            and a.group_id = #{TalkBackRecordVo.groupId}
+        </if>
+        GROUP BY pid,groupId
+        ORDER BY recordTime Desc
+    </select>
+
+    <!--按条件导出广播记录 2020-3-12-->
+    <select id="exportBroadcastDate" resultType="com.wyfx.business.entity.vo.BroadcastRecordExcelVo">
+        SELECT a.id AS `id`,d.`name` AS sendName,d.user_name AS account,d.user_type,a.message_type AS
+        messageType,a.record_time AS
+        recordTime,a.type AS `type`,a.message
+        FROM record_manager a,business_user d
+        WHERE a.send_bid=d.bid
+        <if test="RecordManager.pid != null">
+            and a.pid = #{RecordManager.pid}
+        </if>
+        <if test="RecordManager.sendBid != null">
+            and a.send_bid = #{RecordManager.sendBid}
+        </if>
+        <if test="RecordManager.sendToName != null">
+            and a.send_to_name like CONCAT('%',#{RecordManager.sendToName},'%')
+        </if>
+        <if test="RecordManager.startTime != null">
+            <if test="RecordManager.endTime != null">
+                and a.record_time between #{RecordManager.startTime} and #{RecordManager.endTime}
+            </if>
+        </if>
+        <if test="RecordManager.type != null">
+            and a.type = #{RecordManager.type}
+        </if>
+        <if test="RecordManager.businessId != null">
+            and d.business_id=#{RecordManager.businessId}
+        </if>
+        <if test="RecordManager.groupId != null">
+            and group_id=#{RecordManager.groupId}
+        </if>
+        <if test="RecordManager.messageType != null">
+            and message_type=#{RecordManager.messageType}
+        </if>
+        <if test="RecordManager.sendName != null">
+            and a.send_name like CONCAT('%',#{RecordManager.sendName},'%')
+        </if>
+        <if test="RecordManager.userType != null">
+            and d.user_type=#{RecordManager.userType}
+        </if>
+        order by record_time desc
+    </select>
+
+    <!--导出广播记录 2020-3-12 弃用-->
+    <select id="exportBroadcastRecord" resultType="com.wyfx.business.entity.vo.BroadcastRecordExcelVo">
+        SELECT d.`name` AS sendName,d.user_name AS account,a.message_type AS messageType,a.record_time AS recordTime
+        FROM record_manager a,business_user d
+        WHERE a.send_bid=d.bid and a.type=1
+        <if test="ids!=null">
+            and a.id in
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
+    <!--按条件导出电话记录 2020-3-12-->
+    <select id="exportPhoneRecordDate" resultType="com.wyfx.business.entity.vo.PhoneRecordExcelVo">
+        SELECT a.id AS `id`,d.`name` AS sendName,d.user_name AS callerAccount,a.message_type AS
+        messageType,a.record_time AS
+        recordTime,b.`name` AS sendToName,b.user_name AS calledAccount,a.title AS title,a.record_by
+        FROM record_manager a,business_user d,business_user b
+        WHERE a.send_bid=d.bid AND a.send_to_bid=b.bid
+        <if test="RecordManager.pid != null">
+            and a.pid = #{RecordManager.pid}
+        </if>
+        <if test="RecordManager.sendBid != null">
+            and a.send_bid = #{RecordManager.sendBid}
+        </if>
+        <if test="RecordManager.sendName != null">
+            and d.`name` = #{RecordManager.sendName}
+        </if>
+        <if test="RecordManager.sendToBid != null">
+            and a.send_to_bid = #{RecordManager.sendToBid}
+        </if>
+        <if test="RecordManager.sendToName != null">
+            and a.send_to_name like CONCAT('%',#{RecordManager.sendToName},'%')
+        </if>
+        <if test="RecordManager.startTime != null">
+            <if test="RecordManager.endTime != null">
+                and a.record_time between #{RecordManager.startTime} and #{RecordManager.endTime}
+            </if>
+        </if>
+        <if test="RecordManager.type != null">
+            and a.type = #{RecordManager.type}
+        </if>
+        <if test="RecordManager.businessId != null">
+            and d.business_id=#{RecordManager.businessId}
+        </if>
+        order by record_time desc
+    </select>
+
+    <!--导出电话录音记录 弃用 -->
+    <select id="exportPhoneRecord" resultType="com.wyfx.business.entity.vo.PhoneRecordExcelVo">
+        SELECT d.`name` AS sendName,d.user_name AS account,a.message_type AS messageType,a.record_time AS
+        recordTime,b.`name` AS sendToName,b.user_name AS sendToAccount,a.title AS title
+        FROM record_manager a,business_user d,business_user b
+        WHERE a.send_bid=d.bid AND a.send_to_bid=b.bid and a.type=4
+        <if test="ids!=null">
+            and a.id in
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
+    <!--按条件导出巡检记录 2020-3-12 -->
+    <select id="exportPatrolRecordDate" resultType="com.wyfx.business.entity.vo.PatrolRecordExcelVo">
+        SELECT a.id AS `id`,d.`name` AS sendName,d.user_name AS account,a.message_type AS messageType,a.record_time AS
+        recordTime,a.type AS `type`,a.message,a.pid,a.send_name,a.title,p.project_name
+        FROM record_manager a,business_user d,project_info p
+        WHERE a.send_bid=d.bid and a.pid=d.project_id and d.project_id=p.pid
+        <if test="RecordManager.pid != null">
+            and a.pid = #{RecordManager.pid}
+        </if>
+        <if test="RecordManager.sendBid != null">
+            and a.send_bid = #{RecordManager.sendBid}
+        </if>
+        <if test="RecordManager.sendName != null">
+            and a.send_name like CONCAT('%',#{RecordManager.sendName},'%')
+        </if>
+        <if test="RecordManager.startTime != null">
+            <if test="RecordManager.endTime != null">
+                and a.record_time between #{RecordManager.startTime} and #{RecordManager.endTime}
+            </if>
+        </if>
+        <if test="RecordManager.type != null">
+            and a.type = #{RecordManager.type}
+        </if>
+        <if test="RecordManager.businessId != null">
+            and d.business_id=#{RecordManager.businessId}
+        </if>
+        order by record_time desc
+    </select>
+    <!--导出巡检记录 弃用 -->
+    <select id="exportPatrolRecord" resultType="com.wyfx.business.entity.vo.PatrolRecordExcelVo">
+        SELECT a.id AS `id`,a.pid AS pid,d.`name` AS sendName,d.user_name AS account,a.record_time AS recordTime,a.title
+        AS title,c.project_name AS projectName
+        FROM record_manager a,business_user d,project_info c
+        WHERE a.send_bid=d.bid AND a.pid=c.pid and a.type=5
+        <if test="ids!=null">
+            and a.id in
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
+
+    <!--按条件导出对讲记录 2020-3-12-->
+    <select id="exportTalkBackRecordDate" resultType="com.wyfx.business.entity.vo.TalkBackRecordExcelVo">
+        SELECT a.id AS `id`,d.`name` AS sendName,d.user_name AS account,d.user_type,a.message_type AS
+        messageType,a.record_time AS
+        recordTime,a.type AS `type`,a.message
+        FROM record_manager a,business_user d
+        WHERE a.send_bid=d.bid
+        <if test="RecordManager.pid != null">
+            and a.pid = #{RecordManager.pid}
+        </if>
+        <if test="RecordManager.sendBid != null">
+            and a.send_bid = #{RecordManager.sendBid}
+        </if>
+        <if test="RecordManager.sendToName != null">
+            and a.send_to_name like CONCAT('%',#{RecordManager.sendToName},'%')
+        </if>
+        <if test="RecordManager.startTime != null">
+            <if test="RecordManager.endTime != null">
+                and a.record_time between #{RecordManager.startTime} and #{RecordManager.endTime}
+            </if>
+        </if>
+        <if test="RecordManager.type != null">
+            and a.type = #{RecordManager.type}
+        </if>
+        <if test="RecordManager.businessId != null">
+            and d.business_id=#{RecordManager.businessId}
+        </if>
+        <if test="RecordManager.groupId != null">
+            and group_id=#{RecordManager.groupId}
+        </if>
+        <if test="RecordManager.messageType != null">
+            and message_type=#{RecordManager.messageType}
+        </if>
+        <if test="RecordManager.sendName != null">
+            and a.send_name like CONCAT('%',#{RecordManager.sendName},'%')
+        </if>
+        <if test="RecordManager.userType != null">
+            and d.user_type=#{RecordManager.userType}
+        </if>
+        order by record_time desc
+    </select>
+
+    <!--导出对讲记录明细  弃用-->
+    <select id="exportTalkBackRecord" resultType="com.wyfx.business.entity.vo.TalkBackRecordExcelVo">
+        SELECT a.id AS `id`,d.`name` AS sendName,d.user_name AS account,d.user_type AS userType,a.record_time AS
+        recordTime
+        FROM record_manager a,business_user d
+        WHERE a.send_bid=d.bid and a.type=3
+        <if test="ids!=null">
+            and a.id in
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

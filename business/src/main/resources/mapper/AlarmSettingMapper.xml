@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.AlarmSettingMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.AlarmSetting">
+        <constructor>
+            <idArg column="alarm_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="drop_switch" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="alarm_leave_switch" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="alarm_leave_time" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="hign_work_alarm" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="project_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="begin_time" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="end_time" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        alarm_id, drop_switch, alarm_leave_switch, alarm_leave_time, hign_work_alarm, project_id,
+        begin_time, end_time
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from alarm_setting
+        where alarm_id = #{alarmId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from alarm_setting
+        where alarm_id = #{alarmId,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.AlarmSetting">
+        insert into alarm_setting (alarm_id, drop_switch, alarm_leave_switch,
+        alarm_leave_time, hign_work_alarm, project_id,
+        begin_time, end_time)
+        values (#{alarmId,jdbcType=BIGINT}, #{dropSwitch,jdbcType=INTEGER}, #{alarmLeaveSwitch,jdbcType=INTEGER},
+        #{alarmLeaveTime,jdbcType=VARCHAR}, #{hignWorkAlarm,jdbcType=INTEGER}, #{projectId,jdbcType=BIGINT},
+        #{beginTime,jdbcType=VARCHAR}, #{endTime,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.AlarmSetting">
+        insert into alarm_setting
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="alarmId != null">
+                alarm_id,
+            </if>
+            <if test="dropSwitch != null">
+                drop_switch,
+            </if>
+            <if test="alarmLeaveSwitch != null">
+                alarm_leave_switch,
+            </if>
+            <if test="alarmLeaveTime != null">
+                alarm_leave_time,
+            </if>
+            <if test="hignWorkAlarm != null">
+                hign_work_alarm,
+            </if>
+            <if test="projectId != null">
+                project_id,
+            </if>
+            <if test="beginTime != null">
+                begin_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="alarmId != null">
+                #{alarmId,jdbcType=BIGINT},
+            </if>
+            <if test="dropSwitch != null">
+                #{dropSwitch,jdbcType=INTEGER},
+            </if>
+            <if test="alarmLeaveSwitch != null">
+                #{alarmLeaveSwitch,jdbcType=INTEGER},
+            </if>
+            <if test="alarmLeaveTime != null">
+                #{alarmLeaveTime,jdbcType=VARCHAR},
+            </if>
+            <if test="hignWorkAlarm != null">
+                #{hignWorkAlarm,jdbcType=INTEGER},
+            </if>
+            <if test="projectId != null">
+                #{projectId,jdbcType=BIGINT},
+            </if>
+            <if test="beginTime != null">
+                #{beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.AlarmSetting">
+        update alarm_setting
+        <set>
+            <if test="dropSwitch != null">
+                drop_switch = #{dropSwitch,jdbcType=INTEGER},
+            </if>
+            <if test="alarmLeaveSwitch != null">
+                alarm_leave_switch = #{alarmLeaveSwitch,jdbcType=INTEGER},
+            </if>
+            <if test="alarmLeaveTime != null">
+                alarm_leave_time = #{alarmLeaveTime,jdbcType=VARCHAR},
+            </if>
+            <if test="hignWorkAlarm != null">
+                hign_work_alarm = #{hignWorkAlarm,jdbcType=INTEGER},
+            </if>
+            <if test="projectId != null">
+                project_id = #{projectId,jdbcType=BIGINT},
+            </if>
+            <if test="beginTime != null">
+                begin_time = #{beginTime,jdbcType=VARCHAR},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where alarm_id = #{alarmId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.AlarmSetting">
+        update alarm_setting
+        set drop_switch = #{dropSwitch,jdbcType=INTEGER},
+        alarm_leave_switch = #{alarmLeaveSwitch,jdbcType=INTEGER},
+        alarm_leave_time = #{alarmLeaveTime,jdbcType=VARCHAR},
+        hign_work_alarm = #{hignWorkAlarm,jdbcType=INTEGER},
+        project_id = #{projectId,jdbcType=BIGINT},
+        begin_time = #{beginTime,jdbcType=VARCHAR},
+        end_time = #{endTime,jdbcType=VARCHAR}
+        where alarm_id = #{alarmId,jdbcType=BIGINT}
+    </update>
+
+
+    <select id="findByProjectId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from alarm_setting
+        where project_id = #{projectId,jdbcType=BIGINT}
+    </select>
+</mapper>

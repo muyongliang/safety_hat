@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.BusinessUserMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.BusinessUser">
+        <constructor>
+            <idArg column="bid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="password" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="mobile" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="create_person" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="modify_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="modify_person" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="last_login_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="project_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="token" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="business_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="user_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="online_status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="zidian_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        </constructor>
+    </resultMap>
+    <!--一对多查询  create by wsm on 2019-11-28-->
+    <resultMap id="subManagerMap" type="com.wyfx.business.entity.vo.SubManagerVo">
+        <id property="bid" column="bid"/>
+        <result property="name" column="name"/>
+        <result property="username" column="user_name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="status" column="status"/>
+        <result property="cratePerson" column="cratePerson"/>
+        <result property="updatePerson" column="updatePerson"/>
+        <result property="ctime" column="ctime"/>
+        <result property="utime" column="utime"/>
+        <!--集合 -->
+        <!--        <collection property="roleList"  ofType="com.wyfx.business.entity.Role">-->
+        <!--            <id property="roleId" column="role_id"/>-->
+        <!--            <result property="roleName" column="role_name"/>-->
+        <!--            <result property="description" column="description"/>-->
+        <!--            <result property="createTime" column="crate_time"/>-->
+        <!--            <result property="modifyTime" column="modify_time"/>-->
+        <!--            <result property="createBy" column="create_by"/>-->
+        <!--            <result property="updateBy" column="update_by"/>-->
+        <!--            <result property="businessId" column="business_id"/>-->
+        <!--        </collection>-->
+        <!--column 为子查询的参数-->
+        <collection property="roleList" column="bid" select="getRoles"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        bid, user_name, password, name, mobile, create_person, create_time, modify_time,
+        modify_person, last_login_time, status, project_id, token,business_id,user_type,online_status,zidian_id
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from business_user
+        where bid = #{bid,jdbcType=BIGINT}
+    </select>
+
+    <select id="findByTokenAndBusinessId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from business_user
+        where token=#{token}
+    </select>
+    <!--通过选择的多条数据的id查询数据集合 create by wsm on  2019-11-22-->
+    <select id="selectByPrimaryKeyList" resultType="com.wyfx.business.entity.vo.DispatcherVo">
+        select
+        bid,user_name,name,mobile,status
+        from business_user
+        where project_id=#{projectId,jdbcType=BIGINT}
+        and bid
+        in
+        <foreach item="bid" index="index" collection="bids" open="(" separator="," close=")">
+            #{bid}
+        </foreach>
+    </select>
+
+
+    <!--通过状态查询子账号列表 -->
+    <!--    <select id="findSubManagerByStatus" resultMap="subManagerMap">-->
+    <!--        select u.bid ,user_name,name,mobile,status,r.*-->
+    <!--        from business_user u JOIN user_role ur ON u.bid=ur.user_id-->
+    <!--        join role r on ur.role_id=r.role_id-->
+    <!--        <where>-->
+    <!--            u.user_type=3-->
+    <!--            <if test="status != null">-->
+    <!--                and u.status=#{status}-->
+    <!--            </if>-->
+    <!--        </where>-->
+    <!--    </select>-->
+
+
+    <!--通过状态查询子账号列表 -->
+    <select id="findSubManagerByStatus" resultMap="subManagerMap">
+        select bid ,user_name,name,mobile,status
+        from business_user u
+        <where>
+            u.user_type=3 and u.business_id=#{businessId}
+            <if test="status!=null">
+                and u.status=#{status}
+            </if>
+        </where>
+    </select>
+
+
+    <!--通过 账号 姓名 电话 检索 子账号-->
+    <select id="findByCondition" resultMap="subManagerMap">
+        select u.bid ,user_name,name,mobile,status
+        from business_user u
+        <where>
+            u.user_type=3
+            <if test="username != null">
+                and u.user_name=#{username}
+            </if>
+            <if test="name != null">
+                and u.name=#{name}
+            </if>
+            <if test="mobile != null">
+                and u.mobile=#{mobile}
+            </if>
+        </where>
+    </select>
+
+    <!--通过user_role表中的user_id查询用户的角色集 通过子查询获取角色信息-->
+    <select id="getRoles" resultType="com.wyfx.business.entity.Role">
+        select r.role_name,r.role_id ,create_time,create_by,modify_time,update_by
+        from user_role ur right join role r on
+        ur.role_id=r.role_id
+        <where>
+            and ur.user_id=#{bid}
+        </where>
+    </select>
+
+
+    <!--通过id查询子账号 -->
+    <select id="findSubManagerById" resultMap="subManagerMap">
+        select u.bid ,user_name,name,mobile,status
+        from business_user u
+        <where>
+            u.user_type=3
+            <if test="bid != null">
+                and u.bid=#{bid}
+            </if>
+        </where>
+    </select>
+
+    <!-- 总后台 远程控制查询-->
+    <select id="findDispatcherByCondition" resultType="com.wyfx.business.entity.vo.MyDispatcherVo">
+        select u.bid,u.user_name as userName,u.name,u.mobile,u.status as accountStatus,
+        u.online_status as onlineStatus,info.business_name as businessName
+        from business_user u JOIN business_info info ON u.business_id=info.business_id
+        <where>
+            user_type=1
+            <if test="userName != null and userName !=''">
+                and u.user_name like concat('%',#{userName,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="name != null and name!=''">
+                and u.name like concat('%',#{name,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="mobile != null and mobile!=''">
+                and u.mobile like concat('%',#{mobile,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="accountStatus != null  ">
+                and u.status=#{accountStatus}
+            </if>
+            <if test="onlineStatus != null ">
+                and u.online_status=#{onlineStatus}
+            </if>
+            <if test="businessName != null and businessName != ''">
+                and info.business_name like concat('%',#{businessName,jdbcType=VARCHAR},'%')
+            </if>
+        </where>
+    </select>
+
+    <!--通过token和用户类型更新用户信息 -->
+    <update id="updateByTokenAndUserType" parameterType="com.wyfx.business.entity.BusinessUser">
+        update business_user
+        <set>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                mobile = #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="createPerson != null">
+                create_person = #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyPerson != null">
+                modify_person = #{modifyPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="lastLoginTime != null">
+                last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="projectId != null">
+                project_id = #{projectId,jdbcType=BIGINT},
+            </if>
+            <if test="token != null">
+                token = #{token,jdbcType=VARCHAR},
+            </if>
+            <if test="businessId != null">
+                business_id = #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="userType != null">
+                user_type = #{userType,jdbcType=INTEGER},
+            </if>
+            <if test="onlineStatus != null">
+                online_status= #{onlineStatus,jdbcType=INTEGER},
+            </if>
+            <if test="zidianId != null">
+                zidian_id= #{zidianId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where token = #{token,jdbcType=BIGINT}
+        and user_type = #{userType,jdbcType=INTEGER}
+    </update>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from business_user
+        where bid = #{bid,jdbcType=BIGINT}
+    </delete>
+
+
+    <insert id="insert" parameterType="com.wyfx.business.entity.BusinessUser">
+        insert into business_user (bid, user_name, password,
+        name, mobile, create_person,
+        create_time, modify_time, modify_person,
+        last_login_time, status, project_id,
+        token,business_id,user_type,online_status,zidian_id)
+        values (#{bid,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+        #{name,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, #{createPerson,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}, #{modifyPerson,jdbcType=VARCHAR},
+        #{lastLoginTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{projectId,jdbcType=BIGINT},
+        #{token,jdbcType=VARCHAR}),#{businessId,jdbcType=BIGINT},#{userType,jdbcType=INTEGER},#{onlineStatus,jdbcType=INTEGER},#{zidianId,jdbcType=BIGINT}
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.BusinessUser" useGeneratedKeys="true"
+            keyProperty="bid">
+        insert into business_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bid != null">
+                bid,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="mobile != null">
+                mobile,
+            </if>
+            <if test="createPerson != null">
+                create_person,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="modifyTime != null">
+                modify_time,
+            </if>
+            <if test="modifyPerson != null">
+                modify_person,
+            </if>
+            <if test="lastLoginTime != null">
+                last_login_time,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="projectId != null">
+                project_id,
+            </if>
+            <if test="token != null">
+                token,
+            </if>
+            <if test="businessId != null">
+                business_id,
+            </if>
+            <if test="userType !=null">
+                user_type,
+            </if>
+            <if test="onlineStatus != null">
+                online_status,
+            </if>
+            <if test="zidianId !=null">
+                zidian_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bid != null">
+                #{bid,jdbcType=BIGINT},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="createPerson != null">
+                #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyPerson != null">
+                #{modifyPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="lastLoginTime != null">
+                #{lastLoginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="projectId != null">
+                #{projectId,jdbcType=BIGINT},
+            </if>
+            <if test="token != null">
+                #{token,jdbcType=VARCHAR},
+            </if>
+            <if test="businessId != null">
+                #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="userType != null">
+                #{userType,jdbcType=INTEGER},
+            </if>
+            <if test="onlineStatus != null">
+                #{onlineStatus,jdbcType=INTEGER},
+            </if>
+            <if test="zidianId != null">
+                #{zidianId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.BusinessUser">
+        update business_user
+        <set>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                mobile = #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="createPerson != null">
+                create_person = #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyPerson != null">
+                modify_person = #{modifyPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="lastLoginTime != null">
+                last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="projectId != null">
+                project_id = #{projectId,jdbcType=BIGINT},
+            </if>
+            <if test="token != null">
+                token = #{token,jdbcType=VARCHAR},
+            </if>
+            <if test="businessId != null">
+                business_id = #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="userType != null">
+                user_type = #{userType,jdbcType=INTEGER},
+            </if>
+            <if test="onlineStatus != null">
+                online_status= #{onlineStatus,jdbcType=INTEGER},
+            </if>
+            <if test="zidianId != null">
+                zidian_id= #{zidianId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where bid = #{bid,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateNameOrPwd">
+        update business_user
+        <set>
+            <if test="pwd != null">
+                password = #{pwd,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where bid = #{bid,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateOnlineStatus">
+        update business_user set online_status=#{status,jdbcType=INTEGER}
+        where user_name = #{userName,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.BusinessUser">
+        update business_user
+        set user_name = #{userName,jdbcType=VARCHAR},
+        password = #{password,jdbcType=VARCHAR},
+        name = #{name,jdbcType=VARCHAR},
+        mobile = #{mobile,jdbcType=VARCHAR},
+        create_person = #{createPerson,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+        modify_person = #{modifyPerson,jdbcType=VARCHAR},
+        last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+        status = #{status,jdbcType=INTEGER},
+        project_id = #{projectId,jdbcType=BIGINT},
+        token = #{token,jdbcType=VARCHAR},
+        business_id=#{businessId,jdbcType=BIGINT},
+        user_type = #{userType,jdbcType=INTEGER},
+        online_status=#{onlineStatus,jdbcType=INTEGER},
+        zidian_id=#{zidianId,jdbcType=BIGINT}
+        where bid = #{bid,jdbcType=BIGINT}
+    </update>
+
+
+    <select id="findByUserName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from business_user
+        where user_name=#{userName}
+    </select>
+
+    <select id="findByUserNameAndPwd" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from business_user
+        where user_name=#{userName} and password=#{password}
+    </select>
+
+    <select id="selectDispatcherByAccount" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from business_user
+        where project_id=(select project_id from business_user where user_name=#{userName}) and user_type=1
+    </select>
+
+    <select id="findByBusinessIdAndUserName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from business_user
+        where business_id = #{bid}
+        <if test="userName !=null">
+            and user_name=#{userName}
+        </if>
+    </select>
+    <select id="findByBusinessId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from business_user
+        where business_id = #{businessId}
+    </select>
+
+    <select id="findByStatus" resultType="com.wyfx.business.entity.vo.DispatcherVo">
+        select bid,user_name,password,name,mobile,status from business_user
+        where project_id=#{projectId} and user_type=1
+        <if test="status != null">
+            and status=#{status}
+        </if>
+        order by bid desc
+    </select>
+
+    <select id="findByProjectId" resultType="com.wyfx.business.entity.vo.DispatcherVo">
+        select bid,user_name,password,name,mobile,status from business_user
+        where project_id=#{projectId} and user_type=1 and business_id=#{businessId}
+    </select>
+
+    <select id="selectByProjectId" resultMap="BaseResultMap">
+        select * from business_user
+        where project_id=#{projectId}
+    </select>
+
+    <select id="findByParam" resultType="com.wyfx.business.entity.vo.DispatcherVo">
+        select bid,user_name,password,name,mobile,status from business_user
+        where project_id=#{projectId} and user_type=1
+        <if test="name != null">
+            and name=#{name}
+        </if>
+        <if test="userName != null">
+            and user_name=#{userName}
+        </if>
+        <if test="mobile != null">
+            and mobile=#{mobile}
+        </if>
+    </select>
+
+    <!--<select id="findContactByProjectId" resultType="com.wyfx.business.app.vo.ContactsVo">
+      select *
+      from (
+      (select b.bid as id,b.`name` as full_name,b.mobile,b.`online_status`,b.user_type as type,z.`name` as work_name,z.color
+        from business_user b,zidian_setting z where b.project_id=#{projectId} and b.zidian_id=z.zid and user_type=1 order by convert(b.name using gbk) asc)
+        union
+        (select c.client_id id,c.name as full_name,c.tel,d.online_flag,1 as type,z.`name` as work_name,z.color
+        from client_account c,zidian_setting z,device_info d
+        where z.zid=c.work_id and d.did=c.device_id and c.project_id=#{projectId} order by convert(c.name using gbk) asc)
+      )A
+    </select>-->
+    <!--备份findContactByProjectId方法sql-->
+    <!--<select id="findContactByProjectId" resultType="com.wyfx.business.app.vo.ContactsVo">
+    select b.bid as id,b.user_name,b.`name` as full_name,b.mobile,b.`online_status` as status,b.user_type as type,z.`name` as work_name,z.color
+    from business_user b,zidian_setting z
+    where b.project_id=#{projectId} and b.zidian_id=z.zid and <![CDATA[ bid <> #{bid} ]]> and user_type in (1,2) order by b.user_type,convert(b.name using gbk) asc
+  </select>-->
+
+    <select id="findContactByProjectId" resultType="com.wyfx.business.app.vo.ContactsVo">
+        (select b.bid as id,b.user_name,b.`name` as full_name,b.mobile,b.`online_status` as status,b.user_type as
+        type,z.`name` as work_name,'#DF8543' as color
+        from business_user b
+        left join zidian_setting z on b.zidian_id=z.zid
+        where b.project_id=#{projectId} and <![CDATA[ bid <> #{bid} ]]> and user_type =1 order by
+        b.user_type,convert(b.name using gbk) asc)
+        UNION
+        (select b.bid as id,b.user_name,b.`name` as full_name,b.mobile,b.`online_status` as status,b.user_type as
+        type,z.`name` as work_name,z.color as color
+        from business_user b,zidian_setting z
+        where b.project_id=#{projectId} and b.zidian_id=z.zid and <![CDATA[ bid <> #{bid} ]]> and user_type =2 order by
+        b.user_type,convert(b.name using gbk) asc)
+    </select>
+    <!--<select id="findContactAndLatLngByProjectId" resultType="com.wyfx.business.app.vo.ContactsForLocationVo">
+        select A.*,g.latitude,g.longitude,g.create_time as last_location_time from (
+        select b.bid as id,b.user_name,b.`name` as full_name,b.mobile,b.`online_status` as status,b.user_type as type,z.`name` as work_name,z.color
+        from business_user b,zidian_setting z
+        where b.project_id=#{projectId} and b.zidian_id=z.zid and <![CDATA[ bid <> #{bid} ]]> and user_type in (1,2) order by b.user_type,convert(b.name using gbk) asc
+        ) A
+        left join gps g
+        on A.id=g.client_id
+        ORDER  BY A.type
+  </select>-->
+
+
+    <select id="findContactAndLatLngByProjectId" resultType="com.wyfx.business.app.vo.ContactsForLocationVo">
+        select b.bid as id,b.user_name as username,b.`name` as full_name,b.mobile as mobile,b.`online_status` as
+        status,b.user_type as type,z.`name` as work_name,
+        z.color as color,g.latitude as latitude,g.longitude as longitude,g.create_time as
+        last_location_time,GROUP_CONCAT(tg.name SEPARATOR ',') AS tname from business_user b
+        left join gps g on b.bid=g.client_id
+        left join zidian_setting z on b.zidian_id=z.zid
+        left join talk_back_group_member tm on tm.business_id = b.bid
+        left join talk_back_group tg on tm.group_id = tg.id
+        where b.project_id=#{projectId} and b.bid != #{bid} and user_type in (1,2) GROUP BY b.user_name order by
+        b.`online_status` desc,b.user_type,convert(b.name using gbk) asc
+    </select>
+
+    <select id="findContactByWorkType" resultType="com.wyfx.business.app.vo.ContactsVo">
+        select b.bid as id,b.user_name,b.`name` as full_name,b.mobile,b.`online_status` as status,b.user_type as
+        type,z.`name` as work_name,z.color
+        from business_user b,zidian_setting z
+        where b.project_id=#{projectId} and z.zid=#{workType} and b.zidian_id=z.zid and user_type in (1,2) order by
+        b.user_type,convert(b.name using gbk) asc
+    </select>
+
+
+    <select id="findContactByName" resultType="com.wyfx.business.app.vo.ContactsVo">
+        select b.bid as id,b.user_name as username,b.`name` as full_name,b.mobile,b.`online_status` as
+        status,b.user_type as type,z.`name` as work_name,z.color
+        from business_user b left join zidian_setting z on b.zidian_id=z.zid
+        where b.project_id=#{projectId} and b.`name`=#{name} and user_type in (1,2)
+    </select>
+
+    <select id="findDispatcherByProjectId" resultType="java.lang.Long">
+        select b.bid from business_user b
+        where b.project_id=#{projectId} and user_type=1
+    </select>
+
+    <select id="selectByProjectIdAndUserType" resultType="java.lang.Integer">
+        select b.bid from business_user b
+        where b.project_id=#{projectId} and user_type=#{userType}
+    </select>
+
+    <select id="selectUsedClientNumByBusinessId" resultType="java.lang.Integer">
+        select count(1) from business_user b where b.token=#{token} and b.user_type=2 and b.`status`=1
+    </select>
+
+</mapper>

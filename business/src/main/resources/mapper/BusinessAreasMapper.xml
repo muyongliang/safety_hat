@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.BusinessAreasMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.BusinessAreas">
+        <constructor>
+            <idArg column="aid" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="name_en" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="code" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="order_by" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="parent_id" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="remarks" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="tbsname" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        aid, name, name_en, code, order_by, parent_id, remarks, tbsname
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from business_areas
+        where aid = #{aid,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete from business_areas
+        where aid = #{aid,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.BusinessAreas">
+        insert into business_areas (aid, name, name_en,
+        code, order_by, parent_id,
+        remarks, tbsname)
+        values (#{aid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{nameEn,jdbcType=VARCHAR},
+        #{code,jdbcType=VARCHAR}, #{orderBy,jdbcType=INTEGER}, #{parentId,jdbcType=VARCHAR},
+        #{remarks,jdbcType=VARCHAR}, #{tbsname,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.BusinessAreas">
+        insert into business_areas
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="aid != null">
+                aid,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="nameEn != null">
+                name_en,
+            </if>
+            <if test="code != null">
+                code,
+            </if>
+            <if test="orderBy != null">
+                order_by,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="remarks != null">
+                remarks,
+            </if>
+            <if test="tbsname != null">
+                tbsname,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="aid != null">
+                #{aid,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="nameEn != null">
+                #{nameEn,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null">
+                #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="orderBy != null">
+                #{orderBy,jdbcType=INTEGER},
+            </if>
+            <if test="parentId != null">
+                #{parentId,jdbcType=VARCHAR},
+            </if>
+            <if test="remarks != null">
+                #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="tbsname != null">
+                #{tbsname,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.BusinessAreas">
+        update business_areas
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="nameEn != null">
+                name_en = #{nameEn,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null">
+                code = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="orderBy != null">
+                order_by = #{orderBy,jdbcType=INTEGER},
+            </if>
+            <if test="parentId != null">
+                parent_id = #{parentId,jdbcType=VARCHAR},
+            </if>
+            <if test="remarks != null">
+                remarks = #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="tbsname != null">
+                tbsname = #{tbsname,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where aid = #{aid,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.BusinessAreas">
+        update business_areas
+        set name = #{name,jdbcType=VARCHAR},
+        name_en = #{nameEn,jdbcType=VARCHAR},
+        code = #{code,jdbcType=VARCHAR},
+        order_by = #{orderBy,jdbcType=INTEGER},
+        parent_id = #{parentId,jdbcType=VARCHAR},
+        remarks = #{remarks,jdbcType=VARCHAR},
+        tbsname = #{tbsname,jdbcType=VARCHAR}
+        where aid = #{aid,jdbcType=VARCHAR}
+    </update>
+
+
+    <select id="getAreasByParentId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from business_areas
+        where parent_id = #{parentId,jdbcType=VARCHAR}
+    </select>
+</mapper>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.total.mapper.PageSettingMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.total.entity.PageSetting">
+        <constructor>
+            <idArg column="pid" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="system_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="logo_url" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="meta_url" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        pid, system_name, logo_url, meta_url
+    </sql>
+
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from page_setting
+        where pid = #{pid,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from page_setting
+        where pid = #{pid,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.total.entity.PageSetting">
+        insert into page_setting (pid, system_name, logo_url,
+        meta_url)
+        values (#{pid,jdbcType=INTEGER}, #{systemName,jdbcType=VARCHAR}, #{logoUrl,jdbcType=VARCHAR},
+        #{metaUrl,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.total.entity.PageSetting">
+        insert into page_setting
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pid != null">
+                pid,
+            </if>
+            <if test="systemName != null">
+                system_name,
+            </if>
+            <if test="logoUrl != null">
+                logo_url,
+            </if>
+            <if test="metaUrl != null">
+                meta_url,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pid != null">
+                #{pid,jdbcType=INTEGER},
+            </if>
+            <if test="systemName != null">
+                #{systemName,jdbcType=VARCHAR},
+            </if>
+            <if test="logoUrl != null">
+                #{logoUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="metaUrl != null">
+                #{metaUrl,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.total.entity.PageSetting">
+        update page_setting
+        <set>
+            <if test="systemName != null">
+                system_name = #{systemName,jdbcType=VARCHAR},
+            </if>
+            <if test="logoUrl != null">
+                logo_url = #{logoUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="metaUrl != null">
+                meta_url = #{metaUrl,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where pid = #{pid,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.total.entity.PageSetting">
+        update page_setting
+        set system_name = #{systemName,jdbcType=VARCHAR},
+        logo_url = #{logoUrl,jdbcType=VARCHAR},
+        meta_url = #{metaUrl,jdbcType=VARCHAR}
+        where pid = #{pid,jdbcType=INTEGER}
+    </update>
+</mapper>

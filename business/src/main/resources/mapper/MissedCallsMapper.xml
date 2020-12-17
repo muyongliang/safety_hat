@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.MissedCallsMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.MissedCalls">
+        <constructor>
+            <idArg column="miss_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="caller" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="reason" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="bid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="answer_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="is_view" javaType="java.lang.Boolean" jdbcType="TINYINT"/>
+            <arg column="business_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        miss_id, caller, time, type, reason, bid, answer_id,is_view,business_id
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from missed_calls
+        where miss_id = #{missId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from missed_calls
+        where miss_id = #{missId,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.MissedCalls">
+        insert into missed_calls (miss_id, caller, time,
+        type, reason, bid, answer_id,is_view,business_id
+        )
+        values (#{missId,jdbcType=BIGINT}, #{caller,jdbcType=VARCHAR}, #{time,jdbcType=TIMESTAMP},
+        #{type,jdbcType=INTEGER}, #{reason,jdbcType=VARCHAR}, #{bid,jdbcType=BIGINT},
+        #{answerId,jdbcType=BIGINT},#{isView,jdbcType=TINYINT},#{businessId,jdbcType=BIGINT}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.MissedCalls">
+        insert into missed_calls
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="missId != null">
+                miss_id,
+            </if>
+            <if test="caller != null">
+                caller,
+            </if>
+            <if test="time != null">
+                time,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="reason != null">
+                reason,
+            </if>
+            <if test="bid != null">
+                bid,
+            </if>
+            <if test="answerId != null">
+                answer_id,
+            </if>
+            <if test="isView != null">
+                is_view,
+            </if>
+            <if test="businessId != null">
+                business_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="missId != null">
+                #{missId,jdbcType=BIGINT},
+            </if>
+            <if test="caller != null">
+                #{caller,jdbcType=VARCHAR},
+            </if>
+            <if test="time != null">
+                #{time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="reason != null">
+                #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="bid != null">
+                #{bid,jdbcType=BIGINT},
+            </if>
+            <if test="answerId != null">
+                #{answerId,jdbcType=BIGINT},
+            </if>
+            <if test="isView != null">
+                #{isView,jdbcType=TINYINT},
+            </if>
+            <if test="businessId != null">
+                #{businessId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.MissedCalls">
+        update missed_calls
+        <set>
+            <if test="caller != null">
+                caller = #{caller,jdbcType=VARCHAR},
+            </if>
+            <if test="time != null">
+                time = #{time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="reason != null">
+                reason = #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="bid != null">
+                bid = #{bid,jdbcType=BIGINT},
+            </if>
+            <if test="answerId != null">
+                answer_id = #{answerId,jdbcType=BIGINT},
+            </if>
+            <if test="isView != null">
+                is_view = #{isView,jdbcType=TINYINT},
+            </if>
+            <if test="businessId != null">
+                business_id = #{businessId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where miss_id = #{missId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.MissedCalls">
+        update missed_calls
+        set caller = #{caller,jdbcType=VARCHAR},
+        time = #{time,jdbcType=TIMESTAMP},
+        type = #{type,jdbcType=INTEGER},
+        reason = #{reason,jdbcType=VARCHAR},
+        bid = #{bid,jdbcType=BIGINT},
+        answer_id = #{answerId,jdbcType=BIGINT},
+        is_view = #{isView,jdbcType=TINYINT},
+        business_id = #{businessId,jdbcType=BIGINT}
+        where miss_id = #{missId,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateStatusForeach" parameterType="list">
+        update missed_calls
+        set is_view = 1
+        where miss_id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
+    <!--导出记录使用-->
+    <select id="selectByIds" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from missed_calls
+        where business_id = #{businessId} and miss_id
+        in
+        <foreach collection="missIds" item="missId" open="(" close=")" separator=",">
+            #{missId}
+        </foreach>
+    </select>
+
+
+    <delete id="deleteForeach" parameterType="long">
+        delete from missed_calls where business_id = #{businessId} and miss_id in
+        <foreach collection="missIds" item="missId" open="(" close=")" separator=",">
+            #{missId}
+        </foreach>
+    </delete>
+
+    <delete id="clearMissedCall">
+        delete from missed_calls
+        where bid = #{bid,jdbcType=BIGINT} and business_id = #{businessId,jdbcType=BIGINT}
+    </delete>
+
+
+    <select id="selectByBid" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from missed_calls
+        where business_id = #{businessId} and bid = #{bid,jdbcType=BIGINT} ORDER BY time desc
+    </select>
+
+    <select id="selectByBidAndType" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from missed_calls
+        where business_id = #{businessId} and bid = #{bid,jdbcType=BIGINT} and type=#{type} ORDER BY time desc
+    </select>
+
+
+    <select id="selectByBidAndTime" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from missed_calls
+        where business_id = #{businessId} and bid = #{bid,jdbcType=BIGINT} and time between #{begin} and #{end} ORDER BY
+        time desc
+    </select>
+    <select id="selectNotViewCount" resultType="int">
+        select miss_id
+        from missed_calls
+        where business_id = #{businessId,jdbcType=BIGINT} and is_view=0
+    </select>
+</mapper>

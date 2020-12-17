@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <!-- 在本项目中开启二级缓存,对于不使用缓存从查询，请将缓存设置为false -->
+        <setting name="cacheEnabled" value="true"/>
+        <!-- 开启POJO与表驼峰命名映射 -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+</configuration>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.BaiduAlarmMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.BaiduAlarm">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="service_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="fence_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="fence_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="monitored_person" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="action" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="alarm_point" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="pre_point" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, service_id, fence_id, fence_name, monitored_person, action, alarm_point, pre_point
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from baidu_alarm
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from baidu_alarm
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.BaiduAlarm">
+        insert into baidu_alarm (id, service_id, fence_id,
+        fence_name, monitored_person, action,
+        alarm_point, pre_point)
+        values (#{id,jdbcType=BIGINT}, #{serviceId,jdbcType=INTEGER}, #{fenceId,jdbcType=INTEGER},
+        #{fenceName,jdbcType=VARCHAR}, #{monitoredPerson,jdbcType=VARCHAR}, #{action,jdbcType=VARCHAR},
+        #{alarmPoint,jdbcType=BIGINT}, #{prePoint,jdbcType=BIGINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.BaiduAlarm">
+        insert into baidu_alarm
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="serviceId != null">
+                service_id,
+            </if>
+            <if test="fenceId != null">
+                fence_id,
+            </if>
+            <if test="fenceName != null">
+                fence_name,
+            </if>
+            <if test="monitoredPerson != null">
+                monitored_person,
+            </if>
+            <if test="action != null">
+                action,
+            </if>
+            <if test="alarmPoint != null">
+                alarm_point,
+            </if>
+            <if test="prePoint != null">
+                pre_point,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="serviceId != null">
+                #{serviceId,jdbcType=INTEGER},
+            </if>
+            <if test="fenceId != null">
+                #{fenceId,jdbcType=INTEGER},
+            </if>
+            <if test="fenceName != null">
+                #{fenceName,jdbcType=VARCHAR},
+            </if>
+            <if test="monitoredPerson != null">
+                #{monitoredPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="action != null">
+                #{action,jdbcType=VARCHAR},
+            </if>
+            <if test="alarmPoint != null">
+                #{alarmPoint,jdbcType=BIGINT},
+            </if>
+            <if test="prePoint != null">
+                #{prePoint,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.BaiduAlarm">
+        update baidu_alarm
+        <set>
+            <if test="serviceId != null">
+                service_id = #{serviceId,jdbcType=INTEGER},
+            </if>
+            <if test="fenceId != null">
+                fence_id = #{fenceId,jdbcType=INTEGER},
+            </if>
+            <if test="fenceName != null">
+                fence_name = #{fenceName,jdbcType=VARCHAR},
+            </if>
+            <if test="monitoredPerson != null">
+                monitored_person = #{monitoredPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="action != null">
+                action = #{action,jdbcType=VARCHAR},
+            </if>
+            <if test="alarmPoint != null">
+                alarm_point = #{alarmPoint,jdbcType=BIGINT},
+            </if>
+            <if test="prePoint != null">
+                pre_point = #{prePoint,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.BaiduAlarm">
+        update baidu_alarm
+        set service_id = #{serviceId,jdbcType=INTEGER},
+        fence_id = #{fenceId,jdbcType=INTEGER},
+        fence_name = #{fenceName,jdbcType=VARCHAR},
+        monitored_person = #{monitoredPerson,jdbcType=VARCHAR},
+        action = #{action,jdbcType=VARCHAR},
+        alarm_point = #{alarmPoint,jdbcType=BIGINT},
+        pre_point = #{prePoint,jdbcType=BIGINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <!--
+      select u.*,IFNULL(A.loc_time,'') first_into_time,IFNULL(c.loc_time,'') last_leave_time from
+  (select distinct  b.user_name,b.mobile,z.`name` as work_Type from business_user b,zidian_setting z,baidu_alarm a where a.monitored_person=b.user_name and b.zidian_id=z.zid and a.fence_id=328 group by b.user_name) u
+  left join (select MIN(p.loc_time) loc_time,a.monitored_person from baidu_alarm a,alarm_track_point p where a.alarm_point=p.tid and a.action='enter' and a.fence_id=328 and TO_DAYS(p.loc_time) = TO_DAYS(NOW())) A
+  on A.monitored_person=u.user_name
+  left join (select MAX(p.loc_time) loc_time,a.monitored_person from baidu_alarm a,alarm_track_point p where a.alarm_point=p.tid and a.action='exit' and a.fence_id=328 and TO_DAYS(p.loc_time) = TO_DAYS(NOW())) c
+  on c.monitored_person=u.user_name;
+    -->
+    <select id="selectOnlineClientByFenceId" resultType="java.util.Map">
+        select u.*,IFNULL(A.loc_time,'') first_into_time,IFNULL(c.loc_time,'') last_leave_time from
+        (select b.`user_name`,b.mobile,z.`name` as work_Type from business_user b,alarm_range_member m,alarm_range
+        a,zidian_setting z
+        where b.bid=m.bid and a.rid=m.rid and b.zidian_id=z.zid and m.`status`=1 and <![CDATA[ b.online_status <> 0 ]]>
+        and a.fence_id=#{fenceId} group by b.user_name) u
+        left join (select MIN(p.loc_time) loc_time,a.monitored_person from baidu_alarm a,alarm_track_point p where
+        a.alarm_point=p.tid and a.action='enter' and a.fence_id=#{fenceId} and TO_DAYS(p.loc_time) = TO_DAYS(NOW())) A
+        on A.monitored_person=u.user_name
+        left join (select MAX(p.loc_time) loc_time,a.monitored_person from baidu_alarm a,alarm_track_point p where
+        a.alarm_point=p.tid and a.action='exit' and a.fence_id=#{fenceId} and TO_DAYS(p.loc_time) = TO_DAYS(NOW())) c
+        on c.monitored_person=u.user_name
+    </select>
+</mapper>

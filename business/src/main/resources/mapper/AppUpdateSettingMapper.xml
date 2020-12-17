@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.AppUpdateSettingMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.AppUpdateSetting">
+        <constructor>
+            <idArg column="app_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="current_version" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="last_version" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="update_set" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        app_id, current_version, last_version,update_set
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from app_update_setting
+        where app_id = #{appId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from app_update_setting
+        where app_id = #{appId,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.AppUpdateSetting">
+        insert into app_update_setting (
+        app_id, current_version, last_version,update_set )
+        values (
+        #{appId,jdbcType=BIGINT}, #{currentVersion,jdbcType=VARCHAR}, #{lastVersion,jdbcType=VARCHAR},
+        #{updateSet,jdbcType=INTEGER} )
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.AppUpdateSetting">
+        insert into app_update_setting
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="appId != null">
+                app_id,
+            </if>
+            <if test="currentVersion != null">
+                current_version,
+            </if>
+            <if test="lastVersion != null">
+                last_version,
+            </if>
+            <if test="updateSet != null">
+                update_set
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="appId != null">
+                #{appId,jdbcType=BIGINT},
+            </if>
+            <if test="currentVersion != null">
+                #{currentVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="lastVersion != null">
+                #{lastVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="updateSet != null">
+                #{updateSet,jdbcType=INTEGER}
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.AppUpdateSetting">
+        update app_update_setting
+        <set>
+            <if test="currentVersion != null">
+                current_version = #{currentVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="lastVersion != null">
+                last_version = #{lastVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="updateSet != null">
+                update_set= #{updateSet,jdbcType=INTEGER},
+            </if>
+        </set>
+        where app_id = #{appId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.AppUpdateSetting">
+        update app_update_setting
+        set current_version = #{currentVersion,jdbcType=VARCHAR},
+        last_version = #{lastVersion,jdbcType=VARCHAR},
+        update_set= #{updateSet,jdbcType=INTEGER}
+        where app_id = #{appId,jdbcType=BIGINT}
+    </update>
+
+
+</mapper>

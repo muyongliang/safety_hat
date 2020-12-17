@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.total.mapper.DefaultSettingMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.total.entity.DefaultSetting">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="vedio_time_limit" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="is_auto_upload" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="dispatcher_upload_limit" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="app_log" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="dispatcher_log" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="tip_time" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="third_tip_time" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="store_tip" javaType="java.lang.Double" jdbcType="DOUBLE"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, vedio_time_limit, is_auto_upload, dispatcher_upload_limit, app_log, dispatcher_log,
+        tip_time, third_tip_time, store_tip
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from default_setting
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from default_setting
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.total.entity.DefaultSetting">
+        insert into default_setting (id, vedio_time_limit, is_auto_upload,
+        dispatcher_upload_limit, app_log, dispatcher_log,
+        tip_time, third_tip_time, store_tip
+        )
+        values (#{id,jdbcType=BIGINT}, #{vedioTimeLimit,jdbcType=INTEGER}, #{isAutoUpload,jdbcType=INTEGER},
+        #{dispatcherUploadLimit,jdbcType=INTEGER}, #{appLog,jdbcType=INTEGER}, #{dispatcherLog,jdbcType=INTEGER},
+        #{tipTime,jdbcType=INTEGER}, #{thirdTipTime,jdbcType=INTEGER}, #{storeTip,jdbcType=DOUBLE}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.total.entity.DefaultSetting">
+        insert into default_setting
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="vedioTimeLimit != null">
+                vedio_time_limit,
+            </if>
+            <if test="isAutoUpload != null">
+                is_auto_upload,
+            </if>
+            <if test="dispatcherUploadLimit != null">
+                dispatcher_upload_limit,
+            </if>
+            <if test="appLog != null">
+                app_log,
+            </if>
+            <if test="dispatcherLog != null">
+                dispatcher_log,
+            </if>
+            <if test="tipTime != null">
+                tip_time,
+            </if>
+            <if test="thirdTipTime != null">
+                third_tip_time,
+            </if>
+            <if test="storeTip != null">
+                store_tip,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="vedioTimeLimit != null">
+                #{vedioTimeLimit,jdbcType=INTEGER},
+            </if>
+            <if test="isAutoUpload != null">
+                #{isAutoUpload,jdbcType=INTEGER},
+            </if>
+            <if test="dispatcherUploadLimit != null">
+                #{dispatcherUploadLimit,jdbcType=INTEGER},
+            </if>
+            <if test="appLog != null">
+                #{appLog,jdbcType=INTEGER},
+            </if>
+            <if test="dispatcherLog != null">
+                #{dispatcherLog,jdbcType=INTEGER},
+            </if>
+            <if test="tipTime != null">
+                #{tipTime,jdbcType=INTEGER},
+            </if>
+            <if test="thirdTipTime != null">
+                #{thirdTipTime,jdbcType=INTEGER},
+            </if>
+            <if test="storeTip != null">
+                #{storeTip,jdbcType=DOUBLE},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.total.entity.DefaultSetting">
+        update default_setting
+        <set>
+            <if test="vedioTimeLimit != null">
+                vedio_time_limit = #{vedioTimeLimit,jdbcType=INTEGER},
+            </if>
+            <if test="isAutoUpload != null">
+                is_auto_upload = #{isAutoUpload,jdbcType=INTEGER},
+            </if>
+            <if test="dispatcherUploadLimit != null">
+                dispatcher_upload_limit = #{dispatcherUploadLimit,jdbcType=INTEGER},
+            </if>
+            <if test="appLog != null">
+                app_log = #{appLog,jdbcType=INTEGER},
+            </if>
+            <if test="dispatcherLog != null">
+                dispatcher_log = #{dispatcherLog,jdbcType=INTEGER},
+            </if>
+            <if test="tipTime != null">
+                tip_time = #{tipTime,jdbcType=INTEGER},
+            </if>
+            <if test="thirdTipTime != null">
+                third_tip_time = #{thirdTipTime,jdbcType=INTEGER},
+            </if>
+            <if test="storeTip != null">
+                store_tip = #{storeTip,jdbcType=DOUBLE},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.total.entity.DefaultSetting">
+        update default_setting
+        set vedio_time_limit = #{vedioTimeLimit,jdbcType=INTEGER},
+        is_auto_upload = #{isAutoUpload,jdbcType=INTEGER},
+        dispatcher_upload_limit = #{dispatcherUploadLimit,jdbcType=INTEGER},
+        app_log = #{appLog,jdbcType=INTEGER},
+        dispatcher_log = #{dispatcherLog,jdbcType=INTEGER},
+        tip_time = #{tipTime,jdbcType=INTEGER},
+        third_tip_time = #{thirdTipTime,jdbcType=INTEGER},
+        store_tip = #{storeTip,jdbcType=DOUBLE}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

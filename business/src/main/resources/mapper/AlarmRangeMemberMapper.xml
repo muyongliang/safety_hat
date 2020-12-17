@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.AlarmRangeMemberMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.AlarmRangeMember">
+        <constructor>
+            <idArg column="mid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="bid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="rid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        mid, bid, rid, status
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from alarm_range_member
+        where mid = #{mid,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByRidAndBid" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from alarm_range_member
+        where rid = #{rid} and bid=#{bid}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from alarm_range_member
+        where mid = #{mid,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.AlarmRangeMember">
+        insert into alarm_range_member (mid, bid, rid, status
+        )
+        values (#{mid,jdbcType=BIGINT}, #{bid,jdbcType=BIGINT}, #{rid,jdbcType=BIGINT}, #{status,jdbcType=INTEGER}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.AlarmRangeMember">
+        insert into alarm_range_member
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="mid != null">
+                mid,
+            </if>
+            <if test="bid != null">
+                bid,
+            </if>
+            <if test="rid != null">
+                rid,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="mid != null">
+                #{mid,jdbcType=BIGINT},
+            </if>
+            <if test="bid != null">
+                #{bid,jdbcType=BIGINT},
+            </if>
+            <if test="rid != null">
+                #{rid,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.AlarmRangeMember">
+        update alarm_range_member
+        <set>
+            <if test="bid != null">
+                bid = #{bid,jdbcType=BIGINT},
+            </if>
+            <if test="rid != null">
+                rid = #{rid,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+        </set>
+        where mid = #{mid,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.AlarmRangeMember">
+        update alarm_range_member
+        set bid = #{bid,jdbcType=BIGINT},
+        rid = #{rid,jdbcType=BIGINT},
+        status = #{status,jdbcType=INTEGER}
+        where mid = #{mid,jdbcType=BIGINT}
+    </update>
+
+    <insert id="insertByForeach" parameterType="com.wyfx.business.entity.AlarmRangeMember" useGeneratedKeys="true"
+            keyProperty="mid">
+        insert into alarm_range_member (bid, rid, status)
+        values
+        <foreach collection="members" item="member" separator=",">
+            (#{member.bid}, #{member.rid}, #{member.status})
+        </foreach>
+    </insert>
+
+    <update id="updateByForeach" parameterType="com.wyfx.business.entity.AlarmRangeMember">
+        update alarm_range_member
+        set status = #{status,jdbcType=INTEGER}
+        where rid=#{rid} and bid in
+        <foreach collection="members" item="member" separator="," open="(" close=")">
+            #{member.bid}
+        </foreach>
+    </update>
+
+    <select id="selectByRid" resultType="com.wyfx.business.app.vo.ContactsVo">
+        select b.bid as id,b.user_name,b.`name` as full_name,b.mobile,b.`online_status` as status,b.user_type as
+        type,z.`name` as work_name,z.color
+        from business_user b,zidian_setting z,alarm_range_member m
+        where b.zidian_id=z.zid and m.bid=b.bid and m.rid=#{rid} and m.`status`=#{status}
+    </select>
+
+    <select id="selectNotInAlarmRangeClient" resultType="com.wyfx.business.app.vo.ContactsVo">
+        select b.bid as id,b.user_name,b.`name` as full_name,b.mobile,b.`online_status` as status,b.user_type as
+        type,z.`name` as work_name,z.color
+        from business_user b
+        left join zidian_setting z on b.zidian_id=z.zid
+        left join alarm_range_member m on m.bid=b.bid
+        where b.user_type=2 and b.project_id=#{projectId} and m.rid=#{rid} and m.`status`=#{status}
+    </select>
+
+</mapper>

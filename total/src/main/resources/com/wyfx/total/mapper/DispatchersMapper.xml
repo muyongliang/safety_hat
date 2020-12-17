@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.total.mapper.DispatchersMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.total.entity.Dispatchers">
+        <constructor>
+            <idArg column="did" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="password" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="business_id" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="project_address" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        did, user_name, password, name, status, business_id, project_address
+    </sql>
+
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from dispatchers
+        where did = #{did,jdbcType=BIGINT}
+    </select>
+
+
+    <!--通过地址模糊查询  /*businessId为前端传递的参数必须与实体类一致     business_id为数据库中的字段*/-->
+    <select id="selectByAddressAndBusinessId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from dispatchers
+        <where>
+            <if test="address != null">
+                project_address like concat('%',#{address,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="status != null">
+                and status=#{status,jdbcType=INTEGER}
+            </if>
+            <if test="businessId != null">
+                and business_id =#{businessId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from dispatchers
+        where did = #{did,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.total.entity.Dispatchers">
+        insert into dispatchers (did, user_name, password,
+        name, status, business_id,
+        project_address)
+        values (#{did,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+        #{name,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{businessId,jdbcType=VARCHAR},
+        #{projectAddress,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.total.entity.Dispatchers">
+        insert into dispatchers
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="did != null">
+                did,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="businessId != null">
+                business_id,
+            </if>
+            <if test="projectAddress != null">
+                project_address,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="did != null">
+                #{did,jdbcType=BIGINT},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="businessId != null">
+                #{businessId,jdbcType=VARCHAR},
+            </if>
+            <if test="projectAddress != null">
+                #{projectAddress,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.total.entity.Dispatchers">
+        update dispatchers
+        <set>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="businessId != null">
+                business_id = #{businessId,jdbcType=VARCHAR},
+            </if>
+            <if test="projectAddress != null">
+                project_address = #{projectAddress,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where did = #{did,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.total.entity.Dispatchers">
+        update dispatchers
+        set user_name = #{userName,jdbcType=VARCHAR},
+        password = #{password,jdbcType=VARCHAR},
+        name = #{name,jdbcType=VARCHAR},
+        status = #{status,jdbcType=INTEGER},
+        business_id = #{businessId,jdbcType=VARCHAR},
+        project_address = #{projectAddress,jdbcType=VARCHAR}
+        where did = #{did,jdbcType=BIGINT}
+    </update>
+</mapper>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.BusinessMessageCenterMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.BusinessMessageCenter">
+        <constructor>
+            <idArg column="mid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="title" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="content" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="flag" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="token" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        mid, title, content, flag, type, time, token
+    </sql>
+
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from business_message_center
+        where mid = #{mid,jdbcType=BIGINT}
+    </select>
+
+    <!--通过标识和状态查询所有或者未读的消息-->
+    <select id="selectAllMessagesByFlagAndType" resultType="java.util.Map">
+        select
+        title,content,time,mid
+        from business_message_center
+        <where>
+            <if test="flag!=null">
+                flag = #{flag,jdbcType=INTEGER}
+            </if>
+            <if test="type!=null">
+                and type = #{type,jdbcType=INTEGER}
+            </if>
+        </where>
+        order by time desc
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from business_message_center
+        where mid = #{mid,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.BusinessMessageCenter">
+        insert into business_message_center (mid, title, content,
+        flag, type, time,
+        token)
+        values (#{mid,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
+        #{flag,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{time,jdbcType=TIMESTAMP},
+        #{token,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.BusinessMessageCenter">
+        insert into business_message_center
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="mid != null">
+                mid,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="flag != null">
+                flag,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="time != null">
+                time,
+            </if>
+            <if test="token != null">
+                token,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="mid != null">
+                #{mid,jdbcType=BIGINT},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="flag != null">
+                #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="time != null">
+                #{time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="token != null">
+                #{token,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateBusinessMessageFlag" parameterType="java.lang.Long">
+        update business_message_center
+        set flag=1
+        where mid
+        in
+        <foreach item="mid" index="index" collection="mids" open="(" separator="," close=")">
+            #{mid}
+        </foreach>
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.BusinessMessageCenter">
+        update business_message_center
+        <set>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="flag != null">
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="time != null">
+                time = #{time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="token != null">
+                token = #{token,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where mid = #{mid,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.BusinessMessageCenter">
+        update business_message_center
+        set title = #{title,jdbcType=VARCHAR},
+        content = #{content,jdbcType=VARCHAR},
+        flag = #{flag,jdbcType=INTEGER},
+        type = #{type,jdbcType=INTEGER},
+        time = #{time,jdbcType=TIMESTAMP},
+        token = #{token,jdbcType=VARCHAR}
+        where mid = #{mid,jdbcType=BIGINT}
+    </update>
+</mapper>

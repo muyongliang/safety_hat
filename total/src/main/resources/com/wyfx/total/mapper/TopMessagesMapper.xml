@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.total.mapper.TopMessagesMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.total.entity.TopMessages">
+        <constructor>
+            <idArg column="mid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="ctime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="company" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="end_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="flag" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="store" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        mid, ctime, company, end_time, type, flag,store
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from top_messages
+        where mid = #{mid,jdbcType=BIGINT}
+    </select>
+
+    <!--通过flag查询所有已读或未读消息 发送时间倒序-->
+    <select id="selectAllTopMessagesByFlag" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from top_messages
+        <if test="flag!=null">
+            where flag=#{flag,jdbcType=INTEGER}
+        </if>
+        order by ctime desc
+    </select>
+
+
+    <!--总条数 -->
+    <select id="selectTomMessagesCount" resultType="java.lang.Integer">
+        select
+        count(*)
+        from top_messages
+        where flag=#{flag,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from top_messages
+        where mid = #{mid,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="insert" parameterType="com.wyfx.total.entity.TopMessages">
+        insert into top_messages (mid, ctime, company,
+        end_time, type, flag,store)
+        values (#{mid,jdbcType=BIGINT}, #{ctime,jdbcType=TIMESTAMP}, #{company,jdbcType=VARCHAR},
+        #{endTime,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER}, #{flag,jdbcType=INTEGER},#{store,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.wyfx.total.entity.TopMessages">
+        insert into top_messages
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="mid != null">
+                mid,
+            </if>
+            <if test="ctime != null">
+                ctime,
+            </if>
+            <if test="company != null">
+                company,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="flag != null">
+                flag,
+            </if>
+            <if test="store != null">
+                store,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="mid != null">
+                #{mid,jdbcType=BIGINT},
+            </if>
+            <if test="ctime != null">
+                #{ctime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="company != null">
+                #{company,jdbcType=VARCHAR},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="flag != null">
+                #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="store != null">
+                #{store,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.total.entity.TopMessages">
+        update top_messages
+        <set>
+            <if test="ctime != null">
+                ctime = #{ctime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="company != null">
+                company = #{company,jdbcType=VARCHAR},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="flag != null">
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="store != null">
+                flag = #{store,jdbcType=VARHCAR},
+            </if>
+        </set>
+        where mid = #{mid,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.total.entity.TopMessages">
+        update top_messages
+        set ctime = #{ctime,jdbcType=TIMESTAMP},
+        company = #{company,jdbcType=VARCHAR},
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+        type = #{type,jdbcType=INTEGER},
+        flag = #{flag,jdbcType=INTEGER},
+        store = #{store,jdbcType=VARCHAR}
+        where mid = #{mid,jdbcType=BIGINT}
+    </update>
+
+    <!--更新多条数据 为已读-->
+    <update id="updateByMids">
+        update top_messages
+        set
+        flag = 1
+        where mid
+        in
+        <foreach item="mid" index="index" collection="mids" open="(" separator="," close=")">
+            #{mid}
+        </foreach>
+
+    </update>
+
+</mapper>

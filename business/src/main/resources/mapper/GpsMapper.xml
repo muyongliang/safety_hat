@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.GpsMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.Gps">
+        <constructor>
+            <idArg column="gid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="client_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="power" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="main_temperature" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="environment_temperature" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="pressure" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="network" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="longitude" javaType="java.lang.Double" jdbcType="DOUBLE"/>
+            <arg column="latitude" javaType="java.lang.Double" jdbcType="DOUBLE"/>
+            <arg column="humidity" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        gid, client_id, power, main_temperature, environment_temperature, pressure, network,
+        create_time, longitude, latitude,humidity
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from gps
+        where gid = #{gid,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from gps
+        where gid = #{gid,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.Gps" useGeneratedKeys="true" keyProperty="gid">
+        insert into gps (gid, client_id, power,
+        main_temperature, environment_temperature,
+        pressure, network, create_time,
+        longitude, latitude,humidity)
+        values (#{gid,jdbcType=BIGINT}, #{clientId,jdbcType=BIGINT}, #{power,jdbcType=VARCHAR},
+        #{mainTemperature,jdbcType=VARCHAR}, #{environmentTemperature,jdbcType=VARCHAR},
+        #{pressure,jdbcType=VARCHAR}, #{network,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+        #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE},#{humidity,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.Gps" useGeneratedKeys="true" keyProperty="gid">
+        insert into gps
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="gid != null">
+                gid,
+            </if>
+            <if test="clientId != null">
+                client_id,
+            </if>
+            <if test="power != null">
+                power,
+            </if>
+            <if test="mainTemperature != null">
+                main_temperature,
+            </if>
+            <if test="environmentTemperature != null">
+                environment_temperature,
+            </if>
+            <if test="pressure != null">
+                pressure,
+            </if>
+            <if test="network != null">
+                network,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="longitude != null">
+                longitude,
+            </if>
+            <if test="latitude != null">
+                latitude,
+            </if>
+            <if test="humidity != null">
+                humidity,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="gid != null">
+                #{gid,jdbcType=BIGINT},
+            </if>
+            <if test="clientId != null">
+                #{clientId,jdbcType=BIGINT},
+            </if>
+            <if test="power != null">
+                #{power,jdbcType=VARCHAR},
+            </if>
+            <if test="mainTemperature != null">
+                #{mainTemperature,jdbcType=VARCHAR},
+            </if>
+            <if test="environmentTemperature != null">
+                #{environmentTemperature,jdbcType=VARCHAR},
+            </if>
+            <if test="pressure != null">
+                #{pressure,jdbcType=VARCHAR},
+            </if>
+            <if test="network != null">
+                #{network,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="longitude != null">
+                #{longitude,jdbcType=DOUBLE},
+            </if>
+            <if test="latitude != null">
+                #{latitude,jdbcType=DOUBLE},
+            </if>
+            <if test="humidity != null">
+                #{humidity,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.Gps">
+        update gps
+        <set>
+            <if test="clientId != null">
+                client_id = #{clientId,jdbcType=BIGINT},
+            </if>
+            <if test="power != null">
+                power = #{power,jdbcType=VARCHAR},
+            </if>
+            <if test="mainTemperature != null">
+                main_temperature = #{mainTemperature,jdbcType=VARCHAR},
+            </if>
+            <if test="environmentTemperature != null">
+                environment_temperature = #{environmentTemperature,jdbcType=VARCHAR},
+            </if>
+            <if test="pressure != null">
+                pressure = #{pressure,jdbcType=VARCHAR},
+            </if>
+            <if test="network != null">
+                network = #{network,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude,jdbcType=DOUBLE},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude,jdbcType=DOUBLE},
+            </if>
+            <if test="humidity != null">
+                humidity = #{humidity,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where gid = #{gid,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.Gps">
+        update gps
+        set client_id = #{clientId,jdbcType=BIGINT},
+        power = #{power,jdbcType=VARCHAR},
+        main_temperature = #{mainTemperature,jdbcType=VARCHAR},
+        environment_temperature = #{environmentTemperature,jdbcType=VARCHAR},
+        pressure = #{pressure,jdbcType=VARCHAR},
+        network = #{network,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        longitude = #{longitude,jdbcType=DOUBLE},
+        latitude = #{latitude,jdbcType=DOUBLE},
+        humidity = #{humidity,jdbcType=VARCHAR},
+        where gid = #{gid,jdbcType=BIGINT}
+    </update>
+
+
+    <select id="selectByClientId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from gps
+        where client_id = #{clientId,jdbcType=BIGINT}
+    </select>
+
+    <!--<select id="selectClientInfoByUserId" resultType="com.wyfx.business.app.vo.MemberDetailVo">
+      select b.bid as id,b.user_name as account,b.user_type,b.`name`,b.mobile,b.online_status,z.`name` workType,z.color,g.power,g.main_temperature,g.environment_temperature,g.pressure,g.network,g.create_time as time,g.longitude,g.latitude
+      from business_user b,zidian_setting z,gps g
+      where b.bid=#{userId} and b.zidian_id=z.zid and b.user_type=2 and b.bid=g.client_id
+    </select>-->
+    <select id="selectClientInfoByUserId" resultType="com.wyfx.business.app.vo.MemberDetailVo">
+        select id,account,user_type,A.name,mobile,online_status,z.`name`
+        workType,z.color,power,main_temperature,environment_temperature,pressure,network,time,longitude,latitude from (
+        select b.bid as id,b.user_name as
+        account,b.user_type,b.`name`,b.mobile,b.online_status,g.power,g.main_temperature,g.environment_temperature,g.pressure,g.network,g.create_time
+        as time,
+        g.longitude,g.latitude,zidian_id from business_user b,gps g where b.bid=#{userId} and b.user_type=2 and
+        b.bid=g.client_id)A
+        left join zidian_setting z on A.zidian_id=z.zid
+    </select>
+
+    <!--<select id="selectDispatcherInfoByUserId" resultType="com.wyfx.business.app.vo.MemberDetailVo">
+      select b.bid as id,b.user_name as account,b.user_type,b.`name`,b.mobile,b.online_status,z.`name` workType,z.color,g.power,g.main_temperature,g.environment_temperature,g.pressure,g.network,g.create_time as time,g.longitude,g.latitude
+      from business_user b,zidian_setting z,gps g
+      where b.bid=#{userId} and b.zidian_id=z.zid and b.user_type=1 and b.bid=g.client_id
+    </select>-->
+    <select id="selectDispatcherInfoByUserId" resultType="com.wyfx.business.app.vo.MemberDetailVo">
+        select id,account,user_type,A.name,mobile,online_status,z.`name`
+        workType,z.color,power,main_temperature,environment_temperature,pressure,network,time,longitude,latitude from (
+        select b.bid as id,b.user_name as
+        account,b.user_type,b.`name`,b.mobile,b.online_status,g.power,g.main_temperature,g.environment_temperature,g.pressure,g.network,g.create_time
+        as time,
+        g.longitude,g.latitude,zidian_id from business_user b,gps g where b.bid=#{userId} and b.user_type=1 and
+        b.bid=g.client_id)A
+        left join zidian_setting z on A.zidian_id=z.zid
+    </select>
+</mapper>

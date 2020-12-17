@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.total.mapper.DictionariesMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.total.entity.Dictionaries">
+        <constructor>
+            <idArg column="did" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="option_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="flag" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="order_num" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="uuid" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        did, type, option_name, flag,order_num,update_time,uuid
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from dictionaries
+        where did = #{did,jdbcType=INTEGER}
+    </select>
+
+    <!--通过选项名称查询 是否重复-->
+    <select id="selectByOptionName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from dictionaries
+        where option_name = #{optionName,jdbcType=VARCHAR}
+    </select>
+
+    <!--通过标识排序查询字典-->
+    <select id="selectAllOrderByFlag" resultType="java.util.Map">
+        select
+        did,flag,option_name,uuid,type,order_num
+        from dictionaries
+        order by flag , order_num
+    </select>
+
+
+    <!--通过排序查询 2020-2-26-->
+    <select id="selectByOrderNum" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from dictionaries
+        where order_num=#{orderNum,javaType=INTEGER}
+    </select>
+
+    <!--查询最大的启用数量 即最大排序数  flag;//状态标记{0:已启用;1:禁用} 2020-2-26  -->
+    <select id="selectMaxEnableNum" resultType="java.lang.Integer">
+        select
+        count(*)
+        from dictionaries
+        where flag=0
+    </select>
+
+    <!--查询所有排序字段大于此字典排序字段的字典id集合  -->
+    <select id="selectAllOrderNumLargerThanMe" resultType="java.lang.Integer">
+        select
+        did
+        from dictionaries
+        where order_num <![CDATA[ >]]>  #{orderNum,jdbcType=INTEGER}
+    </select>
+
+    <!--批量更新所有的排序字段 排序字段减一 2020-2-26 -->
+    <update id="updateAllOrderNum">
+        update dictionaries
+        set order_num =order_num -1
+        where
+        <if test="dids!=null">
+            did
+            in
+            <foreach collection="dids" open="(" separator="," close=")" item="did">
+                #{did}
+            </foreach>
+        </if>
+    </update>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from dictionaries
+        where did = #{did,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.total.entity.Dictionaries">
+        insert into dictionaries (did, type, option_name, flag,order_num,update_time,uuid)
+        values (#{did,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{optionName,jdbcType=VARCHAR},
+        #{flag,jdbcType=INTEGER},#{orderNum,jdbcType=INTEGER},
+        #{updateTime,jdbcType=TIMESTAMP},#{uuid,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.wyfx.total.entity.Dictionaries">
+        insert into dictionaries
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="did != null">
+                did,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="optionName != null">
+                option_name,
+            </if>
+            <if test="flag != null">
+                flag,
+            </if>
+            <if test="orderNum != null">
+                order_num,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="uuid != null">
+                uuid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="did != null">
+                #{did,jdbcType=INTEGER},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="optionName != null">
+                #{optionName,jdbcType=VARCHAR},
+            </if>
+            <if test="flag != null">
+                #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="orderNum != null">
+                #{orderNum,jdbcType=INTEGER},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="uuid != null">
+                #{uuid,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.total.entity.Dictionaries">
+        update dictionaries
+        <set>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="optionName != null">
+                option_name = #{optionName,jdbcType=VARCHAR},
+            </if>
+            <if test="flag != null">
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="orderNum != null">
+                order_num = #{orderNum,jdbcType=INTEGER},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="uuid != null">
+                uuid = #{uuid,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where did = #{did,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.total.entity.Dictionaries">
+        update dictionaries
+        set type = #{type,jdbcType=INTEGER},
+        option_name = #{optionName,jdbcType=VARCHAR},
+        flag = #{flag,jdbcType=INTEGER},
+        order_num=#{orderNum,jdbcType=INTEGER},
+        update_time=#{updateTime,jdbcType=TIMESTAMP},
+        uuid=#{uuid,jdbcType=VARCHAR}
+        where did = #{did,jdbcType=INTEGER}
+    </update>
+</mapper>

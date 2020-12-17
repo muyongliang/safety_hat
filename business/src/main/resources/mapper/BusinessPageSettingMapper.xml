@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.BusinessPageSettingMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.BusinessPageSetting">
+        <constructor>
+            <idArg column="pid" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="system_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="business_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="logo_img" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="meta_img" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        pid, system_name, business_id,logo_img,meta_img
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from business_page_setting
+        where pid = #{pid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByBusinessId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from business_page_setting
+        where business_id = #{businessId,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete from business_page_setting
+        where pid = #{pid,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.BusinessPageSetting">
+        insert into business_page_setting (pid, system_name, business_id,
+        logo_img, meta_img)
+        values (#{pid,jdbcType=VARCHAR}, #{systemName,jdbcType=VARCHAR}, #{businessId,jdbcType=BIGINT},
+        #{logoImg,jdbcType=VARCHAR}, #{metaImg,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.BusinessPageSetting" keyProperty="pid"
+            useGeneratedKeys="true">
+        insert into business_page_setting
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pid != null">
+                pid,
+            </if>
+            <if test="systemName != null">
+                system_name,
+            </if>
+            <if test="businessId != null">
+                business_id,
+            </if>
+            <if test="logoImg != null">
+                logo_img,
+            </if>
+            <if test="metaImg != null">
+                meta_img,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pid != null">
+                #{pid,jdbcType=VARCHAR},
+            </if>
+            <if test="systemName != null">
+                #{systemName,jdbcType=VARCHAR},
+            </if>
+            <if test="businessId != null">
+                #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="logoImg != null">
+                #{logoImg,jdbcType=VARCHAR},
+            </if>
+            <if test="metaImg != null">
+                #{metaImg,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.BusinessPageSetting">
+        update business_page_setting
+        <set>
+            <if test="systemName != null">
+                system_name = #{systemName,jdbcType=VARCHAR},
+            </if>
+            <if test="businessId != null">
+                business_id = #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="logoImg != null">
+                logo_img = #{logoImg,jdbcType=VARCHAR},
+            </if>
+            <if test="metaImg != null">
+                meta_img = #{metaImg,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where pid = #{pid,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.BusinessPageSetting">
+        update business_page_setting
+        set system_name = #{systemName,jdbcType=VARCHAR},
+        business_id = #{businessId,jdbcType=BIGINT},
+        logo_img = #{logoImg,jdbcType=VARCHAR},
+        meta_img = #{metaImg,jdbcType=VARCHAR}
+        where pid = #{pid,jdbcType=VARCHAR}
+    </update>
+</mapper>

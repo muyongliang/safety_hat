@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.RoleBusinessMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.RoleBusiness">
+        <constructor>
+            <arg column="business_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="role_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        </constructor>
+    </resultMap>
+    <insert id="insert" parameterType="com.wyfx.business.entity.RoleBusiness">
+        insert into role_business (business_id, role_id)
+        values (#{businessId,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.RoleBusiness">
+        insert into role_business
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="businessId != null">
+                business_id,
+            </if>
+            <if test="roleId != null">
+                role_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="businessId != null">
+                #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="roleId != null">
+                #{roleId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectByRoleIdAndBusinessId" resultMap="BaseResultMap">
+        select * from role_business where business_id=#{businessId} and role_id=#{roleId}
+    </select>
+
+    <select id="selectByBusinessId" resultMap="BaseResultMap">
+        select * from role_business where business_id=#{businessId}
+    </select>
+
+    <delete id="deleteByRoleBusiness">
+        delete from role_business where 1=1
+        <if test="businessId != null">
+            and business_id=#{businessId}
+        </if>
+        <if test="roleId != null">
+            and role_id=#{roleId}
+        </if>
+    </delete>
+
+    <select id="selectRoleSetByBusinessId" resultType="com.wyfx.business.entity.Role">
+        select r.* from role r,role_business rb where r.role_id=rb.role_id and rb.business_id=#{businessId}
+    </select>
+
+    <select id="selectRoleSetByBusinessIdAndRole" resultType="com.wyfx.business.entity.Role">
+        select r.* from role r,role_business rb where r.role_id=rb.role_id
+        <if test="businessId != null">
+            and rb.business_id=#{businessId}
+        </if>
+        <if test="roleId != null">
+            and rb.role_id=#{roleId}
+        </if>
+        <if test="roleName != null">
+            and r.role_name=#{roleName}
+        </if>
+    </select>
+
+
+</mapper>

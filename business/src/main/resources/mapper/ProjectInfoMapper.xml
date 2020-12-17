@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.ProjectInfoMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.ProjectInfo">
+        <constructor>
+            <idArg column="pid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="project_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="project_address" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="person_in_charge" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="pic_phone" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="introduction" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="business_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="longitude" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="latitude" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="altitude" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        pid, project_name, project_address, person_in_charge, pic_phone, status, introduction,
+        business_id,longitude,latitude,altitude
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from project_info
+        where pid = #{pid,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from project_info
+        where pid = #{pid,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="insert" parameterType="com.wyfx.business.entity.ProjectInfo">
+        insert into project_info (pid, project_name, project_address,
+        person_in_charge, pic_phone, status,
+        introduction, business_id,longitude,latitude,altitude)
+        values (#{pid,jdbcType=BIGINT}, #{projectName,jdbcType=VARCHAR}, #{projectAddress,jdbcType=VARCHAR},
+        #{personInCharge,jdbcType=VARCHAR}, #{picPhone,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER},
+        #{introduction,jdbcType=VARCHAR},
+        #{businessId,jdbcType=BIGINT},#{longitude,jdbcType=VARCHAR},#{latitude,jdbcType=VARCHAR},#{altitude,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.ProjectInfo" useGeneratedKeys="true"
+            keyProperty="pid">
+        insert into project_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pid != null">
+                pid,
+            </if>
+            <if test="projectName != null">
+                project_name,
+            </if>
+            <if test="projectAddress != null">
+                project_address,
+            </if>
+            <if test="personInCharge != null">
+                person_in_charge,
+            </if>
+            <if test="picPhone != null">
+                pic_phone,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="introduction != null">
+                introduction,
+            </if>
+            <if test="businessId != null">
+                business_id,
+            </if>
+            <if test="longitude != null">
+                longitude,
+            </if>
+            <if test="latitude != null">
+                latitude,
+            </if>
+            <if test="altitude != null">
+                altitude,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pid != null">
+                #{pid,jdbcType=BIGINT},
+            </if>
+            <if test="projectName != null">
+                #{projectName,jdbcType=VARCHAR},
+            </if>
+            <if test="projectAddress != null">
+                #{projectAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="personInCharge != null">
+                #{personInCharge,jdbcType=VARCHAR},
+            </if>
+            <if test="picPhone != null">
+                #{picPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="introduction != null">
+                #{introduction,jdbcType=VARCHAR},
+            </if>
+            <if test="businessId != null">
+                #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="longitude != null">
+                #{longitude,jdbcType=VARCHAR},
+            </if>
+            <if test="latitude != null">
+                #{latitude,jdbcType=VARCHAR},
+            </if>
+            <if test="altitude != null">
+                #{altitude,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.ProjectInfo" keyProperty="pid"
+            useGeneratedKeys="true">
+        update project_info
+        <set>
+            <if test="projectName != null">
+                project_name = #{projectName,jdbcType=VARCHAR},
+            </if>
+            <if test="projectAddress != null">
+                project_address = #{projectAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="personInCharge != null">
+                person_in_charge = #{personInCharge,jdbcType=VARCHAR},
+            </if>
+            <if test="picPhone != null">
+                pic_phone = #{picPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="introduction != null">
+                introduction = #{introduction,jdbcType=VARCHAR},
+            </if>
+            <if test="businessId != null">
+                business_id = #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude,jdbcType=VARCHAR},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude,jdbcType=VARCHAR},
+            </if>
+            <if test="altitude != null">
+                altitude = #{altitude,jdbcType=INTEGER},
+            </if>
+        </set>
+        where pid = #{pid,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.ProjectInfo">
+        update project_info
+        set project_name = #{projectName,jdbcType=VARCHAR},
+        project_address = #{projectAddress,jdbcType=VARCHAR},
+        person_in_charge = #{personInCharge,jdbcType=VARCHAR},
+        pic_phone = #{picPhone,jdbcType=VARCHAR},
+        status = #{status,jdbcType=INTEGER},
+        introduction = #{introduction,jdbcType=VARCHAR},
+        business_id = #{businessId,jdbcType=BIGINT},
+        longitude = #{longitude,jdbcType=VARCHAR},
+        latitude = #{latitude,jdbcType=VARCHAR},
+        altitude= #{altitude,jdbcType=INTEGER}
+        where pid = #{pid,jdbcType=BIGINT}
+    </update>
+
+
+    <select id="findByBusinessId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from project_info
+        where business_id = #{businessId}
+    </select>
+
+    <select id="findByStatus" resultMap="BaseResultMap">
+        select p.* from project_info p
+        where 1=1
+        <if test="businessId !=null">
+            and p.business_id=#{businessId}
+        </if>
+        <if test="status !=null">
+            and p.status=#{status}
+        </if>
+        <if test="bid !=null">
+            and p.pid=#{projectId}
+        </if>
+        group by p.pid order by pid desc
+    </select>
+
+    <select id="findByName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from project_info
+        where business_id = #{businessId} and project_name like '${projectName}'
+    </select>
+
+    <select id="findMoveList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from project_info
+        where business_id = #{businessId} and <![CDATA[ pid <> #{pid} ]]>
+    </select>
+
+
+    <select id="selectByBid" parameterType="java.lang.Long" resultType="com.wyfx.business.entity.vo.ProjectVo">
+        select b.user_name,p.* from project_info p,business_user b
+        where b.project_id=p.pid and b.bid=#{bid}
+    </select>
+
+    <select id="selectByBusinessId" parameterType="java.lang.Long" resultType="com.wyfx.business.entity.vo.ProjectVo">
+        select p.pid,p.project_name from project_info p
+        where p.business_id=#{businessId}
+        group by p.pid
+        order by pid desc
+    </select>
+
+
+    <!--通过项目名和状态查询 项目信息 -->
+    <select id="selectByProjectNameAndStatus" resultType="java.util.Map">
+        select
+        project_name,pid,person_in_charge,pic_phone,introduction,longitude,latitude,status
+        from project_info
+        <where>
+            <if test="projectName != null">
+                and project_name like concat('%',#{projectName,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="status != null">
+                and status = #{status,jdbcType=INTEGER}
+            </if>
+            and business_id = #{businessId,jdbcType=INTEGER}
+        </where>
+    </select>
+
+    <!--通过businessId 和status查询 2020-2-26-->
+    <select id="findByBusinessIdAndStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from project_info
+        <where>
+            <if test="businessId != null">
+                and business_id = #{businessId,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+                and status = #{status,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
+    <!--总后台通过token 和状态 查询某一企业的项目完成情况-->
+    <select id="selectProjectCount" resultType="java.lang.Integer">
+        select
+        count(*)
+        from project_info pinfo join business_info binfo on pinfo.business_id=binfo.business_id
+        <where>
+            and binfo.token=#{token,jdbcType=VARCHAR}
+            <if test="projectStatus!=null ">
+                and pinfo.status=#{projectStatus,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
+    <!--总后台 通过地址 token 状态查询 项目情况 返回项目的id集合-->
+    <select id="selectProjectCountByAddressAndStatus" resultType="java.lang.Integer">
+        select pinfo.pid from project_info pinfo
+        <where>
+            pinfo.business_id=(select binfo.business_id from business_info binfo where
+            binfo.token=#{token,jdbcType=INTEGER})
+            <if test="projectStatus!=null">
+                and pinfo.status=#{projectStatus,jdbcType=INTEGER}
+            </if>
+            <if test="address!=null and address!=''">
+                and pinfo.project_address like concat('%',#{address,jdbcType=VARCHAR},'%')
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

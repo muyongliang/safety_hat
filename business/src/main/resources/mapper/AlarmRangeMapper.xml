@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.AlarmRangeMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.AlarmRange">
+        <constructor>
+            <idArg column="rid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="tip_info" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="project_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="range_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="hand_shape" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="radius" javaType="java.lang.Double" jdbcType="DOUBLE"/>
+            <arg column="fence_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.wyfx.business.entity.AlarmRange">
+        <constructor>
+            <idArg column="rid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="tip_info" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="project_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="range_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="hand_shape" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="gps_range" javaType="java.lang.String" jdbcType="LONGVARCHAR"/>
+            <arg column="radius" javaType="java.lang.Double" jdbcType="DOUBLE"/>
+            <arg column="fence_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        rid, name, type, tip_info, project_id, range_type, hand_shape,radius,fence_id,create_time,update_time
+    </sql>
+    <sql id="Blob_Column_List">
+        gps_range
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from alarm_range
+        where rid = #{rid,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from alarm_range
+        where rid = #{rid,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.AlarmRange">
+        insert into alarm_range (rid, name, type,
+        tip_info, project_id, range_type,
+        hand_shape, gps_range,radius,fence_id,create_time,update_time)
+        values (#{rid,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER},
+        #{tipInfo,jdbcType=VARCHAR}, #{projectId,jdbcType=BIGINT}, #{rangeType,jdbcType=INTEGER},
+        #{handShape,jdbcType=INTEGER}, #{gpsRange,jdbcType=LONGVARCHAR},#{radius,jdbcType=DOUBLE},
+        #{fence_id,jdbcType=INTEGER},create_time=#{createTime,jdbcType=TIMESTAMP},
+        update_time=#{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.AlarmRange" useGeneratedKeys="true"
+            keyProperty="rid">
+        insert into alarm_range
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="rid != null">
+                rid,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="tipInfo != null">
+                tip_info,
+            </if>
+            <if test="projectId != null">
+                project_id,
+            </if>
+            <if test="rangeType != null">
+                range_type,
+            </if>
+            <if test="handShape != null">
+                hand_shape,
+            </if>
+            <if test="gpsRange != null">
+                gps_range,
+            </if>
+            <if test="radius != null">
+                radius,
+            </if>
+            <if test="fenceId != null">
+                fence_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="rid != null">
+                #{rid,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="tipInfo != null">
+                #{tipInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="projectId != null">
+                #{projectId,jdbcType=BIGINT},
+            </if>
+            <if test="rangeType != null">
+                #{rangeType,jdbcType=INTEGER},
+            </if>
+            <if test="handShape != null">
+                #{handShape,jdbcType=INTEGER},
+            </if>
+            <if test="gpsRange != null">
+                #{gpsRange,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="radius != null">
+                #{radius,jdbcType=DOUBLE},
+            </if>
+            <if test="fenceId != null">
+                #{fenceId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.AlarmRange">
+        update alarm_range
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="tipInfo != null">
+                tip_info = #{tipInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="projectId != null">
+                project_id = #{projectId,jdbcType=BIGINT},
+            </if>
+            <if test="rangeType != null">
+                range_type = #{rangeType,jdbcType=INTEGER},
+            </if>
+            <if test="handShape != null">
+                hand_shape = #{handShape,jdbcType=INTEGER},
+            </if>
+            <if test="gpsRange != null">
+                gps_range = #{gpsRange,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="radius != null">
+                radius= #{radius,jdbcType=DOUBLE},
+            </if>
+            <if test="fenceId != null">
+                fence_id= #{fenceId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time=#{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time=#{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where rid = #{rid,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.wyfx.business.entity.AlarmRange">
+        update alarm_range
+        set name = #{name,jdbcType=VARCHAR},
+        type = #{type,jdbcType=INTEGER},
+        tip_info = #{tipInfo,jdbcType=VARCHAR},
+        project_id = #{projectId,jdbcType=BIGINT},
+        range_type = #{rangeType,jdbcType=INTEGER},
+        hand_shape = #{handShape,jdbcType=INTEGER},
+        gps_range = #{gpsRange,jdbcType=LONGVARCHAR},
+        radius= #{radius,jdbcType=DOUBLE},
+        fence_id= #{fenceId,jdbcType=INTEGER},
+        create_time=#{createTime,jdbcType=TIMESTAMP},
+        update_time=#{updateTime,jdbcType=TIMESTAMP}
+        where rid = #{rid,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.AlarmRange">
+        update alarm_range
+        set name = #{name,jdbcType=VARCHAR},
+        type = #{type,jdbcType=INTEGER},
+        tip_info = #{tipInfo,jdbcType=VARCHAR},
+        project_id = #{projectId,jdbcType=BIGINT},
+        range_type = #{rangeType,jdbcType=INTEGER},
+        hand_shape = #{handShape,jdbcType=INTEGER},
+        radius= #{radius,jdbcType=DOUBLE},
+        fence_id= #{fenceId,jdbcType=INTEGER},
+        create_time=#{createTime,jdbcType=TIMESTAMP},
+        update_time=#{updateTime,jdbcType=TIMESTAMP}
+        where rid = #{rid,jdbcType=BIGINT}
+    </update>
+
+
+    <select id="selectByBid" parameterType="java.lang.Long" resultType="com.wyfx.business.entity.vo.ProjectVo">
+        select b.user_name,p.* from project_info p,business_user b
+        where b.project_id=p.pid and b.bid=#{bid}
+    </select>
+
+    <select id="selectByBusinessId" parameterType="java.lang.Long" resultType="com.wyfx.business.entity.vo.ProjectVo">
+        select p.pid,p.project_name from project_info p
+        where p.business_id=#{businessId}
+        group by p.pid
+        order by pid desc
+    </select>
+
+    <delete id="deleteByFenceId" parameterType="java.lang.Integer">
+        delete from alarm_range
+        where fence_id = #{fenceId,jdbcType=BIGINT}
+    </delete>
+
+    <select id="selectByProjectId" resultType="com.wyfx.business.entity.vo.RangeVo">
+        select r.rid,r.`name`,r.type,r.fence_id,IFNULL(count(b.online_status!=1),0) as
+        online_client_num,IFNULL(count(m.mid),0) as total_client_num
+        from alarm_range r
+        left join alarm_range_member m on r.rid=m.rid and m.`status`=1
+        left join business_user b on m.bid=b.bid and b.online_status!=0
+        where r.project_id=#{projectId}
+        GROUP BY r.rid
+    </select>
+
+    <select id="selectByProjectIdAndTypeAndName" resultType="com.wyfx.business.entity.vo.RangeVo">
+        select r.rid,r.`name`,r.type,r.fence_id,IFNULL(count(b.online_status!=1),0) as
+        online_client_num,IFNULL(count(m.mid),0) as total_client_num
+        from alarm_range r
+        left join alarm_range_member m on r.rid=m.rid and m.`status`=1
+        left join business_user b on m.bid=b.bid and b.online_status!=0
+        where 1=1
+        <if test="projectId ==null">
+            and r.project_id in (select pid from project_info where business_id=#{businessId})
+        </if>
+        <if test="projectId !=null">
+            and r.project_id=#{projectId}
+        </if>
+        <if test="name !=null">
+            and r.name=#{name}
+        </if>
+        <if test="type !=null">
+            and r.type=#{type}
+        </if>
+        GROUP BY r.rid
+    </select>
+
+    <select id="selectByName" resultType="com.wyfx.business.entity.vo.RangeVo">
+        select r.rid,r.`name`,r.type,r.fence_id,IFNULL(count(b.online_status!=1),0) as
+        online_client_num,IFNULL(count(m.mid),0) as total_client_num
+        from alarm_range r
+        left join alarm_range_member m on r.rid=m.rid and m.`status`=1
+        left join business_user b on m.bid=b.bid and b.online_status!=0
+        where r.project_id=#{projectId} and r.name=#{name}
+        GROUP BY r.rid
+    </select>
+
+    <select id="selectByType" resultType="com.wyfx.business.entity.vo.RangeVo">
+        select r.rid,r.`name`,r.type,r.fence_id,IFNULL(count(b.online_status!=1),0) as
+        online_client_num,IFNULL(count(m.mid),0) as total_client_num
+        from alarm_range r
+        left join alarm_range_member m on r.rid=m.rid and m.`status`=1
+        left join business_user b on m.bid=b.bid and b.online_status!=0
+        where r.project_id=#{projectId} and r.type=#{type}
+        GROUP BY r.rid
+    </select>
+
+    <select id="selectRangesByBid" resultMap="ResultMapWithBLOBs">
+        select a.* from alarm_range a,alarm_range_member am
+        where a.rid=am.rid and am.bid=#{bid} and am.`status`=#{status}
+    </select>
+</mapper>

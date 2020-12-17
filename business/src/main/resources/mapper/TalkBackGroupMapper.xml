@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.TalkBackGroupMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.TalkBackGroup">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="is_activate" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="is_recording" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="is_lock" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="create_person" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="bid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="project_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, name, is_activate, is_recording, is_lock, create_time, create_person, bid,project_id
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from talk_back_group
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectActivateByProjectId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from talk_back_group
+        where is_activate=1 and project_id=#{projectId};
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from talk_back_group
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.TalkBackGroup">
+        insert into talk_back_group (id, name, is_activate,
+        is_recording, is_lock, create_time,
+        create_person, bid,project_id)
+        values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{isActivate,jdbcType=INTEGER},
+        #{isRecording,jdbcType=INTEGER}, #{isLock,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
+        #{createPerson,jdbcType=VARCHAR}, #{bid,jdbcType=BIGINT}, #{projectId,jdbcType=BIGINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.TalkBackGroup" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into talk_back_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="isActivate != null">
+                is_activate,
+            </if>
+            <if test="isRecording != null">
+                is_recording,
+            </if>
+            <if test="isLock != null">
+                is_lock,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createPerson != null">
+                create_person,
+            </if>
+            <if test="bid != null">
+                bid,
+            </if>
+            <if test="projectId != null">
+                project_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="isActivate != null">
+                #{isActivate,jdbcType=INTEGER},
+            </if>
+            <if test="isRecording != null">
+                #{isRecording,jdbcType=INTEGER},
+            </if>
+            <if test="isLock != null">
+                #{isLock,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="bid != null">
+                #{bid,jdbcType=BIGINT},
+            </if>
+            <if test="projectId != null">
+                #{projectId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.TalkBackGroup"
+            useGeneratedKeys="true" keyProperty="id">
+        update talk_back_group
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="isActivate != null">
+                is_activate = #{isActivate,jdbcType=INTEGER},
+            </if>
+            <if test="isRecording != null">
+                is_recording = #{isRecording,jdbcType=INTEGER},
+            </if>
+            <if test="isLock != null">
+                is_lock = #{isLock,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                create_person = #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="bid != null">
+                bid = #{bid,jdbcType=BIGINT},
+            </if>
+            <if test="projectId != null">
+                project_id = #{projectId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.TalkBackGroup">
+        update talk_back_group
+        set name = #{name,jdbcType=VARCHAR},
+        is_activate = #{isActivate,jdbcType=INTEGER},
+        is_recording = #{isRecording,jdbcType=INTEGER},
+        is_lock = #{isLock,jdbcType=INTEGER},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        create_person = #{createPerson,jdbcType=VARCHAR},
+        bid = #{bid,jdbcType=BIGINT},
+        project_id = #{projectId,jdbcType=BIGINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectByNameAndProjectId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from talk_back_group
+        where project_id = #{projectId,jdbcType=BIGINT} and name=#{name,jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateByActivate">
+        update talk_back_group set is_activate = #{isActivate,jdbcType=INTEGER}
+        where project_id = #{projectId,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByActivateAndId">
+        update talk_back_group set is_activate = #{isActivate,jdbcType=INTEGER}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByIsLock">
+        update talk_back_group set is_lock = #{isLock,jdbcType=INTEGER}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectByProjectId" resultType="com.wyfx.business.entity.vo.TalkBackGroupVo">
+        select g.id,g.name,g.is_activate,g.is_recording,IFNULL(count(A.group_id),0) member_num
+        from talk_back_group g
+        left join (
+        select m.* from talk_back_group_member m,business_user b where m.business_id=b.bid and
+        b.project_id=#{projectId,jdbcType=BIGINT}
+        ) A on A.group_id=g.id
+        where <![CDATA[ g.is_lock <> -1 ]]> and g.project_id = #{projectId,jdbcType=BIGINT}
+        GROUP BY g.id
+    </select>
+
+    <select id="selectByProjectIdAndName" resultType="com.wyfx.business.entity.vo.TalkBackGroupVo">
+        select g.id,g.name,g.is_activate,g.is_recording,IFNULL(count(m.group_id),0) member_num
+        from talk_back_group g
+        left join talk_back_group_member m
+        on g.id=m.group_id where <![CDATA[ g.is_lock <> -1 ]]> and g.project_id = #{projectId,jdbcType=BIGINT} and
+        g.name=#{name}
+        GROUP BY g.id
+    </select>
+    <select id="selectByBusinessId" resultType="com.wyfx.business.entity.vo.TalkBackGroupVo">
+        select g.id,g.name,g.is_activate,g.is_recording,IFNULL(count(A.group_id),0) member_num
+        from talk_back_group g
+        left join (
+        select m.* from talk_back_group_member m,business_user b where m.business_id=b.bid and
+        b.business_id=#{businessId,jdbcType=BIGINT}
+        ) A on A.group_id=g.id
+        where <![CDATA[ g.is_lock <> -1 ]]>
+        GROUP BY g.id
+    </select>
+
+</mapper>

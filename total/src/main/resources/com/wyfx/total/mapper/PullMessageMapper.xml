@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.total.mapper.PullMessageMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.total.entity.PullMessage">
+        <constructor>
+            <idArg column="pid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="title" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="content" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="ptime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="flag" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="ctime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="creator" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="update_person" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="utime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.wyfx.total.entity.PullMessage">
+        <constructor>
+            <idArg column="pid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="title" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="content" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="ptime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="flag" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="ctime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="creator" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="update_person" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="utime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="to_users" javaType="java.lang.String" jdbcType="LONGVARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        pid, title, content, ptime, flag, ctime, creator, update_person, utime
+    </sql>
+    <sql id="Blob_Column_List">
+        to_users
+    </sql>
+
+
+    <!--通过标题查询推送消息-->
+    <select id="selectByTitle" resultType="java.util.Map">
+        select
+        pid,title,flag,ptime,creator,ctime,update_person,utime
+        from pull_message
+        where title like concat('%',#{title,jdbcType=VARCHAR},'%')
+    </select>
+
+
+    <!--查询所有推送消息 按更新时间倒序排列-->
+    <select id="selectAllPullMessage" resultType="java.util.Map">
+        select
+        pid,title,flag,ptime,creator,ctime,update_person,utime
+        from pull_message
+        order by
+        ctime
+        desc
+    </select>
+
+
+    <!--查询所有在某段时间类需要推送的消息-->
+    <select id="selectAllPullMessageByCondition" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from pull_message
+        <where>
+            <if test="flag != null">
+                and flag = #{flag,jdbcType=INTEGER}
+            </if>
+            <if test="startTime != null and endTime!=null">
+                and ptime between #{startTime,jdbcType=TIMESTAMP} and #{endTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+
+    <!--总条数-->
+    <select id="selectPullMessageCount" resultType="java.lang.Integer">
+        select
+        count(*)
+        from pull_message
+    </select>
+
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from pull_message
+        where pid = #{pid,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from pull_message
+        where pid = #{pid,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="insert" parameterType="com.wyfx.total.entity.PullMessage">
+        insert into pull_message (pid, title, content,
+        ptime, flag, ctime,
+        creator, update_person, utime,
+        to_users)
+        values (#{pid,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
+        #{ptime,jdbcType=TIMESTAMP}, #{flag,jdbcType=INTEGER}, #{ctime,jdbcType=TIMESTAMP},
+        #{creator,jdbcType=VARCHAR}, #{updatePerson,jdbcType=VARCHAR}, #{utime,jdbcType=TIMESTAMP},
+        #{toUsers,jdbcType=LONGVARCHAR})
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.wyfx.total.entity.PullMessage">
+        insert into pull_message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pid != null">
+                pid,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="ptime != null">
+                ptime,
+            </if>
+            <if test="flag != null">
+                flag,
+            </if>
+            <if test="ctime != null">
+                ctime,
+            </if>
+            <if test="creator != null">
+                creator,
+            </if>
+            <if test="updatePerson != null">
+                update_person,
+            </if>
+            <if test="utime != null">
+                utime,
+            </if>
+            <if test="toUsers != null">
+                to_users,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pid != null">
+                #{pid,jdbcType=BIGINT},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="ptime != null">
+                #{ptime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null">
+                #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="ctime != null">
+                #{ctime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creator != null">
+                #{creator,jdbcType=VARCHAR},
+            </if>
+            <if test="updatePerson != null">
+                #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="utime != null">
+                #{utime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="toUsers != null">
+                #{toUsers,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.total.entity.PullMessage">
+        update pull_message
+        <set>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="ptime != null">
+                ptime = #{ptime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="flag != null">
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="ctime != null">
+                ctime = #{ctime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creator != null">
+                creator = #{creator,jdbcType=VARCHAR},
+            </if>
+            <if test="updatePerson != null">
+                update_person = #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="utime != null">
+                utime = #{utime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="toUsers != null">
+                to_users = #{toUsers,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where pid = #{pid,jdbcType=BIGINT}
+    </update>
+
+    <!--更新所有定时推送到企业后台的消息标识为已发送-->
+    <update id="updateFlagByKeyListSelective">
+        update pull_message
+        <set>
+            <if test="flag != null">
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+            <if test="updatePerson != null">
+                update_person = #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="utime != null">
+                utime = #{utime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where pid
+        in
+        <foreach item="item" collection="pullMessageList" open="(" separator="," close=")">
+            #{item.pid}
+        </foreach>
+    </update>
+
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.wyfx.total.entity.PullMessage">
+        update pull_message
+        set title = #{title,jdbcType=VARCHAR},
+        content = #{content,jdbcType=VARCHAR},
+        ptime = #{ptime,jdbcType=TIMESTAMP},
+        flag = #{flag,jdbcType=INTEGER},
+        ctime = #{ctime,jdbcType=TIMESTAMP},
+        creator = #{creator,jdbcType=VARCHAR},
+        update_person = #{updatePerson,jdbcType=VARCHAR},
+        utime = #{utime,jdbcType=TIMESTAMP},
+        to_users = #{toUsers,jdbcType=LONGVARCHAR}
+        where pid = #{pid,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.total.entity.PullMessage">
+        update pull_message
+        set title = #{title,jdbcType=VARCHAR},
+        content = #{content,jdbcType=VARCHAR},
+        ptime = #{ptime,jdbcType=TIMESTAMP},
+        flag = #{flag,jdbcType=INTEGER},
+        ctime = #{ctime,jdbcType=TIMESTAMP},
+        creator = #{creator,jdbcType=VARCHAR},
+        update_person = #{updatePerson,jdbcType=VARCHAR},
+        utime = #{utime,jdbcType=TIMESTAMP}
+        where pid = #{pid,jdbcType=BIGINT}
+    </update>
+</mapper>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.BusinessInfoMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.BusinessInfo">
+        <constructor>
+            <idArg column="business_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="business_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="token" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="main_account" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="client_num" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="flag" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        business_id, business_name, token, main_account,client_num,status,flag
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from business_info
+        where business_id = #{businessId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from business_info
+        where business_id = #{businessId,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.BusinessInfo">
+        insert into business_info (business_id, business_name, token,
+        main_account,client_num,status,flag)
+        values (#{businessId,jdbcType=BIGINT}, #{businessName,jdbcType=VARCHAR}, #{token,jdbcType=VARCHAR},
+        #{mainAccount,jdbcType=VARCHAR},#{client_num,jdbcType=INTEGER},#{status,jdbcType=INTEGER},#{flag,jdbcType=INTEGER})
+    </insert>
+    <!--获取自增主键   keyProperty="businessId"  与实体类的id属性一致 -->
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="businessId"
+            parameterType="com.wyfx.business.entity.BusinessInfo">
+        insert into business_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="businessId != null">
+                business_id,
+            </if>
+            <if test="businessName != null">
+                business_name,
+            </if>
+            <if test="token != null">
+                token,
+            </if>
+            <if test="mainAccount != null">
+                main_account,
+            </if>
+            <if test="clientNum != null">
+                client_num,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="flag != null">
+                flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="businessId != null">
+                #{businessId,jdbcType=BIGINT},
+            </if>
+            <if test="businessName != null">
+                #{businessName,jdbcType=VARCHAR},
+            </if>
+            <if test="token != null">
+                #{token,jdbcType=VARCHAR},
+            </if>
+            <if test="mainAccount != null">
+                #{mainAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="clientNum != null">
+                #{clientNum,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="flag != null">
+                #{flag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.BusinessInfo">
+        update business_info
+        <set>
+            <if test="businessName != null">
+                business_name = #{businessName,jdbcType=VARCHAR},
+            </if>
+            <if test="token != null">
+                token = #{token,jdbcType=VARCHAR},
+            </if>
+            <if test="mainAccount != null">
+                main_account = #{mainAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="clientNum != null">
+                client_num = #{clientNum,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="flag != null">
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where business_id = #{businessId,jdbcType=BIGINT}
+    </update>
+    <!--通过token更新-->
+    <update id="updateByToken" parameterType="com.wyfx.business.entity.BusinessInfo">
+        update business_info
+        <set>
+            <if test="businessName != null">
+                business_name = #{businessName,jdbcType=VARCHAR},
+            </if>
+            <if test="token != null">
+                token = #{token,jdbcType=VARCHAR},
+            </if>
+            <if test="mainAccount != null">
+                main_account = #{mainAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="clientNum != null">
+                client_num = #{clientNum,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="flag != null">
+                flag = #{flag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where token = #{token,jdbcType=VARCHAR}
+    </update>
+
+    <!--通过token批量更新状态-->
+    <update id="updateBusinessStatus">
+        update business_info
+        <set>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER}
+            </if>
+        </set>
+        where token in
+        <foreach collection="tokens" open="(" separator="," close=")" item="token">
+            #{token,jdbcType=VARCHAR}
+        </foreach>
+    </update>
+
+    <!--总后台 通过token查询企业id-->
+    <select id="findBusinessInfoByToken" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from business_info
+        where token=#{token,jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.BusinessInfo">
+        update business_info
+        set business_name = #{businessName,jdbcType=VARCHAR},
+        token = #{token,jdbcType=VARCHAR},
+        main_account = #{mainAccount,jdbcType=VARCHAR},
+        client_num = #{clientNum,jdbcType=INTEGER},
+        status = #{status,jdbcType=INTEGER},
+        flag = #{flag,jdbcType=INTEGER}
+        where business_id = #{businessId,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectClientNumByBusinessId" resultType="int">
+        select count(1) from business_info where token = #{token,jdbcType=VARCHAR}
+    </select>
+</mapper>

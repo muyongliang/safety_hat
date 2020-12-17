@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.total.mapper.LogInfoMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.total.entity.LogInfo">
+        <constructor>
+            <idArg column="lid" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="executor" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="task_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="execut_describe" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="ctime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="related_data" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        lid, executor, task_type, execut_describe, ctime, related_data
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from log_info
+        where lid = #{lid,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from log_info
+        where lid = #{lid,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.total.entity.LogInfo">
+        insert into log_info (lid, executor, task_type,
+        execut_describe, ctime, related_data
+        )
+        values (#{lid,jdbcType=INTEGER}, #{executor,jdbcType=VARCHAR}, #{taskType,jdbcType=INTEGER},
+        #{executDescribe,jdbcType=VARCHAR}, #{ctime,jdbcType=TIMESTAMP}, #{relatedData,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.total.entity.LogInfo">
+        insert into log_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="lid != null">
+                lid,
+            </if>
+            <if test="executor != null">
+                executor,
+            </if>
+            <if test="taskType != null">
+                task_type,
+            </if>
+            <if test="executDescribe != null">
+                execut_describe,
+            </if>
+            <if test="ctime != null">
+                ctime,
+            </if>
+            <if test="relatedData != null">
+                related_data,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="lid != null">
+                #{lid,jdbcType=INTEGER},
+            </if>
+            <if test="executor != null">
+                #{executor,jdbcType=VARCHAR},
+            </if>
+            <if test="taskType != null">
+                #{taskType,jdbcType=INTEGER},
+            </if>
+            <if test="executDescribe != null">
+                #{executDescribe,jdbcType=VARCHAR},
+            </if>
+            <if test="ctime != null">
+                #{ctime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="relatedData != null">
+                #{relatedData,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.total.entity.LogInfo">
+        update log_info
+        <set>
+            <if test="executor != null">
+                executor = #{executor,jdbcType=VARCHAR},
+            </if>
+            <if test="taskType != null">
+                task_type = #{taskType,jdbcType=INTEGER},
+            </if>
+            <if test="executDescribe != null">
+                execut_describe = #{executDescribe,jdbcType=VARCHAR},
+            </if>
+            <if test="ctime != null">
+                ctime = #{ctime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="relatedData != null">
+                related_data = #{relatedData,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where lid = #{lid,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.total.entity.LogInfo">
+        update log_info
+        set executor = #{executor,jdbcType=VARCHAR},
+        task_type = #{taskType,jdbcType=INTEGER},
+        execut_describe = #{executDescribe,jdbcType=VARCHAR},
+        ctime = #{ctime,jdbcType=TIMESTAMP},
+        related_data = #{relatedData,jdbcType=VARCHAR}
+        where lid = #{lid,jdbcType=INTEGER}
+    </update>
+
+    <!--查询所有的日志-->
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from log_info
+        order by
+        ctime
+        desc
+    </select>
+
+    <!--通过不同条件查询企业信息-->
+    <select id="selectLogInfByCondition" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from log_info
+        <where>
+            <if test="taskType != null">
+                and task_type = #{taskType,jdbcType=INTEGER}
+            </if>
+            <if test="startTime != null">
+                and ctime between #{startTime,jdbcType=TIMESTAMP} and #{endTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+        order by
+        ctime
+        desc
+    </select>
+
+
+</mapper>

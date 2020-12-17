@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.business.dao.GroupMemberMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.business.entity.GroupMember">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="gourp_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="group_menber_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, gourp_id, group_menber_id,status
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from group_member
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from group_member
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.business.entity.GroupMember">
+        insert into group_member (id, gourp_id, group_menber_id,
+        client_id, type)
+        values (#{id,jdbcType=BIGINT}, #{gourpId,jdbcType=BIGINT}, #{groupMenberId,jdbcType=BIGINT},
+        #{status,jdbcType=INTEGER})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.business.entity.GroupMember">
+        insert into group_member
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="gourpId != null">
+                gourp_id,
+            </if>
+            <if test="groupMenberId != null">
+                group_menber_id,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="gourpId != null">
+                #{gourpId,jdbcType=BIGINT},
+            </if>
+            <if test="groupMenberId != null">
+                #{groupMenberId,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.business.entity.GroupMember">
+        update group_member
+        <set>
+            <if test="gourpId != null">
+                gourp_id = #{gourpId,jdbcType=BIGINT},
+            </if>
+            <if test="groupMenberId != null">
+                group_menber_id = #{groupMenberId,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                type = #{status,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.business.entity.GroupMember">
+        update group_member
+        set gourp_id = #{gourpId,jdbcType=BIGINT},
+        group_menber_id = #{groupMenberId,jdbcType=BIGINT},
+        status = #{status,jdbcType=INTEGER}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <insert id="insertForeach" useGeneratedKeys="true" keyProperty="id">
+        insert into group_member (gourp_id, group_menber_id,status)
+        values
+        <foreach collection="memberList" item="member" separator="," index="index">
+            ( #{member.gourpId,jdbcType=BIGINT}, #{member.groupMenberId,jdbcType=BIGINT},
+            #{member.status,jdbcType=INTEGER})
+        </foreach>
+    </insert>
+
+    <delete id="deleteByGroupId" parameterType="java.lang.Long">
+        delete from group_member
+        where gourp_id = #{groupId,jdbcType=BIGINT}
+    </delete>
+
+    <!--<select id="selectByGroupIdAndStatus" resultType="com.wyfx.business.app.vo.ContactsVo">
+      select b.bid as id,b.`name` as full_name,b.mobile,b.`online_status` as status,b.user_type as type,z.`name` as work_name,z.color
+      from business_user b,zidian_setting z,group_member g
+      where b.zidian_id=z.zid and user_type in (1,2) and g.group_menber_id=b.bid and g.gourp_id=#{groupId,jdbcType=BIGINT} and g.`status`=#{status,jdbcType=INTEGER}
+    </select>-->
+    <select id="selectByGroupIdAndStatus" resultType="com.wyfx.business.app.vo.ContactsVo">
+        select A.*,z.`name` as work_name,z.color from (
+        select b.bid as id,b.`name` as full_name,b.mobile,b.`online_status` as status,b.user_type as type,b.zidian_id
+        from business_user b,group_member g
+        where b.user_type in (1,2) and g.group_menber_id=b.bid and g.gourp_id=#{groupId,jdbcType=BIGINT} and
+        g.`status`=#{status,jdbcType=INTEGER}
+        ) A
+        left join zidian_setting z on A.zidian_id=z.zid
+    </select>
+
+
+    <update id="updateForeach">
+        <foreach collection="members" index="index" separator=";" item="member">
+            update group_member
+            set status = #{status,jdbcType=INTEGER}
+            where gourp_id = #{groupId,jdbcType=BIGINT} and
+            group_menber_id = #{member.id}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.total.mapper.ThirdbusinessmanagerMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.total.entity.Thirdbusinessmanager">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="bid" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="main_account" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="bname" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="person_in_charge" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="pic_phone" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="address" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="validity_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="state" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="device_num_limit" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="server_host" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="server_mac" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="ctime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="utime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="password" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="longitude" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="latitude" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.wyfx.total.entity.Thirdbusinessmanager">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="bid" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="main_account" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="bname" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="person_in_charge" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="pic_phone" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="address" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="validity_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="state" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="device_num_limit" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="server_host" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="server_mac" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="ctime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="utime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="password" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="description" javaType="java.lang.String" jdbcType="LONGVARCHAR"/>
+            <arg column="longitude" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="latitude" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,bid, main_account,bname, person_in_charge, pic_phone, address, validity_time, state, device_num_limit,
+        server_host, server_mac, ctime, utime, password,longitude,latitude
+    </sql>
+    <sql id="Blob_Column_List">
+        description
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from thirdbusinessmanager
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+
+    <!--通过bid查询第三方企业-->
+    <select id="selectTBusinessByBid" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from thirdbusinessmanager
+        where bid = #{bid,jdbcType=VARCHAR}
+    </select>
+
+    <!--通过主账号查询 企业-->
+    <select id="selectTBusinessByMainAccount" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from thirdbusinessmanager
+        where main_account = #{mainAccount,jdbcType=VARCHAR}
+
+    </select>
+
+
+    <!--通过ip和mac地址查询第三方企业-->
+    <select id="selectByIpAndMac" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from thirdbusinessmanager
+        where server_host = #{ip,jdbcType=VARCHAR}
+        and server_mac=#{mac,jdbcType=VARCHAR}
+    </select>
+
+
+    <!--通过企业名查询第三方企业信息-->
+    <select id="selectByTBusinessName" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from thirdbusinessmanager
+        where bname = #{bname,jdbcType=VARCHAR}
+    </select>
+
+    <!--按给定条件查询第三方企业信息-->
+    <select id="selectTBusinessManagerByCondition" resultType="java.util.Map">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from thirdbusinessmanager
+        <where>
+            <if test="state != null">
+                and state = #{state,jdbcType=INTEGER}
+            </if>
+            <if test="bname != null">
+                and bname = #{bname,jdbcType=VARCHAR}
+            </if>
+            <if test="address != null">
+                and address like concat('%',#{address,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="startTime != null and endTime!=null">
+                and validity_time between #{startTime,jdbcType=TIMESTAMP} and #{endTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+        order by
+        utime desc
+    </select>
+
+
+    <!--查询所有第三方合作企业 按更新时间倒序排列-->
+    <select id="selectAllTBusinessManager" resultType="java.util.Map">
+        select
+        bid,bname,address,validity_time,state,longitude,latitude,main_account,password ,server_host,server_mac
+        from thirdbusinessmanager
+        order by
+        utime desc
+    </select>
+
+
+    <!--总条数-->
+    <select id="selectTBusinessManagerCount" resultType="java.lang.Integer">
+        select
+        count(*)
+        from thirdbusinessmanager
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from thirdbusinessmanager
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.total.entity.Thirdbusinessmanager">
+        insert into thirdbusinessmanager (id,bid, main_account, bname, person_in_charge,
+        pic_phone, address, validity_time,
+        state, device_num_limit, server_host,
+        server_mac, ctime, utime,
+        password, description,longitude,latitude)
+        values (#{id,jdbcType=INTEGER},#{bid,jdbcType=VARCHAR},#{mainAccount,jdbcType=VARCHAR}
+        ,#{bname,jdbcType=VARCHAR}, #{personInCharge,jdbcType=VARCHAR},
+        #{picPhone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{validityTime,jdbcType=TIMESTAMP},
+        #{state,jdbcType=INTEGER}, #{deviceNumLimit,jdbcType=INTEGER}, #{serverHost,jdbcType=VARCHAR},
+        #{serverMac,jdbcType=VARCHAR}, #{ctime,jdbcType=TIMESTAMP}, #{utime,jdbcType=TIMESTAMP},
+        #{password,jdbcType=VARCHAR}, #{description,jdbcType=LONGVARCHAR}
+        ,#{longitude,jdbcType=VARCHAR},#{latitude,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.total.entity.Thirdbusinessmanager">
+        insert into thirdbusinessmanager
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="bid != null">
+                bid,
+            </if>
+            <if test="mainAccount != null">
+                main_account,
+            </if>
+            <if test="bname != null">
+                bname,
+            </if>
+            <if test="personInCharge != null">
+                person_in_charge,
+            </if>
+            <if test="picPhone != null">
+                pic_phone,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="validityTime != null">
+                validity_time,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="deviceNumLimit != null">
+                device_num_limit,
+            </if>
+            <if test="serverHost != null">
+                server_host,
+            </if>
+            <if test="serverMac != null">
+                server_mac,
+            </if>
+            <if test="ctime != null">
+                ctime,
+            </if>
+            <if test="utime != null">
+                utime,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="longitude != null">
+                longitude,
+            </if>
+            <if test="latitude != null">
+                latitude,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="bid != null">
+                #{bid,jdbcType=VARCHAR},
+            </if>
+            <if test="mainAccount != null">
+                #{mainAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="bname != null">
+                #{bname,jdbcType=VARCHAR},
+            </if>
+            <if test="personInCharge != null">
+                #{personInCharge,jdbcType=VARCHAR},
+            </if>
+            <if test="picPhone != null">
+                #{picPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="validityTime != null">
+                #{validityTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="deviceNumLimit != null">
+                #{deviceNumLimit,jdbcType=INTEGER},
+            </if>
+            <if test="serverHost != null">
+                #{serverHost,jdbcType=VARCHAR},
+            </if>
+            <if test="serverMac != null">
+                #{serverMac,jdbcType=VARCHAR},
+            </if>
+            <if test="ctime != null">
+                #{ctime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="utime != null">
+                #{utime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="longitude != null">
+                #{longitude,jdbcType=VARCHAR},
+            </if>
+            <if test="latitude != null">
+                #{latitude,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.total.entity.Thirdbusinessmanager">
+        update thirdbusinessmanager
+        <set>
+            <if test="bname != null">
+                bname = #{bname,jdbcType=VARCHAR},
+            </if>
+            <if test="mainAccount != null">
+                main_account=#{mainAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="personInCharge != null">
+                person_in_charge = #{personInCharge,jdbcType=VARCHAR},
+            </if>
+            <if test="picPhone != null">
+                pic_phone = #{picPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="validityTime != null">
+                validity_time = #{validityTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=INTEGER},
+            </if>
+            <if test="deviceNumLimit != null">
+                device_num_limit = #{deviceNumLimit,jdbcType=INTEGER},
+            </if>
+            <if test="serverHost != null">
+                server_host = #{serverHost,jdbcType=VARCHAR},
+            </if>
+            <if test="serverMac != null">
+                server_mac = #{serverMac,jdbcType=VARCHAR},
+            </if>
+            <if test="ctime != null">
+                ctime = #{ctime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="utime != null">
+                utime = #{utime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude,jdbcType=VARCHAR},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+    <!--通过bid更新第三方企业-->
+    <update id="updateTBusinessByBid" parameterType="com.wyfx.total.entity.Thirdbusinessmanager">
+        update thirdbusinessmanager
+        <set>
+            <if test="bname != null">
+                bname = #{bname,jdbcType=VARCHAR},
+            </if>
+            <if test="mainAccount != null">
+                main_account=#{mainAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="personInCharge != null">
+                person_in_charge = #{personInCharge,jdbcType=VARCHAR},
+            </if>
+            <if test="picPhone != null">
+                pic_phone = #{picPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="validityTime != null">
+                validity_time = #{validityTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=INTEGER},
+            </if>
+            <if test="deviceNumLimit != null">
+                device_num_limit = #{deviceNumLimit,jdbcType=INTEGER},
+            </if>
+            <if test="serverHost != null">
+                server_host = #{serverHost,jdbcType=VARCHAR},
+            </if>
+            <if test="serverMac != null">
+                server_mac = #{serverMac,jdbcType=VARCHAR},
+            </if>
+            <if test="ctime != null">
+                ctime = #{ctime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="utime != null">
+                utime = #{utime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude,jdbcType=VARCHAR},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where bid = #{bid,jdbcType=VARCHAR}
+    </update>
+
+
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.wyfx.total.entity.Thirdbusinessmanager">
+        update thirdbusinessmanager
+        set bname = #{bname,jdbcType=VARCHAR},
+        person_in_charge = #{personInCharge,jdbcType=VARCHAR},
+        pic_phone = #{picPhone,jdbcType=VARCHAR},
+        address = #{address,jdbcType=VARCHAR},
+        validity_time = #{validityTime,jdbcType=TIMESTAMP},
+        state = #{state,jdbcType=INTEGER},
+        device_num_limit = #{deviceNumLimit,jdbcType=INTEGER},
+        server_host = #{serverHost,jdbcType=VARCHAR},
+        server_mac = #{serverMac,jdbcType=VARCHAR},
+        ctime = #{ctime,jdbcType=TIMESTAMP},
+        utime = #{utime,jdbcType=TIMESTAMP},
+        password = #{password,jdbcType=VARCHAR},
+        description = #{description,jdbcType=LONGVARCHAR},
+        longitude = #{longitude,jdbcType=VARCHAR},
+        latitude = #{latitude,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.total.entity.Thirdbusinessmanager">
+        update thirdbusinessmanager
+        set bname = #{bname,jdbcType=VARCHAR},
+        main_account=#{mainAccount,jdbcType=VARCHAR},
+        person_in_charge = #{personInCharge,jdbcType=VARCHAR},
+        pic_phone = #{picPhone,jdbcType=VARCHAR},
+        address = #{address,jdbcType=VARCHAR},
+        validity_time = #{validityTime,jdbcType=TIMESTAMP},
+        state = #{state,jdbcType=INTEGER},
+        device_num_limit = #{deviceNumLimit,jdbcType=INTEGER},
+        server_host = #{serverHost,jdbcType=VARCHAR},
+        server_mac = #{serverMac,jdbcType=VARCHAR},
+        ctime = #{ctime,jdbcType=TIMESTAMP},
+        utime = #{utime,jdbcType=TIMESTAMP},
+        password = #{password,jdbcType=VARCHAR},
+        longitude = #{longitude,jdbcType=VARCHAR},
+        latitude = #{latitude,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+    <!--批量修改第三方企业合作状态 通过token bid-->
+    <update id="updateTBusinessStatusByBids">
+        update thirdbusinessmanager
+        set
+        state = #{state,jdbcType=INTEGER}
+        where bid in
+        <foreach collection="bids" open="(" separator="," close=")" item="bid">
+            #{bid,jdbcType=VARCHAR}
+        </foreach>
+    </update>
+</mapper>

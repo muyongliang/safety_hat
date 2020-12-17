@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyfx.total.mapper.ClientInfosMapper">
+    <resultMap id="BaseResultMap" type="com.wyfx.total.entity.ClientInfos">
+        <constructor>
+            <idArg column="cid" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="account" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="project_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="online_flag" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="business_id" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="project_address" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        cid, account, name, project_id, online_flag, business_id, project_address
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from client_infos
+        where cid = #{cid,jdbcType=BIGINT}
+    </select>
+
+
+    <!--通过地址模糊查询   -->
+    <select id="selectByAddressAndBusinessId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from client_infos
+        <where>
+            <if test="address != null">
+                project_address like concat('%',#{address,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="onlineFlag != null">
+                and online_flag=#{onlineFlag,jdbcType=INTEGER}
+            </if>
+            <if test="businessId != null">
+                and business_id =#{businessId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from client_infos
+        where cid = #{cid,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.wyfx.total.entity.ClientInfos">
+        insert into client_infos (cid, account, name,
+        project_id, online_flag, business_id,
+        project_address)
+        values (#{cid,jdbcType=BIGINT}, #{account,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+        #{projectId,jdbcType=INTEGER}, #{onlineFlag,jdbcType=INTEGER}, #{businessId,jdbcType=VARCHAR},
+        #{projectAddress,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.wyfx.total.entity.ClientInfos">
+        insert into client_infos
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cid != null ">
+                cid,
+            </if>
+            <if test="account != null">
+                account,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="projectId != null">
+                project_id,
+            </if>
+            <if test="onlineFlag != null">
+                online_flag,
+            </if>
+            <if test="businessId != null">
+                business_id,
+            </if>
+            <if test="projectAddress != null">
+                project_address,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cid != null">
+                #{cid,jdbcType=BIGINT},
+            </if>
+            <if test="account != null">
+                #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="projectId != null">
+                #{projectId,jdbcType=INTEGER},
+            </if>
+            <if test="onlineFlag != null">
+                #{onlineFlag,jdbcType=INTEGER},
+            </if>
+            <if test="businessId != null">
+                #{businessId,jdbcType=VARCHAR},
+            </if>
+            <if test="projectAddress != null">
+                #{projectAddress,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyfx.total.entity.ClientInfos">
+        update client_infos
+        <set>
+            <if test="account != null">
+                account = #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="projectId != null">
+                project_id = #{projectId,jdbcType=INTEGER},
+            </if>
+            <if test="onlineFlag != null">
+                online_flag = #{onlineFlag,jdbcType=INTEGER},
+            </if>
+            <if test="businessId != null">
+                business_id = #{businessId,jdbcType=VARCHAR},
+            </if>
+            <if test="projectAddress != null">
+                project_address = #{projectAddress,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where cid = #{cid,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyfx.total.entity.ClientInfos">
+        update client_infos
+        set account = #{account,jdbcType=VARCHAR},
+        name = #{name,jdbcType=VARCHAR},
+        project_id = #{projectId,jdbcType=INTEGER},
+        online_flag = #{onlineFlag,jdbcType=INTEGER},
+        business_id = #{businessId,jdbcType=VARCHAR},
+        project_address = #{projectAddress,jdbcType=VARCHAR}
+        where cid = #{cid,jdbcType=BIGINT}
+    </update>
+</mapper>
