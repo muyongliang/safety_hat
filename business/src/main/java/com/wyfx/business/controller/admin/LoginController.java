@@ -16,13 +16,12 @@ import com.wyfx.business.utils.AccountUtil;
 import com.wyfx.business.utils.MD5Util;
 import com.wyfx.business.utils.RandomValidateCode;
 import io.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,9 +43,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/admin")
 @Api(value = "LoginController", tags = {"用户登录退出等API"})
+@Slf4j
 public class LoginController extends BaseController {
-
-    private final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @Autowired
     private BusinessUserService businessUserService;
@@ -155,7 +153,7 @@ public class LoginController extends BaseController {
         } else {
             SecurityUtils.getSubject().getSession().setTimeout(30 * 60 * 1000);
         }
-        logger.info(username + "接口获取sessionId:" + request.getSession().getId() + "\nshiro获取sessionId:" + getSubject().getSession().getId());
+        log.info(username + "接口获取sessionId:" + request.getSession().getId() + "\nshiro获取sessionId:" + getSubject().getSession().getId());
         TalkBackGroup talkBackGroup = (user != null) ? talkBackService.findClientTalkBack(user) : null;
 
         Map<String, Object> map = new HashMap<>();
@@ -291,7 +289,7 @@ public class LoginController extends BaseController {
         }
         //-- 保存登录日志
         BusinessUser businessUser = (BusinessUser) getSubject().getPrincipal();
-        logger.info(username + "接口获取sessionId:" + request.getSession().getId() + "\nshiro获取sessionId:" + getSubject().getSession().getId());
+        log.info(username + "接口获取sessionId:" + request.getSession().getId() + "\nshiro获取sessionId:" + getSubject().getSession().getId());
         //设置session用不过期
         SecurityUtils.getSubject().getSession().setTimeout(-1000L);
         Map clientInfo = clientAccountService.getCurrentClientInfo(businessUser.getBid());

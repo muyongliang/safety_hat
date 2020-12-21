@@ -1,6 +1,7 @@
 package com.wyfx.business.utils;
 
 import com.wyfx.business.controller.BaseController;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -20,6 +21,7 @@ import java.util.Random;
  *
  * @author Tao
  */
+@Slf4j
 public class RandomValidateCode extends BaseController {
 
     private final Random random = new Random();
@@ -33,6 +35,7 @@ public class RandomValidateCode extends BaseController {
     public static boolean verify(String code, HttpServletRequest request) {
         HttpSession session = request.getSession();
         String sessionCode = (String) session.getAttribute("sessionCode");
+        log.info("验证码,请求：{},真实：{}", code, sessionCode);
         return StringUtils.equalsIgnoreCase(code, sessionCode);
     }
 

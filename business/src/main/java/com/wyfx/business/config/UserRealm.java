@@ -14,6 +14,7 @@ import com.wyfx.business.service.shiro.MenuManagerService;
 import com.wyfx.business.service.shiro.RoleService;
 import com.wyfx.business.service.shiro.UserRoleService;
 import com.wyfx.business.utils.ConstantList;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -24,8 +25,6 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -37,8 +36,8 @@ import java.util.stream.Collectors;
  * @date 2019/11/2
  * @description 自定义shiro的安全数据源, 包含认证和授权两大模块, Realm可以存在多个
  */
+@Slf4j
 public class UserRealm extends AuthorizingRealm {
-    private static final Logger logger = LoggerFactory.getLogger(UserRealm.class);
 
     @Autowired
     private BusinessUserService businessUserService;
@@ -67,7 +66,7 @@ public class UserRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        logger.debug("******************************执行认证过程doGetAuthenticationInfo****************************");
+        log.debug("******************************执行认证过程doGetAuthenticationInfo****************************");
         //获取用户输入的用户名和密码
         String name = (String) authenticationToken.getPrincipal();//实体信息(Principals)
         String pwd = new String((char[]) authenticationToken.getCredentials());//凭据信息(Credentials)
@@ -105,9 +104,9 @@ public class UserRealm extends AuthorizingRealm {
                         String message = JSON.toJSONString(new BaseCommand(WsConstant.logout.name(), "", null));
                         try {
                             session.getBasicRemote().sendText(message);//发送退出命令
-                            logger.info("发送了退出命令:" + name);
+                            log.info("发送了退出命令:" + name);
                         } catch (Exception e) {
-                            logger.error("登录时退出之前账号失败", e);
+                            log.error("登录时退出之前账号失败", e);
                         }
                     }
                 }
@@ -126,7 +125,7 @@ public class UserRealm extends AuthorizingRealm {
                 obj = String.valueOf(session.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY));
                 if (obj.contains(stringBuffer.toString()) && session.getAttribute("source").equals(source.toString())) {
                     sessionManager.getSessionDAO().delete(session);
-                    logger.info("移除先前登录的账号:" + name);
+                    log.info("移除先前登录的账号:" + name);
                 }
             }
         }
@@ -159,7 +158,7 @@ public class UserRealm extends AuthorizingRealm {
             throw new LockedAccountException("账号已被锁定,请联系管理员！");
         }
 
-        logger.debug("********************************执行认证过程doGetAuthenticationInfo:" + user.getUserName() + "通过认证!");
+        log.debug("********************************执行认证过程doGetAuthenticationInfo:" + user.getUserName() + "通过认证!");
         return new SimpleAuthenticationInfo(user, pwd, getName());
     }
 
@@ -171,7 +170,7 @@ public class UserRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        logger.debug("******************************执行授权模块过程doGetAuthorizationInfo****************************");
+        log.debug("******************************执行授权模块过程doGetAuthorizationInfo****************************");
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         //如果授权部分没有传入User对象，这里只能取到userName
         //也就是SimpleAuthenticationInfo构造的时候第一个参数传递需要AdminUser对象
@@ -187,7 +186,7 @@ public class UserRealm extends AuthorizingRealm {
         List<RoleMenuVo> permissionList = meunManagerService.findUserPermissions(userRoleList);
         Set<String> permissionSet = permissionList.stream().map(RoleMenuVo::getRemark).collect(Collectors.toSet());
         authorizationInfo.setStringPermissions(permissionSet);
-        logger.debug("********************************执行授权模块过程doGetAuthorizationInfo:" + user.getUserName() + "通过授权!");
+        log.debug("********************************执行授权模块过程doGetAuthorizationInfo:" + user.getUserName() + "通过授权!");
         return authorizationInfo;
     }
 
@@ -212,7 +211,11 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     public boolean isPermitted(PrincipalCollection principals, String permission) {
         String userName = principals.getPrimaryPrincipal().toString();
-        return adminAccount.equals(userName) || super.isPermitted(principals, permission);
+        if (adminAccount.equals(userName)) {
+            log.info("超级管理员admin登录");
+            return true;
+        }
+        return super.isPermitted(principals, permission);
     }
 
     /**
@@ -225,6 +228,10 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     public boolean hasRole(PrincipalCollection principals, String roleIdentifier) {
         String userName = principals.getPrimaryPrincipal().toString();
-        return adminAccount.equals(userName) || super.hasRole(principals, roleIdentifier);
+        if (adminAccount.equals(userName)) {
+            log.info("超级管理员admin登录");
+            return true;
+        }
+        return super.hasRole(principals, roleIdentifier);
     }
 }

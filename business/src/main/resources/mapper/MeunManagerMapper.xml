@@ -168,15 +168,34 @@
         </constructor>
     </resultMap>
     <select id="selectByParentIdAndBid" resultMap="selectMap">
-        select m.mid,m.parent_id,m.name,m.type,m.order_num from meun_manager m
-        where m.type=#{type} and m.parent_id=#{parentId} and m.mid in (
-        select DISTINCT rm.menu_id from role_menu rm
-        left join role r on (r.role_id=rm.role_id)
-        left join user_role ur on (ur.role_id=r.role_id)
-        LEFT JOIN business_user u on (u.bid=ur.user_id)
-        where u.bid=#{bid}
+        SELECT
+        meun_manager.mid,
+        meun_manager.parent_id,
+        meun_manager.`name`,
+        meun_manager.type,
+        meun_manager.order_num
+        FROM
+        meun_manager
+        WHERE
+        meun_manager.type = #{type}
+        AND meun_manager.parent_id = #{parentId}
+        AND meun_manager.mid IN (
+        SELECT DISTINCT
+        role_menu.menu_id
+        FROM
+        role_menu
+        INNER JOIN user_role ON (
+        user_role.role_id = role_menu.role_id
         )
-        order by m.mid,m.order_num
+        INNER JOIN business_user ON (
+        business_user.bid = user_role.user_id
+        )
+        WHERE
+        business_user.bid = #{bid}
+        )
+        ORDER BY
+        meun_manager.mid,
+        meun_manager.order_num
     </select>
     <select id="selectByParentIdAndBidForSub" resultMap="selectMap">
         select m.mid,m.parent_id,m.name,m.type,m.order_num from meun_manager m
