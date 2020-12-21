@@ -27,6 +27,7 @@ import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -53,6 +54,8 @@ public class UserRealm extends AuthorizingRealm {
     private ClientAccountService clientAccountService;
     /*@Autowired
     private RedisSessionDAO redisSessionDAO;*/
+    @Value("#{'admin'}")
+    private String adminAccount;
 
 
     /**
@@ -197,5 +200,31 @@ public class UserRealm extends AuthorizingRealm {
         PrincipalCollection principals = SecurityUtils.getSubject().getPrincipals();
         /*super.clearCachedAuthorizationInfo(principals);*/
         super.clearCache(principals);
+    }
+
+    /**
+     * 为超级管理员添加所有权限
+     *
+     * @param principals
+     * @param permission
+     * @return
+     */
+    @Override
+    public boolean isPermitted(PrincipalCollection principals, String permission) {
+        String userName = principals.getPrimaryPrincipal().toString();
+        return adminAccount.equals(userName) || super.isPermitted(principals, permission);
+    }
+
+    /**
+     * 为超级管理员添加所有角色
+     *
+     * @param principals
+     * @param roleIdentifier
+     * @return
+     */
+    @Override
+    public boolean hasRole(PrincipalCollection principals, String roleIdentifier) {
+        String userName = principals.getPrimaryPrincipal().toString();
+        return adminAccount.equals(userName) || super.hasRole(principals, roleIdentifier);
     }
 }

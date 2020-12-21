@@ -120,11 +120,11 @@ public class LoginController extends BaseController {
         password = MD5Util.encrypt(username.toLowerCase(), password);
         System.out.println(password);
         BusinessUser businessUser = (BusinessUser) getSubject().getPrincipal();
-        Boolean isLogin = businessUser == null || businessUser.getUserName().equals(username);
+        Boolean isLogin = businessUser != null && businessUser.getUserName().equals(username);
         //判断是否有用户登录
 
 
-        if (getSubject().isAuthenticated() && !isLogin) {
+        if (getSubject().isAuthenticated() && isLogin) {
             getSubject().logout();//退出之前登录账号
         }
 
