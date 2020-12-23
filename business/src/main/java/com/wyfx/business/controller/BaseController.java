@@ -1,11 +1,14 @@
 package com.wyfx.business.controller;
 
 import com.wyfx.business.config.exception.SafetyHatSessionException;
+import com.wyfx.business.dao.BusinessUserMapper;
 import com.wyfx.business.entity.BusinessUser;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,10 +18,13 @@ import org.springframework.stereotype.Component;
  * @description 从shiro中获取Session相关信息
  */
 @Component
+@Slf4j
 public class BaseController {
 
     @Value("${remote.url}")
     protected String remoteUrl;
+    @Autowired
+    BusinessUserMapper businessUserMapper;
 
 
     public Subject getSubject() {
@@ -26,7 +32,9 @@ public class BaseController {
     }
 
     public BusinessUser getCurrentUser() {
-        BusinessUser user = (BusinessUser) getSubject().getPrincipal();
+        String principal = (String)getSubject().getPrincipal();
+        log.info("获取当前用户principal:{}",principal);
+        BusinessUser user = businessUserMapper.findByUserName(principal) ;
         if (user == null) {
             throw new SafetyHatSessionException("未登录/会话已过期,请重新登录");
         }

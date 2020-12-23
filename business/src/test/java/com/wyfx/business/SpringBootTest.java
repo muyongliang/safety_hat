@@ -24,21 +24,34 @@ public class SpringBootTest {
     RoleMenuMapper roleMenuMapper;
     @Test
     public void test1() {
-        for (int i = 101; i <= 122; i++) {
-            RoleMenu roleMenu = new RoleMenu();
-            roleMenu.setRoleId(1l);
-            roleMenu.setMenuId((long)i);
-            int insert = roleMenuMapper.insert(roleMenu);
-            System.out.println(insert);
+        for (int j = 3; j <=4; j++) {
+            for (int i = 1; i <= 300; i++) {
+                RoleMenu roleMenu = new RoleMenu();
+                roleMenu.setRoleId((long)j);
+                roleMenu.setMenuId((long)i);
+                int insert = roleMenuMapper.insert(roleMenu);
+                System.out.println(insert);
+            }
         }
+    }
 
+    /**
+     * 清除2-5的权限
+     */
+    @Test
+    public void test3() {
+        for (int i = 1; i <=4; i++) {
+            for (int j = 2; j <=5; j++) {
+                roleMenuMapper.delete((long)i,(long)j);
+            }
+        }
     }
 
     @Test
     public void test2() {
-        Long parentId = 20l;
-        int begin = 108;
-        int end=109;
+        Long parentId = 5l;
+        int begin = 27;
+        int end=32;
         int type=1;
         for (int i = begin; i <= end; i++) {
             MenuManager menuManager = new MenuManager();

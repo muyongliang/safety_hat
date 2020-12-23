@@ -3,6 +3,7 @@ package com.wyfx.business.config;
 import com.alibaba.fastjson.JSON;
 import com.wyfx.business.controller.ws.pojo.BaseCommand;
 import com.wyfx.business.controller.ws.pojo.WsConstant;
+import com.wyfx.business.dao.BusinessUserMapper;
 import com.wyfx.business.entity.BusinessInfo;
 import com.wyfx.business.entity.BusinessUser;
 import com.wyfx.business.entity.UserRole;
@@ -55,6 +56,9 @@ public class UserRealm extends AuthorizingRealm {
     private RedisSessionDAO redisSessionDAO;*/
     @Value("#{'admin'}")
     private String adminAccount;
+
+    @Autowired
+    BusinessUserMapper businessUserMapper;
 
 
     /**
@@ -159,7 +163,10 @@ public class UserRealm extends AuthorizingRealm {
         }
 
         log.debug("********************************执行认证过程doGetAuthenticationInfo:" + user.getUserName() + "通过认证!");
-        return new SimpleAuthenticationInfo(user, pwd, getName());
+        log.info("username:{}",user.getUserName());
+        log.info("pwd:{}",pwd);
+        log.info("realmName:{}",getName());
+        return new SimpleAuthenticationInfo(user.getUserName(), pwd, getName());
     }
 
     /**
@@ -177,15 +184,20 @@ public class UserRealm extends AuthorizingRealm {
         BusinessUser user = (BusinessUser) principalCollection.getPrimaryPrincipal();
 
         //获取用户角色集
+        Set<String> roleSet = new HashSet();
         List<UserRole> userRoleList = userRoleService.findByUserId(user.getBid().intValue());
-        Set<String> roleSet = new HashSet(userRoleList);
+        for (UserRole userRole : userRoleList) {
+            roleSet.add(userRole.getRoleId().toString());
+        }
         log.info("该用户的角色集合为：{}",JSON.toJSONString(roleSet));
         authorizationInfo.setRoles(roleSet);
 
         //获取用户权限集
+        Set<String> permissionSet = new HashSet();
         List<RoleMenuVo> permissionList = meunManagerService.findUserPermissions(userRoleList);
-        Set<String> permissionSet = permissionList.stream().map(RoleMenuVo::getRemark).collect(Collectors.toSet());
-        authorizationInfo.setStringPermissions(permissionSet);
+        for (RoleMenuVo roleMenuVo : permissionList) {
+            permissionSet.add(roleMenuVo.getRemark());
+        }
         log.info("该用户的权限集合为：{}",JSON.toJSONString(permissionSet));
         log.debug("********************************执行授权模块过程doGetAuthorizationInfo:" + user.getUserName() + "通过授权!");
         return authorizationInfo;
@@ -212,8 +224,10 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     public boolean isPermitted(PrincipalCollection principals, String permission) {
         String userName = principals.getPrimaryPrincipal().toString();
+        BusinessUser user = businessUserMapper.findByUserName(userName);
+//        todo 如果用户为管理员
         log.info("用户：{}请求permit",userName);
-        if ("admin".equals(userName)) {
+        if (adminAccount.equals(userName)) {
             log.info("超级管理员admin登录");
             return true;
         }
@@ -230,6 +244,7 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     public boolean hasRole(PrincipalCollection principals, String roleIdentifier) {
         String userName = principals.getPrimaryPrincipal().toString();
+
         if (adminAccount.equals(userName)) {
             log.info("超级管理员admin登录");
             return true;
