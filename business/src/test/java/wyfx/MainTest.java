@@ -1,3 +1,5 @@
+package wyfx;
+
 import cn.hutool.crypto.SecureUtil;
 import org.junit.Test;
 

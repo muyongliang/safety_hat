@@ -179,13 +179,14 @@ public class UserRealm extends AuthorizingRealm {
         //获取用户角色集
         List<UserRole> userRoleList = userRoleService.findByUserId(user.getBid().intValue());
         Set<String> roleSet = new HashSet(userRoleList);
-        System.out.println("角色集:" + roleSet);
+        log.info("该用户的角色集合为：{}",JSON.toJSONString(roleSet));
         authorizationInfo.setRoles(roleSet);
 
         //获取用户权限集
         List<RoleMenuVo> permissionList = meunManagerService.findUserPermissions(userRoleList);
         Set<String> permissionSet = permissionList.stream().map(RoleMenuVo::getRemark).collect(Collectors.toSet());
         authorizationInfo.setStringPermissions(permissionSet);
+        log.info("该用户的权限集合为：{}",JSON.toJSONString(permissionSet));
         log.debug("********************************执行授权模块过程doGetAuthorizationInfo:" + user.getUserName() + "通过授权!");
         return authorizationInfo;
     }
@@ -211,7 +212,8 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     public boolean isPermitted(PrincipalCollection principals, String permission) {
         String userName = principals.getPrimaryPrincipal().toString();
-        if (adminAccount.equals(userName)) {
+        log.info("用户：{}请求permit",userName);
+        if ("admin".equals(userName)) {
             log.info("超级管理员admin登录");
             return true;
         }

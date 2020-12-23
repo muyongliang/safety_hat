@@ -70,7 +70,7 @@ public class DeviceController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/addDeviceInfo", method = RequestMethod.POST)
-    @RequiresPermissions("device:add")
+//    @RequiresPermissions("device:add")
     @AopLog(describe = "添加设备：", targetParamName = "IMEI", operationType = OperationType.INSERT)
     public Object addDeviceInfo(String deviceNum, Integer type, String IMEI) {
         if (deviceNum == null || deviceNum.equals("") || IMEI == null || IMEI.equals("")) {
