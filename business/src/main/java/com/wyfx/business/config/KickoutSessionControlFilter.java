@@ -1,7 +1,6 @@
 package com.wyfx.business.config;
 
 import com.alibaba.fastjson.JSON;
-import com.wyfx.business.entity.BusinessUser;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.session.Session;
@@ -49,9 +48,7 @@ public class KickoutSessionControlFilter extends AccessControlFilter {
             return true;
         }
         Session session = subject.getSession();
-        BusinessUser businessUser = (BusinessUser) subject.getPrincipal();
-        String userName = businessUser.getUserName();
-
+        String userName = (String) subject.getPrincipal();
         Serializable sessionId = session.getId();
 
         //读取缓存   没有就存入

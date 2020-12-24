@@ -117,8 +117,9 @@ public class LoginController extends BaseController {
         }
         password = MD5Util.encrypt(username.toLowerCase(), password);
         System.out.println(password);
-        BusinessUser businessUser = (BusinessUser) getSubject().getPrincipal();
-        Boolean isLogin = businessUser != null && businessUser.getUserName().equals(username);
+        String userName = (String) getSubject().getPrincipal();
+        BusinessUser byUserName = businessUserService.findByUserName(userName);
+        Boolean isLogin = byUserName != null && byUserName.getUserName().equals(username);
         //判断是否有用户登录
 
 
@@ -288,17 +289,18 @@ public class LoginController extends BaseController {
             }
         }
         //-- 保存登录日志
-        BusinessUser businessUser = (BusinessUser) getSubject().getPrincipal();
+        String userName = (String) getSubject().getPrincipal();
+        BusinessUser byUserName = businessUserService.findByUserName(userName);
         log.info(username + "接口获取sessionId:" + request.getSession().getId() + "\nshiro获取sessionId:" + getSubject().getSession().getId());
         //设置session用不过期
         SecurityUtils.getSubject().getSession().setTimeout(-1000L);
-        Map clientInfo = clientAccountService.getCurrentClientInfo(businessUser.getBid());
-        DeviceInfo device = deviceService.findDetailByBid(businessUser.getBid());
+        Map clientInfo = clientAccountService.getCurrentClientInfo(byUserName.getBid());
+        DeviceInfo device = deviceService.findDetailByBid(byUserName.getBid());
         Map<String, Object> map = new HashMap<>();
-        map.put("name", businessUser.getName());
-        map.put("bid", businessUser.getBid());
-        map.put("config", getBusinessOfSetting(businessUser));
-        map.put("alarmSetting", alarmSettingService.findByProjectId(businessUser.getProjectId().intValue()));
+        map.put("name", byUserName.getName());
+        map.put("bid", byUserName.getBid());
+        map.put("config", getBusinessOfSetting(byUserName));
+        map.put("alarmSetting", alarmSettingService.findByProjectId(byUserName.getProjectId().intValue()));
 
         String groupName = (clientInfo != null) ? clientInfo.get("talk_back_name").toString() : null;
         Long groupId = (clientInfo != null) ? Long.valueOf(clientInfo.get("id").toString()) : null;
@@ -309,7 +311,7 @@ public class LoginController extends BaseController {
         map.put("groupId", groupId);
         map.put("number", number);
         map.put("isInGrouping", isInGrouping);
-        map.put("workType", zidianSettingMapper.selectByPrimaryKey(businessUser.getZidianId()).getName());
+        map.put("workType", zidianSettingMapper.selectByPrimaryKey(byUserName.getZidianId()).getName());
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue(), map);
     }
 

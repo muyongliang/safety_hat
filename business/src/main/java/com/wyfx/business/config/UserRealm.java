@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author johnson liu
@@ -181,15 +180,16 @@ public class UserRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         //如果授权部分没有传入User对象，这里只能取到userName
         //也就是SimpleAuthenticationInfo构造的时候第一个参数传递需要AdminUser对象
-        BusinessUser user = (BusinessUser) principalCollection.getPrimaryPrincipal();
+        String userName = (String) principalCollection.getPrimaryPrincipal();
+        BusinessUser byUserName = businessUserService.findByUserName(userName);
 
         //获取用户角色集
         Set<String> roleSet = new HashSet();
-        List<UserRole> userRoleList = userRoleService.findByUserId(user.getBid().intValue());
+        List<UserRole> userRoleList = userRoleService.findByUserId(byUserName.getBid().intValue());
         for (UserRole userRole : userRoleList) {
             roleSet.add(userRole.getRoleId().toString());
         }
-        log.info("该用户的角色集合为：{}",JSON.toJSONString(roleSet));
+        log.info("该用户的角色集合为：{}", JSON.toJSONString(roleSet));
         authorizationInfo.setRoles(roleSet);
 
         //获取用户权限集
@@ -198,8 +198,8 @@ public class UserRealm extends AuthorizingRealm {
         for (RoleMenuVo roleMenuVo : permissionList) {
             permissionSet.add(roleMenuVo.getRemark());
         }
-        log.info("该用户的权限集合为：{}",JSON.toJSONString(permissionSet));
-        log.debug("********************************执行授权模块过程doGetAuthorizationInfo:" + user.getUserName() + "通过授权!");
+        log.info("该用户的权限集合为：{}", JSON.toJSONString(permissionSet));
+        log.debug("********************************执行授权模块过程doGetAuthorizationInfo:" + byUserName.getUserName() + "通过授权!");
         return authorizationInfo;
     }
 
