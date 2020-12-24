@@ -18,8 +18,7 @@ import com.wyfx.business.service.TalkBackService;
 import com.wyfx.business.service.shiro.BusinessUserService;
 import com.wyfx.business.utils.ConstantList;
 import com.wyfx.business.utils.UserTypeAndStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -30,14 +29,17 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 @ServerEndpoint(value = "/video/{source}/{bid}")
+@Slf4j
 public class WebSocketServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
-    private static final CopyOnWriteArraySet<WebSocketServer> webSocketSet = new CopyOnWriteArraySet<WebSocketServer>();//concurrent包的线程安全Set，用来存放每个客户端对应的MyWebSocket对象。
+    //concurrent包的线程安全Set，用来存放每个客户端对应的MyWebSocket对象。
+    private static final CopyOnWriteArraySet<WebSocketServer> webSocketSet = new CopyOnWriteArraySet<>();
     public static List<BaseCommand> baseCommands;
     private static BusinessUserService businessUserService;
     private static TalkBackGroupMemberService talkBackGroupMemberService;
@@ -49,6 +51,13 @@ public class WebSocketServer {
     private String sid;
     private String source;
     private BusinessUser businessUser;
+
+    //静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
+    private static AtomicInteger onlineNum = new AtomicInteger();
+
+    //concurrent包的线程安全Set，用来存放每个客户端对应的WebSocketServer对象。
+    private static ConcurrentHashMap<String, Session> sessionPools = new ConcurrentHashMap<>();
+
 
     /**
      * 给所有(android)用户发送消息
@@ -64,17 +73,17 @@ public class WebSocketServer {
                 item.sendMessage(message, item.sid);
 
             } catch (IOException e) {
-                logger.error("发送消息失败", e);
+                log.error("发送消息失败", e);
                 continue;
             } catch (Exception e) {
-                logger.error("发送消息失败", e);
+                log.error("发送消息失败", e);
                 continue;
             }
         }
     }
 
     /**
-     * 发送给指定用户类型消息
+     * 给指定类型用户发送消息
      *
      * @param message
      * @param userType
@@ -113,18 +122,18 @@ public class WebSocketServer {
                 }
                 item.sendMessage(message, item.sid);
             } catch (IOException e) {
-                logger.error("发送消息失败", e);
+                log.error("发送消息失败", e);
 
                 continue;
             } catch (Exception e) {
-                logger.error("发送消息失败", e);
+                log.error("发送消息失败", e);
                 continue;
             }
         }
     }
 
     public static void sendAllMessage(String sid, String message, Integer userType, Long projectId, String toWay, String token) {
-        logger.info("等待发送消息:" + message);
+        log.info("等待发送消息:" + message);
         for (WebSocketServer item : webSocketSet) {
             try {
                 if (toWay != null && !toWay.equals(item.source)) {
@@ -143,10 +152,10 @@ public class WebSocketServer {
                     item.sendMessage(message, item.sid);
                 }
             } catch (IOException e) {
-                logger.error("发送消息失败", e);
+                log.error("发送消息失败", e);
                 continue;
             } catch (Exception e) {
-                logger.error("发送消息失败", e);
+                log.error("发送消息失败", e);
                 continue;
             }
         }
@@ -183,12 +192,12 @@ public class WebSocketServer {
         try {
             if (sid == null) {
                 session.close();
-                logger.debug(sid);
+                log.debug(sid);
                 return;
             }
             businessUser = businessUserService.findByUserName(sid);
             if (businessUser == null) {
-                logger.debug(sid + ":用户未登录!");
+                log.debug(sid + ":用户未登录!");
                 session.close();
                 return;
             }
@@ -201,7 +210,7 @@ public class WebSocketServer {
                     try {
                         map.get(source).close();//将之前的连接强制关闭
                     } catch (Exception e) {
-                        logger.debug("关闭上一个连接异常！" + e.toString());
+                        log.debug("关闭上一个连接异常！" + e.toString());
                     }
                 }
             }
@@ -224,12 +233,12 @@ public class WebSocketServer {
                 onlineStatus = UserTypeAndStatus.WEB_MOBILE_ONLINE;
             }
 
-            logger.debug("websocket中查询到用户:" + sid);
+            log.debug("websocket中查询到用户:" + sid);
             businessUserService.updateOnlineStatus(sid, onlineStatus);
 
             if (businessUser.getUserType() == 2) {
                 List<OfflineBroadcastVo> offlineBroadcastMessages = offlineBroadcastMessageService.findMessageByAccount(sid);
-                logger.debug(sid + ":检测离线广播消息:" + offlineBroadcastMessages.size());
+                log.debug(sid + ":检测离线广播消息:" + offlineBroadcastMessages.size());
                 if (null != offlineBroadcastMessages && offlineBroadcastMessages.size() > 0) {
                     BaseCommand sendCmd = new BaseCommand();
                     sendCmd.setEventName(WsConstant.broadcast.name());
@@ -242,7 +251,7 @@ public class WebSocketServer {
             String message = JSON.toJSONString(new BaseCommand(WsConstant.updateOnline.name(), "", ""));
             WebSocketServer.sendAllMessage(message, null, businessUser.getProjectId(), null, null);
         } catch (Exception e) {
-            logger.error("建立webSocket连接异常:" + sid, e);
+            log.error("建立webSocket连接异常:" + sid, e);
             //检测是否存入数组中
             Map<String, Session> map = ConstantList.sessionMap.get(sid);
             if (map != null && map.get(source) != null) {
@@ -254,7 +263,7 @@ public class WebSocketServer {
                     try {
                         map.get(source).close();//将之前的连接强制关闭
                     } catch (Exception e1) {
-                        logger.debug("关闭上一个连接异常！" + e1.toString());
+                        log.debug("关闭上一个连接异常！" + e1.toString());
                     }
                 }
 
@@ -270,7 +279,7 @@ public class WebSocketServer {
      */
     @OnMessage
     public void onMessage(String message, Session session, @PathParam("source") String source) {
-        logger.debug("收到消息:" + message);
+        log.debug("收到消息:" + message);
         JSONObject jsonObject = JSON.parseObject(message);
         BaseCommand command = jsonObject.toJavaObject(BaseCommand.class);
 
@@ -279,7 +288,7 @@ public class WebSocketServer {
 
     @OnError
     public void onError(Session session, Throwable t, @PathParam("source") String source) {
-        logger.error(this.sid + ":>>>>连接异常", t);
+        log.error(this.sid + ":>>>>连接异常", t);
         //fixme 连接都出现异常了，是否还需要关闭
         //onClose(session, null, source);
     }
@@ -287,7 +296,7 @@ public class WebSocketServer {
     @OnClose
     public void onClose(Session session, CloseReason reason, @PathParam("source") String source) {
         close(session, source);
-        logger.error("连接关闭:>>>>" + this.sid, reason);
+        log.error("连接关闭:>>>>" + this.sid, reason);
         String message = JSON.toJSONString(new BaseCommand(WsConstant.updateOnline.name(), "", ""));
         Long projectId = businessUser == null ? null : businessUser.getProjectId();
         WebSocketServer.sendAllMessage(message, null, projectId, null, null);
@@ -297,7 +306,7 @@ public class WebSocketServer {
     public void close(Session session, String source) {
         try {
             webSocketSet.remove(this);  //从set中删除
-            logger.error("webSocket连接关闭(sessionId)：" + session + ";用户:" + sid);
+            log.error("webSocket连接关闭(sessionId)：" + session + ";用户:" + sid);
             session.close();//关闭webSocket连接
             if (sid == null) {
                 return;
@@ -315,7 +324,7 @@ public class WebSocketServer {
             }
             businessUserService.updateOnlineStatus(sid, onlineStatus);
         } catch (Exception e) {
-            logger.error("webSocket关闭异常", e);
+            log.error("webSocket关闭异常", e);
         }
     }
 
@@ -329,20 +338,20 @@ public class WebSocketServer {
                 baseCommand.setSessionId(sid);
                 String s = JSONObject.toJSONString(baseCommand);
                 this.session.getBasicRemote().sendText(s);
-                logger.debug("发送消息成功：" + s);
+                log.debug("发送消息成功：" + s);
                 baseCommands = new ArrayList<>();
                 if (baseCommand.getEventName().equals("heartCheck")) {
-                    logger.debug("发送消息成功：" + sid + " >>>>SessionId:" + session.getId());
+                    log.debug("发送消息成功：" + sid + " >>>>SessionId:" + session.getId());
                     baseCommands.add(baseCommand);
                 }
-                logger.error("--------" + baseCommands);
+                log.error("--------" + baseCommands);
             } catch (Exception e) {
                 e.printStackTrace();
                 onClose(session, null, "android");
             }
             return;
         }
-        logger.debug("发送消息成功：" + sid + " >>>>SessionId:" + session.getId());
+        log.debug("发送消息成功：" + sid + " >>>>SessionId:" + session.getId());
         try {
             this.session.getBasicRemote().sendObject(message);
         } catch (Exception e) {
@@ -358,8 +367,8 @@ public class WebSocketServer {
 
     @Scheduled(fixedRate = 30 * 1000)
     private void heartCheck() {
-        logger.info("30s定时检查心跳更改用户状态");
-        logger.info("+++++++++{}", baseCommands);
+        log.info("30s定时检查心跳更改用户状态");
+        log.info("+++++++++{}", baseCommands);
         if (baseCommands == null) {
             return;
         }
@@ -388,7 +397,7 @@ public class WebSocketServer {
 
     public void sendAllTypeInfo(WsConstant wsConstant, Object message, String sid, String toWay) {
         if (ConstantList.sessionMap.get(sid) == null) {
-            logger.debug("设备【" + sid + "】不在线");
+            log.debug("设备【" + sid + "】不在线");
             if (wsConstant != null && wsConstant.equals(WsConstant.broadcast)) {
                 //保存离线广播消息
                 OfflineBroadcastMessage offlineBroadcastMessage = new OfflineBroadcastMessage();
@@ -407,7 +416,7 @@ public class WebSocketServer {
     }
 
     public void handler(BaseCommand message) {
-        logger.error(message.toString());
+        log.error(message.toString());
         try {
             JSONObject data = null;
             String type = message.getType();
@@ -499,7 +508,7 @@ public class WebSocketServer {
                     break;
             }
         } catch (Exception e) {
-            logger.error("处理消息失败", e);
+            log.error("处理消息失败", e);
         }
     }
 
@@ -510,7 +519,7 @@ public class WebSocketServer {
      */
     private void beInvitedBusyHandler(BaseCommand message, WsConstant wsConstant, List<Account> resTargetBeanList) throws Exception {
         DataBean dataBean = JSONObject.toJavaObject((JSONObject) message.getData(), DataBean.class);
-        logger.info("呼叫排队:" + dataBean);
+        log.info("呼叫排队:" + dataBean);
         BaseCommand sendCmd = new BaseCommand(getResEventName(wsConstant), message.getType(), dataBean);
         sendInfoFromTargetBeanList(wsConstant, resTargetBeanList, sendCmd, null);
     }
@@ -664,7 +673,7 @@ public class WebSocketServer {
         BaseCommand sendCmdOfBeInvited = new BaseCommand();
         toWay = ("0".equals(resAccount.getState())) ? null : source;
         for (int i = 0; resTargetBeanList != null && i < resTargetBeanList.size(); i++) {
-            logger.debug("循环发送消息到resTargetBeanList>>>");
+            log.debug("循环发送消息到resTargetBeanList>>>");
 
             //服务器向被邀请人回复消息
             switch (wsConstant) {
@@ -889,12 +898,12 @@ public class WebSocketServer {
         //如果是调度员主动挂断,则将该房间中所有的通话挂断
         //将用户从接听状态移除
         Object data = message.getData();
-        logger.error(data.toString());
+        log.error(data.toString());
         ObjectMapper objectMapper = new ObjectMapper();
         MessageVo messageVo = objectMapper.convertValue(data, MessageVo.class);
         if (messageVo.getTarget().size() == 1) {
             for (MemberBeanVo memberBeanVo : messageVo.getTarget()) {
-                logger.error("是否移除" + resRoomBean.getRoomId() + "-------------" + resAccount.getId());
+                log.error("是否移除" + resRoomBean.getRoomId() + "-------------" + resAccount.getId());
                 ConstantList.removeAnsweringUserList(memberBeanVo.getId());
                 ConstantList.removeMembersByRoom(resRoomBean.getRoomId(), memberBeanVo.getId());
                 //会话发起人结束通话时，关闭所有通话
@@ -1209,7 +1218,7 @@ public class WebSocketServer {
             closeSendCmd.setType(message.getType());
             closeSendCmd.setData(closeDataBean);
             session.getBasicRemote().sendText(JSONObject.toJSONString(closeSendCmd));
-            logger.info("发送消息:" + JSONObject.toJSONString(closeSendCmd));
+            log.info("发送消息:" + JSONObject.toJSONString(closeSendCmd));
         }
     }
 

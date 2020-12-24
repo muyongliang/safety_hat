@@ -3,6 +3,7 @@ package com.wyfx.business.controller.ws.config;
 import com.alibaba.fastjson.JSONObject;
 import com.wyfx.business.controller.ws.WebSocketServer;
 import com.wyfx.business.controller.ws.pojo.BaseCommand;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ import java.util.Date;
  */
 @Configuration      //1.主要用于标记配置类，兼备Component的效果。
 @EnableScheduling   // 2.开启定时任务
+@Slf4j
 public class WebSocketScheduleTask {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketScheduleTask.class);
@@ -35,6 +37,7 @@ public class WebSocketScheduleTask {
         command.setTime((new Date()).getTime());
 
         String message = JSONObject.toJSONString(command);
+        log.info("WebSocketScheduleTask每{}秒执行一次", 10);
         WebSocketServer.sendAllMessage(message, null, null, null);
 
     }
