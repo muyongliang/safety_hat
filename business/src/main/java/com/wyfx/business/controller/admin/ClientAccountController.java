@@ -22,7 +22,6 @@ import com.wyfx.business.service.sys.SystemServer;
 import com.wyfx.business.utils.AccountUtil;
 import com.wyfx.business.utils.MD5Util;
 import com.wyfx.business.utils.UserTypeAndStatus;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -106,7 +105,7 @@ public class ClientAccountController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/addClientAccount", method = RequestMethod.POST)
-    @RequiresPermissions("client:add")
+//    @RequiresPermissions("client:add")
     @AopLog(describe = "创建终端账号：", targetParamName = "clientAccountVo", operationType = OperationType.INSERT)
     public Object addClientAccount(@RequestBody @Valid ClientAccountVo clientAccountVo) {
         BusinessUser user = getCurrentUser();
@@ -200,7 +199,7 @@ public class ClientAccountController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/editClientAccount", method = RequestMethod.POST)
-    @RequiresPermissions("client:edit")
+//    @RequiresPermissions("client:edit")
     @AopLog(describe = "编辑终端账号：", targetParamName = "clientAccountVo", operationType = OperationType.UPDATE)
     public Object editClientAccount(@RequestBody @Valid ClientAccountVo clientAccountVo) {//endBinding
         BusinessUser user = getCurrentUser();
@@ -259,7 +258,7 @@ public class ClientAccountController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/resetPassword", method = RequestMethod.GET)
-    @RequiresPermissions("client:resetPassword")
+//    @RequiresPermissions("client:resetPassword")
     @AopLog(describe = "重置密码：", targetParamName = "userName", operationType = OperationType.RESET)
     public Object resetPassword(Integer clientId, @RequestParam(required = false) String userName) {
         BusinessUser currentUser = getCurrentUser();
@@ -294,7 +293,7 @@ public class ClientAccountController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/changeStatus", method = RequestMethod.GET)
-    @RequiresPermissions("client:changeStatus")
+//    @RequiresPermissions("client:changeStatus")
     @AopLog(describe = "更改终端的启用/禁用状态：", targetParamName = "userName", operationType = OperationType.UPDATE)
     public Object changeStatus(Integer clientId, Integer status, @RequestParam(required = false) String userName) {
         BusinessUser currentUser = getCurrentUser();
@@ -351,7 +350,7 @@ public class ClientAccountController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/moveToTargetProject", method = RequestMethod.POST)
-    @RequiresPermissions("client:move")
+//    @RequiresPermissions("client:move")
     public Object moveToTargetProject(Integer projectId, Long[] clientId) {
         ProjectInfo projectInfo = projectService.findByProjectId(projectId.longValue());
         if (projectInfo.getStatus() == 1) {
@@ -399,7 +398,7 @@ public class ClientAccountController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/findByParam", method = RequestMethod.GET)
-    @RequiresPermissions(value = {"client:view"})
+//    @RequiresPermissions(value = {"client:view"})
     public Object findByParam(Integer projectId, Integer type, String param, Integer pageSize, Integer pageNum) {
         PageInfo pageInfo = null;
         switch (type) {
@@ -431,7 +430,7 @@ public class ClientAccountController extends BaseController {
      * @return
      */
     @PostMapping("/handleExportClientAccountList")
-    @RequiresPermissions("client:export")
+//    @RequiresPermissions("client:export")
     public Object handleExportClientAccountList(Integer projectId, String bids, HttpServletResponse response) {
         logger.info("导出终端账号列表");
         JSONObject jsonObject = JSONObject.parseObject(bids);

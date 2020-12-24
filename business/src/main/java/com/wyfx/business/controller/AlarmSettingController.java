@@ -4,7 +4,6 @@ import com.wyfx.business.controller.commons.MyResponseEntity;
 import com.wyfx.business.controller.commons.ResponseCode;
 import com.wyfx.business.entity.AlarmSetting;
 import com.wyfx.business.service.AlarmSettingService;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +29,7 @@ public class AlarmSettingController {
      * @return
      */
     @RequestMapping(value = "/updateSetting", method = RequestMethod.POST)
-    @RequiresPermissions("alarmSetting:update")
+//    @RequiresPermissions("alarmSetting:update")
     public Object updateSetting(@RequestBody AlarmSetting alarmSetting) {
         alarmSettingService.updateSetting(alarmSetting.getAlarmId(), alarmSetting);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
@@ -43,7 +42,7 @@ public class AlarmSettingController {
      * @return
      */
     @RequestMapping(value = "/findSetting", method = RequestMethod.GET)
-    @RequiresPermissions("alarmSetting:view")
+//    @RequiresPermissions("alarmSetting:view")
     public Object findSetting(Integer projectId) {
         if (projectId == null) {
             return new MyResponseEntity(ResponseCode.ERROR_SYS.getValue(), "未选中项目");

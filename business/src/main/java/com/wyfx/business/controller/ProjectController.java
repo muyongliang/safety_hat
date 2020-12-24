@@ -16,7 +16,6 @@ import com.wyfx.business.utils.AccountUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +47,7 @@ public class ProjectController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/addProject", method = RequestMethod.POST)
-    @RequiresPermissions("project:add")
+//    @RequiresPermissions("project:add")
     @AopLog(describe = "创建项目：", targetParamName = "projectInfo", operationType = OperationType.INSERT)
     public Object addProject(@RequestBody ProjectInfo projectInfo) {
         BusinessUser user = getCurrentUser();
@@ -88,7 +87,7 @@ public class ProjectController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/getProjectList", method = RequestMethod.GET)
-    @RequiresPermissions("project:view")
+//    @RequiresPermissions("project:view")
     public Object getProjectList() {
         BusinessUser businessUser = getCurrentUser();
         List<ProjectVo> list = projectService.getProjectList(businessUser.getBusinessId(), businessUser.getBid(), businessUser.getUserType());
@@ -102,7 +101,7 @@ public class ProjectController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/updateProject", method = RequestMethod.POST)
-    @RequiresPermissions("project:edit")
+//    @RequiresPermissions("project:edit")
     @AopLog(describe = "编辑项目：", targetParamName = "projectInfo", operationType = OperationType.UPDATE)
     public Object updateProject(@RequestBody ProjectInfo projectInfo) {
         if (projectInfo.getPid() != null) {

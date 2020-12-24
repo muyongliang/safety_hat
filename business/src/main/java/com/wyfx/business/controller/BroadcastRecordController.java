@@ -15,7 +15,6 @@ import com.wyfx.business.service.RecordManagerService;
 import com.wyfx.business.service.common.IExcelService;
 import com.wyfx.business.service.shiro.BusinessUserService;
 import com.wyfx.business.utils.DateUtil;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -76,7 +75,7 @@ public class BroadcastRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/detail/{id}", method = RequestMethod.GET)
-    @RequiresPermissions("broadcastRecord:detail")
+//    @RequiresPermissions("broadcastRecord:detail")
     public Object detail(@PathVariable("id") Long id) {
         RecordManager recordManager = recordManagerService.selectDetail(id);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue(), recordManager);
@@ -89,7 +88,7 @@ public class BroadcastRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    @RequiresPermissions("broadcastRecord:delete")
+//    @RequiresPermissions("broadcastRecord:delete")
     public Object checkedRecord(String ids) {
         recordManagerService.deleteRecord(ids);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
@@ -102,7 +101,7 @@ public class BroadcastRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/deleteAll", method = RequestMethod.POST)
-    @RequiresPermissions("broadcastRecord:clear")
+//    @RequiresPermissions("broadcastRecord:clear")
     @AopLog(describe = "清空广播记录", operationType = OperationType.CLEAR)
     public Object clearRecord() {
         recordManagerService.deleteAll(RecordTypeEnum.broadCast.getType());
@@ -117,7 +116,7 @@ public class BroadcastRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    @RequiresPermissions("broadcastRecord:view")
+//    @RequiresPermissions("broadcastRecord:view")
     public Object list(@RequestParam(required = false, defaultValue = "1", value = "page") int page,
                        @RequestParam(required = false, defaultValue = "10", value = "limit") int limit,
                        @RequestParam(required = false, value = "startTime") String startTime,
@@ -177,7 +176,7 @@ public class BroadcastRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/exportBroadcastRecord", method = RequestMethod.POST)
-    @RequiresPermissions("broadcastRecord:export")
+//    @RequiresPermissions("broadcastRecord:export")
     public Object exportBroadcastRecord(
             @RequestParam(required = false, value = "startTime") String startTime,
             @RequestParam(required = false, value = "endTime") String endTime,
@@ -234,7 +233,7 @@ public class BroadcastRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/exportBroadcastRecordExcel", method = RequestMethod.POST)
-    @RequiresPermissions("broadcastRecord:export")
+//    @RequiresPermissions("broadcastRecord:export")
     @Deprecated
     public Object exportBroadcastRecordExcel(HttpServletResponse response, String ids) {
         List<Long> list;

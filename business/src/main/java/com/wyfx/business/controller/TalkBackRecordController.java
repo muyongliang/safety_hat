@@ -13,7 +13,6 @@ import com.wyfx.business.entity.vo.TalkBackRecordVo;
 import com.wyfx.business.service.RecordManagerService;
 import com.wyfx.business.service.common.IExcelService;
 import com.wyfx.business.service.shiro.BusinessUserService;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +78,7 @@ public class TalkBackRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    @RequiresPermissions("talkBackRecord:delete")
+//    @RequiresPermissions("talkBackRecord:delete")
     public Object delete(String ids) {
         recordManagerService.deleteRecord(ids);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
@@ -92,7 +91,7 @@ public class TalkBackRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/deleteByGroupIdAndPid", method = RequestMethod.POST)
-    @RequiresPermissions("talkBackRecord:clear")
+//    @RequiresPermissions("talkBackRecord:clear")
     public Object deleteByGroupIdAndPid(@RequestParam(required = false, value = "groupId") Long groupId,
                                         @RequestParam(required = false, value = "pid") Long pid) {
         if (null == groupId || null == pid) {
@@ -110,7 +109,7 @@ public class TalkBackRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    @RequiresPermissions("talkBackRecord:view")
+//    @RequiresPermissions("talkBackRecord:view")
     public Object list(@RequestParam(required = false, defaultValue = "1", value = "page") int page,
                        @RequestParam(required = false, defaultValue = "10", value = "limit") int limit,
                        @RequestParam(required = false, value = "groupId") Long groupId,
@@ -137,7 +136,7 @@ public class TalkBackRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/listDetail", method = RequestMethod.POST)
-    @RequiresPermissions("talkBackRecord:viewDetail")
+//    @RequiresPermissions("talkBackRecord:viewDetail")
     public Object listDetail(@RequestParam(required = false, defaultValue = "1", value = "page") int page,
                              @RequestParam(required = false, defaultValue = "10", value = "limit") int limit,
                              @RequestParam(required = false, value = "startTime") String startTime,
@@ -194,7 +193,7 @@ public class TalkBackRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/exportTalkBackDetail", method = RequestMethod.POST)
-    @RequiresPermissions("talkBackRecord:export")
+//    @RequiresPermissions("talkBackRecord:export")
     public Object exportTalkBackDetail(
             @RequestParam(required = false, value = "startTime") String startTime,
             @RequestParam(required = false, value = "endTime") String endTime,
@@ -243,7 +242,7 @@ public class TalkBackRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/exportTalkBackExcel", method = RequestMethod.POST)
-    @RequiresPermissions("talkBackRecord:export")
+//    @RequiresPermissions("talkBackRecord:export")
     @Deprecated
     public Object exportTalkBackExcel(HttpServletResponse response, String ids) {
         logger.info("导出对讲记录明细excel");

@@ -24,7 +24,6 @@ import com.wyfx.business.utils.DateUtil;
 import com.wyfx.business.utils.FilePathUtil;
 import com.wyfx.business.utils.UserTypeAndStatus;
 import org.apache.commons.io.FileUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -149,7 +148,7 @@ public class SystemController extends BaseController {
      * @return
      */
     @PostMapping("/handleSelectLogByCondition")
-    @RequiresPermissions("log:view")
+//    @RequiresPermissions("log:view")
     public MyResponseEntity handleSelectLogByCondition(Integer accountType, Integer actionType, String startTime, String endTime, String executor, Integer pageNum, Integer pageSize) throws ParseException {
         logger.info("通过条件检索日志记录----操作日志" + accountType + "=" + actionType + "=");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -167,7 +166,7 @@ public class SystemController extends BaseController {
      * @return
      */
     @PostMapping("/handleExportLog")
-    @RequiresPermissions("log:export")
+//    @RequiresPermissions("log:export")
     public MyResponseEntity handleExportLog(HttpServletResponse response) {
         logger.info("导出日志记录");
         List<Log> logs = iLogService.exportLog(getCurrentUser().getBusinessId());
@@ -253,7 +252,7 @@ public class SystemController extends BaseController {
      * @return
      */
     @PostMapping("/handleUpdateAppVersionSet")
-    @RequiresPermissions("app:save")
+//    @RequiresPermissions("app:save")
     public MyResponseEntity handleAddAppUpdateSet(Integer updateSet) {
         logger.info("企业后台-----app版本更新设置为手动或自动更新");
         AppUpdateSetting appset = new AppUpdateSetting(1L, null, null, updateSet);
@@ -278,7 +277,7 @@ public class SystemController extends BaseController {
      * 手动更新 app
      */
     @GetMapping("/handleUpdateManuallyApp")
-    @RequiresPermissions("app:update")
+//    @RequiresPermissions("app:update")
     public MyResponseEntity handleUpdateManuallyApp() {
         logger.info("企业后台---根据终端app更新设置 手动推送app更新提示给终端app 获取总后台需要推送的数据格式进行推送");
         // 更新版本号
@@ -454,7 +453,7 @@ public class SystemController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/page/addPageSetting", method = RequestMethod.POST)
-    @RequiresPermissions("page_setting:save")
+//    @RequiresPermissions("page_setting:save")
     public Object addPageSetting(String name, MultipartFile logoImg, MultipartFile metaImg) {
         BusinessUser businessUser = getCurrentUser();
         systemServer.addLogoImg(name, logoImg, metaImg, businessUser);
@@ -508,7 +507,7 @@ public class SystemController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/video/addVideoParamSetting", method = RequestMethod.POST)
-    @RequiresPermissions("controller:addVideoParamSetting")
+//    @RequiresPermissions("controller:addVideoParamSetting")
     public Object addVideoParamSetting(Integer type, Integer bitRate) {
         BusinessUser businessUser = getCurrentUser();
         systemServer.addVideoParamSetting(type, bitRate, businessUser);
@@ -549,7 +548,7 @@ public class SystemController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/controller/destroyClientData", method = RequestMethod.POST)
-    @RequiresPermissions("controller:destroyClientData")
+//    @RequiresPermissions("controller:destroyClientData")
     public Object destroyClientData(Long clientId, String type) {
         try {
             String[] strArray = type.split("[^\\w\\d]");
@@ -577,7 +576,7 @@ public class SystemController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/controller/changeClientAccount", method = RequestMethod.POST)
-    @RequiresPermissions("controller:changeClientAccount")
+//    @RequiresPermissions("controller:changeClientAccount")
     public Object changeClientAccount(Long beforeClientId, Long afterClientId) {
         try {
             systemServer.changeClientAccount(beforeClientId, afterClientId);
@@ -597,7 +596,7 @@ public class SystemController extends BaseController {
 
 
     @RequestMapping(value = "/controller/synchronizeVideoParam", method = RequestMethod.POST)
-    @RequiresPermissions("controller:changeClientAccount")
+//    @RequiresPermissions("controller:changeClientAccount")
     public Object synchronizeVideoParam() {
         try {
             BusinessUser user = getCurrentUser();

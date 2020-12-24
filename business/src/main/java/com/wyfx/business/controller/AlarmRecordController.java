@@ -14,7 +14,6 @@ import com.wyfx.business.service.AlarmRecordService;
 import com.wyfx.business.service.common.IExcelService;
 import com.wyfx.business.service.shiro.BusinessUserService;
 import com.wyfx.business.utils.DateUtil;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,7 +107,7 @@ public class AlarmRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    @RequiresPermissions("alarmRecord:delete")
+//    @RequiresPermissions("alarmRecord:delete")
     public Object checkedRecord(String ids) {
         if (ids == null || "".equals(ids)) {
             return new MyResponseEntity(ResponseCode.ERROR_SYS.getValue(), "参数错误");
@@ -124,7 +123,7 @@ public class AlarmRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/deleteAll", method = RequestMethod.POST)
-    @RequiresPermissions("alarmRecord:clear")
+//    @RequiresPermissions("alarmRecord:clear")
     @AopLog(describe = "清空报警记录", operationType = OperationType.CLEAR)
     public Object clearRecord() {
         alarmRecordService.deleteAll();
@@ -139,7 +138,7 @@ public class AlarmRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    @RequiresPermissions("alarmRecord:view")
+//    @RequiresPermissions("alarmRecord:view")
     public Object list(@RequestParam(required = false, defaultValue = "1", value = "page") int page,
                        @RequestParam(required = false, defaultValue = "10", value = "limit") int limit,
                        @RequestParam(required = false, value = "pid") Long pid,
@@ -225,7 +224,7 @@ public class AlarmRecordController extends BaseController {
      * @return
      */
     @PostMapping("/export")
-    @RequiresPermissions("alarmRecord:export")
+//    @RequiresPermissions("alarmRecord:export")
     public MyResponseEntity export(@RequestParam(required = false, value = "pid") Long pid,
                                    @RequestParam(required = false, value = "aid") Long aid,
                                    @RequestParam(required = false, value = "startTime") String startTime,
@@ -269,7 +268,7 @@ public class AlarmRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/exportExcel", method = RequestMethod.POST)
-    @RequiresPermissions("alarmRecord:export")
+//    @RequiresPermissions("alarmRecord:export")
     @Deprecated
     public MyResponseEntity exportExcel(HttpServletResponse response, String ids) {
         List<Long> list;

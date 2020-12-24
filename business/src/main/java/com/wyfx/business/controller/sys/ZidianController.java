@@ -13,7 +13,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,7 +45,7 @@ public class ZidianController extends BaseController {
      */
     @RequestMapping(value = "/addWorkType", method = RequestMethod.POST)
     @AopLog(describe = "添加工种：", targetParamName = "workName", operationType = OperationType.INSERT)
-    @RequiresPermissions("zidian:addWorkType")
+//    @RequiresPermissions("zidian:addWorkType")
     @ApiOperation(value = "新增工种", httpMethod = "POST", produces = "form-data")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "zidianType", value = "字典类型", required = true, dataType = "Integer", example = "0"),
@@ -76,7 +75,7 @@ public class ZidianController extends BaseController {
      */
     @RequestMapping(value = "/updateWorkType", method = RequestMethod.POST)
     @AopLog(describe = "编辑工种：", targetParamName = "workName", operationType = OperationType.UPDATE)
-    @RequiresPermissions("zidian:edit")
+//    @RequiresPermissions("zidian:edit")
     @ApiOperation(value = "编辑工种", httpMethod = "POST", produces = "form-data")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "zid", value = "工种ID", required = true, dataType = "Integer", example = "0"),
@@ -102,7 +101,7 @@ public class ZidianController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/updateWorkTypeStatus", method = RequestMethod.POST)
-    @RequiresPermissions("zidian:changeStatus")
+//    @RequiresPermissions("zidian:changeStatus")
     @AopLog(describe = "更新字典的启用状态:", targetParamName = "name", operationType = OperationType.UPDATE)
     @ApiOperation(value = "更新字典启用状态", httpMethod = "POST", produces = "form-data")
     @ApiImplicitParams({
@@ -162,7 +161,7 @@ public class ZidianController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/changeZidianOrderNum", method = RequestMethod.POST)
-    @RequiresPermissions("zidian:order")
+//    @RequiresPermissions("zidian:order")
     @ApiOperation(value = "改变字典排序", httpMethod = "POST", produces = "form-data")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "zid", value = "工种ID", required = true, dataType = "Integer", example = "0"),

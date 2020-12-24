@@ -17,7 +17,6 @@ import com.wyfx.business.service.common.IExcelService;
 import com.wyfx.business.service.shiro.BusinessUserService;
 import com.wyfx.business.utils.DateUtil;
 import com.wyfx.business.utils.FilePathUtil;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -110,7 +109,7 @@ public class PhoneRecordController extends BaseController {
      */
 
     @RequestMapping(value = "/detail/{id}", method = RequestMethod.GET)
-    @RequiresPermissions("phoneRecord:viewDetail")
+//    @RequiresPermissions("phoneRecord:viewDetail")
     public Object detail(@PathVariable("id") Long id, HttpServletRequest request) {
         RecordManager recordManager = recordManagerService.selectDetail(id);
         String http = "http";
@@ -132,7 +131,7 @@ public class PhoneRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    @RequiresPermissions("phoneRecord:delete")
+//    @RequiresPermissions("phoneRecord:delete")
     public Object checkedRecord(String ids) {
         recordManagerService.deleteRecord(ids);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
@@ -145,7 +144,7 @@ public class PhoneRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/deleteAll", method = RequestMethod.POST)
-    @RequiresPermissions("phoneRecord:clear")
+//    @RequiresPermissions("phoneRecord:clear")
     @AopLog(describe = "清空电话记录：", operationType = OperationType.CLEAR)
     public Object clearRecord() {
         recordManagerService.deleteAll(RecordTypeEnum.phone.getType());
@@ -160,7 +159,7 @@ public class PhoneRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    @RequiresPermissions("phoneRecord:view")
+//    @RequiresPermissions("phoneRecord:view")
     public Object list(@RequestParam(required = false, defaultValue = "1", value = "page") int page,
                        @RequestParam(required = false, defaultValue = "10", value = "limit") int limit,
                        @RequestParam(required = false, value = "startTime") String startTime,
@@ -228,7 +227,7 @@ public class PhoneRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/exportPhoneRecord", method = RequestMethod.POST)
-    @RequiresPermissions(value = {"phoneRecord:export", "phoneRecord:download"})
+//    @RequiresPermissions(value = {"phoneRecord:export", "phoneRecord:download"})
     public Object exportPhoneRecord(
             @RequestParam(required = false, value = "startTime") String startTime,
             @RequestParam(required = false, value = "endTime") String endTime,
@@ -290,7 +289,7 @@ public class PhoneRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/exportPhoneRecordExcel", method = RequestMethod.POST)
-    @RequiresPermissions(value = {"phoneRecord:export", "phoneRecord:download"})
+//    @RequiresPermissions(value = {"phoneRecord:export", "phoneRecord:download"})
     @Deprecated
     public Object exportExcel(HttpServletResponse response, String ids) {
         List<Long> list;

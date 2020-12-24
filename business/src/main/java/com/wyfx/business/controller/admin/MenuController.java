@@ -12,7 +12,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -124,7 +123,7 @@ public class MenuController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/findPermissions", method = RequestMethod.GET)
-    @RequiresPermissions("menu:findPromise")
+//    @RequiresPermissions("menu:findPromise")
     @ApiOperation(value = "权限配置加载权限", httpMethod = "GET", produces = "form-data")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mid", value = "权限ID", required = true, dataType = "Integer", example = "1"),
@@ -146,7 +145,7 @@ public class MenuController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/updatePermissions", method = RequestMethod.POST)
-    @RequiresPermissions("menu:editPromise")
+//    @RequiresPermissions("menu:editPromise")
     @ApiOperation(value = "更新权限", httpMethod = "POST", produces = "form-data")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "roleId", value = "角色ID", required = true, dataType = "Long", example = "1")

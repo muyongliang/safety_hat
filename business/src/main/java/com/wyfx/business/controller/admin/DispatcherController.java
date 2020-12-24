@@ -25,7 +25,6 @@ import com.wyfx.business.service.trace.GpsService;
 import com.wyfx.business.utils.AccountUtil;
 import com.wyfx.business.utils.MD5Util;
 import com.wyfx.business.utils.UserTypeAndStatus;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +81,7 @@ public class DispatcherController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/registerDispatcher", method = RequestMethod.POST)
-    @RequiresPermissions("dispatcher:add")
+//    @RequiresPermissions("dispatcher:add")
     @AopLog(describe = "创建调度员账号：", targetParamName = "account", operationType = OperationType.INSERT)
     public Object registerDispatcher(Integer projectId, String account, String pwd, String name, String tel) {
         if (!AccountUtil.checkAccountName(account) || name.length() > 20) {
@@ -120,7 +119,7 @@ public class DispatcherController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/editDispatcher", method = RequestMethod.POST)
-    @RequiresPermissions("dispatcher:edit")
+//    @RequiresPermissions("dispatcher:edit")
     @AopLog(describe = "编辑调度员账号：", targetParamName = "account", operationType = OperationType.INSERT)
     public Object editDispatcher(Integer bid, String account, String pwd, String name, String tel) {
         if (!AccountUtil.checkAccountName(account) || name.length() > 20) {
@@ -151,7 +150,7 @@ public class DispatcherController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/changeDispatcherStatus", method = RequestMethod.GET)
-    @RequiresPermissions("dispatcher:changeDispatcherStatus")
+//    @RequiresPermissions("dispatcher:changeDispatcherStatus")
     @AopLog(describe = "更改调度员的启用/禁用状态：", targetParamName = "userName", operationType = OperationType.UPDATE)
     public Object changeDispatcherStatus(Integer bid, Integer status, @RequestParam(required = false) String userName) {
         BusinessUser currentUser = getCurrentUser();
@@ -181,7 +180,7 @@ public class DispatcherController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/resetPassword", method = RequestMethod.GET)
-    @RequiresPermissions("dispatcher:resetPassword")
+//    @RequiresPermissions("dispatcher:resetPassword")
     @AopLog(describe = "重置密码：", targetParamName = "userName", operationType = OperationType.RESET)
     public Object resetPassword(Integer bid, @RequestParam(required = false) String userName) {
         BusinessUser currentUser = getCurrentUser();
@@ -210,7 +209,7 @@ public class DispatcherController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/moveDispatcher", method = RequestMethod.POST)
-    @RequiresPermissions("dispatcher:move")
+//    @RequiresPermissions("dispatcher:move")
     public Object moveDispatcher(Long[] bid, Integer projectId) {
         ProjectInfo projectInfo = projectService.findByProjectId(projectId.longValue());
         if (projectInfo.getStatus() == 1) {
@@ -277,7 +276,7 @@ public class DispatcherController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/findByParam", method = RequestMethod.GET)
-    @RequiresPermissions("dispatcher:view")
+//    @RequiresPermissions("dispatcher:view")
     public Object findByParam(Integer projectId, Integer type, String param, Integer pageSize, Integer pageNum) {
         PageInfo<DispatcherVo> pageInfo = businessUserService.findByParam(projectId, type, param, pageSize, pageNum);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue(), pageInfo);
@@ -326,7 +325,7 @@ public class DispatcherController extends BaseController {
      * @return
      */
     @PostMapping("/handleExportDispatcher")
-    @RequiresPermissions("dispatcher:export")
+//    @RequiresPermissions("dispatcher:export")
     public Object handleExportDispatcher(Integer projectId, String bids, HttpServletResponse response) {
         logger.info("导出调度员列表");
         JSONObject jsonObject = JSONObject.parseObject(bids);

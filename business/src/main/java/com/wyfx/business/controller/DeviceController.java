@@ -19,7 +19,6 @@ import com.wyfx.business.service.DeviceService;
 import com.wyfx.business.service.common.IExcelService;
 import com.wyfx.business.utils.DateUtil;
 import com.wyfx.business.utils.poi.ExcelUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +69,7 @@ public class DeviceController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/addDeviceInfo", method = RequestMethod.POST)
-    @RequiresPermissions("device:add")
+//    @RequiresPermissions("device:add")
     @AopLog(describe = "添加设备：", targetParamName = "IMEI", operationType = OperationType.INSERT)
     public Object addDeviceInfo(String deviceNum, Integer type, String IMEI) {
         if (deviceNum == null || deviceNum.equals("") || IMEI == null || IMEI.equals("")) {
@@ -116,7 +115,7 @@ public class DeviceController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/editDeviceInfo", method = RequestMethod.POST)
-    @RequiresPermissions("device:edit")
+//    @RequiresPermissions("device:edit")
     @AopLog(describe = "编辑设备：", targetParamName = "IMEI", operationType = OperationType.UPDATE)
     public Object editDeviceInfo(Integer deviceId, String deviceNum, Integer type, String IMEI) {
         if (deviceNum == null || deviceNum.equals("") || IMEI == null || IMEI.equals("")) {
@@ -165,14 +164,14 @@ public class DeviceController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/deleteDevice", method = RequestMethod.GET)
-    @RequiresPermissions("device:delete")
+//    @RequiresPermissions("device:delete")
     public Object deleteDevice(Integer deviceId) {
         deviceService.deleteDeviceInfo(deviceId);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
     }
 
     @RequestMapping(value = "/deleteDevices", method = RequestMethod.GET)
-    @RequiresPermissions("device:delete")
+//    @RequiresPermissions("device:delete")
     @AopLog(describe = "删除设备：", targetParamName = "imei", operationType = OperationType.DELETE)
     public Object deleteDevice(String deviceIds, @RequestParam(required = false) String imei) {
         deviceService.deleteDeviceInfo(deviceIds);
@@ -186,7 +185,7 @@ public class DeviceController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/findDetailById", method = RequestMethod.GET)
-    @RequiresPermissions("device:findDetail")
+//    @RequiresPermissions("device:findDetail")
     public Object findDetailById(Integer deviceId) {
         DeviceInfo deviceInfo = deviceService.findByDetail(deviceId);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue(), deviceInfo);
@@ -260,7 +259,7 @@ public class DeviceController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/findDevicesBy", method = RequestMethod.GET)
-    @RequiresPermissions("device:view")
+//    @RequiresPermissions("device:view")
     public Object findDevicesBy(Integer type, String param, Integer pageSize, Integer pageNum,
                                 @RequestParam(required = false, value = "projectId") Integer projectId) {
         BusinessUser businessUser = getCurrentUser();
@@ -300,7 +299,7 @@ public class DeviceController extends BaseController {
      * @return
      */
     @PostMapping("/handleImportDeviceList")
-    @RequiresPermissions("device:import")
+//    @RequiresPermissions("device:import")
     public Object handleImportDeviceList(@RequestParam("file") MultipartFile file) {
         logger.info("查看文件是否上传成功==" + file);
         //解析excel，如果有title和header行则添加 占几行则填写几行
@@ -363,7 +362,7 @@ public class DeviceController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/handleExportDeviceList", method = RequestMethod.POST)
-    @RequiresPermissions("device:export")
+//    @RequiresPermissions("device:export")
     public Object handleExportDeviceList(String dids, HttpServletResponse response) {
         logger.info("导出excel 设备列表dids=" + dids);
         List<Long> list = JSONArray.parseArray(dids).toJavaList(Long.class);

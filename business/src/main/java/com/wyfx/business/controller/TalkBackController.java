@@ -13,7 +13,6 @@ import com.wyfx.business.entity.vo.TalkBackGroupVo;
 import com.wyfx.business.service.ClientAccountService;
 import com.wyfx.business.service.TalkBackGroupMemberService;
 import com.wyfx.business.service.TalkBackService;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,7 +45,7 @@ public class TalkBackController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/addTalkBack", method = RequestMethod.POST)
-    @RequiresPermissions("talkBackGroup:add")
+//    @RequiresPermissions("talkBackGroup:add")
     public Object addTalkBack(String name, Integer isRecording) {
         BusinessUser businessUser = getCurrentUser();
         /*TalkBackGroup talkBackGroup=new TalkBackGroup(null,name,0,isRecording,0,new Date(),businessUser.getUserName(),businessUser.getBusinessId(),businessUser.getProjectId());*/
@@ -90,7 +89,7 @@ public class TalkBackController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/updateTalkBack", method = RequestMethod.POST)
-    @RequiresPermissions("talkBackGroup:edit")
+//    @RequiresPermissions("talkBackGroup:edit")
     public Object updateTalkBack(Integer groupId, String name, Integer isRecording) {
         TalkBackGroup talkBackGroup = new TalkBackGroup(groupId.longValue(), name, null, isRecording, null, null, null, null, null);
         talkBackService.updateTalkBack(groupId.longValue(), talkBackGroup, null, false);
@@ -105,7 +104,7 @@ public class TalkBackController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/updateMember", method = RequestMethod.POST)
-    @RequiresPermissions("talkBackGroup:memberManager")
+//    @RequiresPermissions("talkBackGroup:memberManager")
     public Object updateMember(Integer groupId, String params) {
         BusinessUser businessUser = getCurrentUser();
         JSONObject jsonObject = JSONObject.parseObject(params);
@@ -122,7 +121,7 @@ public class TalkBackController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/switchActivateStatus", method = RequestMethod.GET)
-    @RequiresPermissions("talkBackGroup:switch")
+//    @RequiresPermissions("talkBackGroup:switch")
     public Object switchActivateStatus(Integer groupId) {
         BusinessUser businessUser = getCurrentUser();
         talkBackService.switchActivateStatus(groupId.longValue(), businessUser.getProjectId().intValue(), businessUser);
@@ -137,7 +136,7 @@ public class TalkBackController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/deleteTalkBack", method = RequestMethod.GET)
-    @RequiresPermissions("talkBackGroup:delete")
+//    @RequiresPermissions("talkBackGroup:delete")
     public Object deleteTalkBack(Integer groupId) {
         talkBackService.deleteTalkBack(groupId.longValue());
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
@@ -193,7 +192,7 @@ public class TalkBackController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/findTalkBackByName", method = RequestMethod.POST)
-    @RequiresPermissions("talkBackGroup:view")
+//    @RequiresPermissions("talkBackGroup:view")
     public Object findTalkBackByName(String name, Integer pageSize, Integer pageNum) {
         BusinessUser businessUser = getCurrentUser();
         PageInfo pageInfo = talkBackService.findTalkBackByName(businessUser.getProjectId().intValue(), name, pageSize, pageNum);

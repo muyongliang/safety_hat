@@ -16,7 +16,6 @@ import com.wyfx.business.service.sys.SubManagerService;
 import com.wyfx.business.utils.AccountUtil;
 import com.wyfx.business.utils.MD5Util;
 import com.wyfx.business.utils.UserTypeAndStatus;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +54,7 @@ public class SubManagerController extends BaseController {
      */
     @PostMapping("/handleAddSubManager")
     @AopLog(describe = "创建子账号：", targetParamName = "subManagerVo", operationType = OperationType.INSERT)
-    @RequiresPermissions("subAdministrator:add")
+//    @RequiresPermissions("subAdministrator:add")
     public MyResponseEntity handleAddSubManager(SubManagerVo subManagerVo, String roles) {
         logger.info("添加子账号" + subManagerVo + "角色列表=" + roles);
         if (!AccountUtil.vilicationPhone(subManagerVo.getMobile())) {
@@ -118,7 +117,7 @@ public class SubManagerController extends BaseController {
      * @return
      */
     @GetMapping("/handleSelectByState")
-    @RequiresPermissions("subAdministrator:select")
+//    @RequiresPermissions("subAdministrator:select")
     public MyResponseEntity handleSelectByState(String state, Integer pageNum, Integer pageSize) {
         BusinessUser currentUser = getCurrentUser();
         Map map = subManagerService.selectSubManagerByState(
@@ -133,7 +132,7 @@ public class SubManagerController extends BaseController {
      * @return
      */
     @GetMapping("/handleSelectById")
-    @RequiresPermissions("subAdministrator:view")
+//    @RequiresPermissions("subAdministrator:view")
     public MyResponseEntity handleSelectById(Integer bid) {
         System.out.println("bid================" + bid);
         Map map = subManagerService.selectSubManagerById(bid);
@@ -149,7 +148,7 @@ public class SubManagerController extends BaseController {
      * @return
      */
     @PostMapping("/handleEditSubManager")
-    @RequiresPermissions("subAdministrator:edit")
+//    @RequiresPermissions("subAdministrator:edit")
     public MyResponseEntity handleEditSubManager(SubManagerVo subManagerVo, String roles) {
         logger.info("编辑 禁用 重置密码");
         boolean b = subManagerService.editSubManager(subManagerVo, roles);
@@ -167,7 +166,7 @@ public class SubManagerController extends BaseController {
      * @return
      */
     @GetMapping("/handleResetPwd")
-    @RequiresPermissions("subAdministrator:resetPassword")
+//    @RequiresPermissions("subAdministrator:resetPassword")
     public MyResponseEntity handleResetPwd(SubManagerVo subManagerVo) {
         logger.info("重置密码");
         boolean b = subManagerService.resetPwd(subManagerVo);
@@ -184,7 +183,7 @@ public class SubManagerController extends BaseController {
      * @return
      */
     @GetMapping("/handleUpdateStatus")
-    @RequiresPermissions("subAdministrator:changeStatus")
+//    @RequiresPermissions("subAdministrator:changeStatus")
     public MyResponseEntity handleUpdateStatus(SubManagerVo subManagerVo) {
         boolean b = subManagerService.updateStatus(subManagerVo);
         if (!b) {
@@ -200,7 +199,7 @@ public class SubManagerController extends BaseController {
      * @return
      */
     @GetMapping("/handleSelectByCondition")
-    @RequiresPermissions("subAdministrator:select")
+//    @RequiresPermissions("subAdministrator:select")
     public MyResponseEntity handleSelectByCondition(SubManagerVo subManagerVo, Integer pageNum, Integer pageSize) {
         System.out.println("sublist=" + subManagerVo);
         BusinessUser user = getCurrentUser();

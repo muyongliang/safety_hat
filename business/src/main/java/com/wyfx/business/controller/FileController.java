@@ -20,7 +20,6 @@ import com.wyfx.business.service.sys.IBugLogService;
 import com.wyfx.business.utils.FilePathUtil;
 import com.wyfx.business.utils.FileUploadUtil;
 import com.wyfx.business.utils.UserTypeAndStatus;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +71,9 @@ public class FileController extends BaseController {
     }
 
     @RequestMapping(value = "/download", method = RequestMethod.GET)
-    @RequiresPermissions("file:download")
+
+//    @RequiresPermissions("file:download")
+
     public Object download(Integer fid, HttpServletRequest request, HttpServletResponse response) {
         //http://192.168.0.16:8083\\safety-hat\\sxlc\\2019-12-21\\broadcast\\1576911516217.wav
         try {
@@ -200,7 +201,7 @@ public class FileController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/detail/{id}", method = RequestMethod.GET)
-    @RequiresPermissions("file:detail")
+//    @RequiresPermissions("file:detail")
     public Object detail(@PathVariable("id") Long id, HttpServletRequest request) {
         String url = fileService.getUrlById(id, request);
         if (url == null) {
@@ -255,21 +256,21 @@ public class FileController extends BaseController {
     }
 
     @RequestMapping(value = "/editFileName", method = RequestMethod.POST)
-    @RequiresPermissions("file:edit")
+//    @RequiresPermissions("file:edit")
     public Object editFileName(Long fid, String fileName) {
         fileService.updateFileName(fid, fileName);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
     }
 
     @RequestMapping(value = "/deleteFile", method = RequestMethod.POST)
-    @RequiresPermissions("file:delete")
+//    @RequiresPermissions("file:delete")
     public Object deleteFile(Long fid) {
         fileService.deleteFile(fid);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
     }
 
     @RequestMapping(value = "/deleteFiles", method = RequestMethod.POST)
-    @RequiresPermissions("file:delete")
+//    @RequiresPermissions("file:delete")
     public Object deleteFile(String fids) {
         fileService.deleteFile(fids);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
@@ -377,7 +378,7 @@ public class FileController extends BaseController {
      * @return
      */
     @PostMapping("/exportImg")
-    @RequiresPermissions("file:exportImg")
+//    @RequiresPermissions("file:exportImg")
     public MyResponseEntity exportImg(String fileIds, HttpServletResponse response) {
         List<Long> list = JSONArray.parseArray(fileIds).toJavaList(Long.class);
         //文件类型{1:照片;2:视频}
@@ -394,7 +395,7 @@ public class FileController extends BaseController {
      * @return
      */
     @PostMapping("/exportVideo")
-    @RequiresPermissions("file:exportVideo")
+//    @RequiresPermissions("file:exportVideo")
     public MyResponseEntity exportVideo(String fileIds, HttpServletResponse response) {
         List<Long> list = JSONArray.parseArray(fileIds).toJavaList(Long.class);
         //文件类型{1:照片;2:视频}

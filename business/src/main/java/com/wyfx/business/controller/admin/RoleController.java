@@ -13,7 +13,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,7 +41,7 @@ public class RoleController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/addRole", method = RequestMethod.POST)
-    @RequiresPermissions("role:add")
+//    @RequiresPermissions("role:add")
     @AopLog(describe = "创建角色：", targetParamName = "roleName", operationType = OperationType.INSERT)
     @ApiOperation(value = "创建角色", httpMethod = "POST", produces = "form-data")
     @ApiImplicitParams({
@@ -74,7 +73,7 @@ public class RoleController extends BaseController {
      */
     @RequestMapping(value = "/editRole", method = RequestMethod.POST)
     @AopLog(describe = "编辑角色：", targetParamName = "roleName", operationType = OperationType.UPDATE)
-    @RequiresPermissions("role:edit")
+//    @RequiresPermissions("role:edit")
     @ApiOperation(value = "编辑角色", httpMethod = "POST", produces = "form-data")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "roleId", value = "角色ID", required = true, dataType = "Integer"),
@@ -101,7 +100,7 @@ public class RoleController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/findDetailById", method = RequestMethod.GET)
-    @RequiresPermissions("role:select")
+//    @RequiresPermissions("role:select")
     @ApiOperation(value = "查询角色详情", httpMethod = "GET", produces = "form-data")
     @ApiImplicitParam(name = "roleId", value = "角色ID", required = true, dataType = "Integer")
     public Object findDetailById(Integer roleId) {
@@ -110,7 +109,7 @@ public class RoleController extends BaseController {
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    @RequiresPermissions("role:delete")
+//    @RequiresPermissions("role:delete")
     @AopLog(describe = "删除角色：", targetParamName = "roleName", operationType = OperationType.DELETE)
     @ApiOperation(value = "删除角色", httpMethod = "POST", produces = "form-data")
     @ApiImplicitParam(name = "roleId", value = "角色ID", required = true, dataType = "Integer")
@@ -129,7 +128,7 @@ public class RoleController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/findRoles", method = RequestMethod.GET)
-    @RequiresPermissions("role:view")
+//    @RequiresPermissions("role:view")
     @ApiOperation(value = "分页查询角色信息/根据角色名称查询", httpMethod = "GET", produces = "form-data")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "roleName", value = "角色名称", required = true, dataType = "String"),

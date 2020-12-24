@@ -17,7 +17,6 @@ import com.wyfx.business.service.RecordManagerService;
 import com.wyfx.business.service.common.IExcelService;
 import com.wyfx.business.service.shiro.BusinessUserService;
 import com.wyfx.business.utils.DateUtil;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -81,7 +80,7 @@ public class PatrolRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/detail/{id}", method = RequestMethod.GET)
-    @RequiresPermissions("patrolRecord:viewDetail")
+//    @RequiresPermissions("patrolRecord:viewDetail")
     public Object detail(@PathVariable("id") Long id) {
         RecordManager recordManager = recordManagerService.selectDetail(id);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue(), recordManager);
@@ -100,7 +99,7 @@ public class PatrolRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    @RequiresPermissions("patrolRecord:delete")
+//    @RequiresPermissions("patrolRecord:delete")
     public Object checkedRecord(String ids) {
         recordManagerService.deleteRecord(ids);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
@@ -113,7 +112,7 @@ public class PatrolRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/deleteAll", method = RequestMethod.POST)
-    @RequiresPermissions("patrolRecord:clear")
+//    @RequiresPermissions("patrolRecord:clear")
     @AopLog(describe = "清空巡检记录", operationType = OperationType.CLEAR)
     public Object clearRecord() {
         recordManagerService.deleteAll(RecordTypeEnum.patrol.getType());
@@ -128,7 +127,7 @@ public class PatrolRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    @RequiresPermissions("patrolRecord:view")
+//    @RequiresPermissions("patrolRecord:view")
     public Object list(@RequestParam(required = false, defaultValue = "1", value = "page") int page,
                        @RequestParam(required = false, defaultValue = "10", value = "limit") int limit,
                        @RequestParam(required = false, value = "projectId") Long projectId,
@@ -193,7 +192,7 @@ public class PatrolRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/exportPatrolRecord", method = RequestMethod.POST)
-    @RequiresPermissions("patrolRecord:export")
+//    @RequiresPermissions("patrolRecord:export")
     public Object exportPatrolRecord(
             @RequestParam(required = false, value = "projectId") Long projectId,
             @RequestParam(required = false, value = "startTime") String startTime,
@@ -241,7 +240,7 @@ public class PatrolRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/exportPatrolRecordExcel", method = RequestMethod.POST)
-    @RequiresPermissions("patrolRecord:export")
+//    @RequiresPermissions("patrolRecord:export")
     @Deprecated
     public Object exportPatrolRecordExcel(HttpServletResponse response, String ids) {
         List<Long> list;

@@ -12,7 +12,6 @@ import com.wyfx.business.service.AlarmRecordService;
 import com.wyfx.business.service.common.IExcelService;
 import com.wyfx.business.service.shiro.BusinessUserService;
 import com.wyfx.business.service.trace.AlarmRangeService;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -199,7 +198,7 @@ public class AlarmRangeController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/deleteRange", method = RequestMethod.POST)
-    @RequiresPermissions("alarmRange:delete")
+//    @RequiresPermissions("alarmRange:delete")
     public Object deleteRange(Long rangeId, Integer fence_ids) {
         alarmRangeService.deleteAlarmRange(rangeId, fence_ids);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
@@ -212,7 +211,7 @@ public class AlarmRangeController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/addFence", method = RequestMethod.POST)
-    @RequiresPermissions("alarmRange:add")
+//    @RequiresPermissions("alarmRange:add")
     public Object addFence(@RequestBody AlarmRangeVo alarmRangeVo) {
         try {
             alarmRangeService.addAlarmRange(alarmRangeVo);
@@ -223,7 +222,7 @@ public class AlarmRangeController extends BaseController {
     }
 
     @RequestMapping(value = "/editFence", method = RequestMethod.POST)
-    @RequiresPermissions("alarmRange:edit")
+//    @RequiresPermissions("alarmRange:edit")
     public Object editFence(@RequestParam(required = false, value = "fence_id") Integer fence_id, @RequestBody AlarmRangeVo alarmRangeVo) {
         try {
             alarmRangeService.updateAlarmRange(fence_id, alarmRangeVo);
@@ -253,7 +252,7 @@ public class AlarmRangeController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/managerClient", method = RequestMethod.POST)
-    @RequiresPermissions("alarmRange:managerClient")
+//    @RequiresPermissions("alarmRange:managerClient")
     public Object managerClient(Long projectId, @RequestBody RangeMemberVo rangeMemberVo) {
         alarmRangeService.updateRangeMember(projectId, rangeMemberVo);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
