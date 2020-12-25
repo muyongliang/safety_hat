@@ -154,30 +154,45 @@
     </update>
 
     <select id="selectRecord" resultType="com.wyfx.business.entity.vo.AlarmRecordVo">
-        /*select a.id as `id`,b.type as alarmType,a.pid as pid,c.project_name as projectName ,a.bid as bid ,d.`name` as
-        `name`,d.user_name as account,a.message as content,a.record_time as recordTime
-        from alarm_record a,alarm_type b,project_info c,business_user d
-        where a.aid = b.aid and a.pid = c.pid and a.bid = d.bid*/
-        select a.id as `id`,a.aid,b.type as alarmType,a.pid as pid,c.project_name as projectName ,a.bid as bid ,d.`name`
-        as `name`,d.user_name as account,b.tip_message as content,a.record_time as recordTime,z.name as workType
-        from alarm_record a,alarm_type b,project_info c,business_user d,zidian_setting z
-        where a.aid = b.aid and a.pid = c.pid and a.bid = d.bid and z.zid=d.zidian_id and
-        d.business_id=#{alarmRecord.businessId}
+        SELECT
+        alarm_record.id AS `id`,
+        alarm_record.aid,
+        alarm_record.pid AS pid,
+        alarm_record.bid AS bid,
+        alarm_record.record_time AS recordTime,
+        alarm_type.type AS alarmType,
+        alarm_type.tip_message AS content,
+        project_info.project_name AS projectName,
+        business_user.`name` AS `name`,
+        business_user.user_name AS account,
+        zidian_setting. NAME AS workType
+        FROM
+        alarm_record,
+        alarm_type,
+        project_info,
+        business_user,
+        zidian_setting
+        WHERE
+        alarm_record.aid = alarm_type.aid
+        AND alarm_record.pid = project_info.pid
+        AND alarm_record.bid = business_user.bid
+        AND zidian_setting.zid = business_user.zidian_id
+        AND business_user.business_id = #{alarmRecord.businessId}
         <if test="alarmRecord.pid != null">
-            and a.pid = #{alarmRecord.pid}
+            and alarm_record.pid = #{alarmRecord.pid}
         </if>
         <if test="alarmRecord.aid != null">
-            and a.aid = #{alarmRecord.aid}
+            and alarm_record.aid = #{alarmRecord.aid}
         </if>
         <if test="alarmRecord.bid != null">
-            and a.bid = #{alarmRecord.bid}
+            and alarm_record.bid = #{alarmRecord.bid}
         </if>
         <if test="alarmRecord.sendName != null">
-            and a.send_name = #{alarmRecord.sendName}
+            and alarm_record.send_name = #{alarmRecord.sendName}
         </if>
         <if test="alarmRecord.startTime != null">
             <if test="alarmRecord.endTime != null">
-                and a.record_time between #{alarmRecord.startTime} and #{alarmRecord.endTime}
+                and alarm_record.record_time between #{alarmRecord.startTime} and #{alarmRecord.endTime}
             </if>
         </if>
         order by record_time desc

@@ -65,12 +65,12 @@ public class AlarmRecordController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/listByAid", method = RequestMethod.GET)
-    public Object list(@RequestParam(required = false, defaultValue = "1", value = "page") int page,
-                       @RequestParam(required = false, defaultValue = "20", value = "limit") int limit,
-                       @RequestParam(required = true, defaultValue = "1", value = "aid") long aid,
-                       @RequestParam(required = false, value = "beginTime") String beginTime,
-                       @RequestParam(required = false, value = "endTime") String endTime,
-                       @RequestParam(required = false, value = "userName") String userName) {
+    public Object listByAid(@RequestParam(required = false, defaultValue = "1", value = "page") int page,
+                            @RequestParam(required = false, defaultValue = "20", value = "limit") int limit,
+                            @RequestParam(required = true, defaultValue = "1", value = "aid") long aid,
+                            @RequestParam(required = false, value = "beginTime") String beginTime,
+                            @RequestParam(required = false, value = "endTime") String endTime,
+                            @RequestParam(required = false, value = "userName") String userName) {
         try {
             BusinessUser businessUser = getCurrentUser();
             Long pid = businessUser.getProjectId();
