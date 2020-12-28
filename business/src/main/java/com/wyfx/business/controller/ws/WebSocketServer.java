@@ -21,7 +21,6 @@ import com.wyfx.business.utils.UserTypeAndStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
@@ -188,7 +187,8 @@ public class WebSocketServer {
 
     @OnOpen
     public void onOpen(Session session, @PathParam("bid") String sid, @PathParam("source") String source) {
-
+        onlineNum.incrementAndGet();
+        log.info("建立链接,现有链接:{}个", onlineNum);
         try {
             if (sid == null) {
                 session.close();
@@ -197,7 +197,7 @@ public class WebSocketServer {
             }
             businessUser = businessUserService.findByUserName(sid);
             if (businessUser == null) {
-                log.debug(sid + ":用户未登录!");
+                log.debug(sid + ":用户不存在!");
                 session.close();
                 return;
             }
@@ -295,6 +295,8 @@ public class WebSocketServer {
 
     @OnClose
     public void onClose(Session session, CloseReason reason, @PathParam("source") String source) {
+        int i = onlineNum.decrementAndGet();
+        log.info("session:{}断开链接,reason:{},现有链接:{}个", JSON.toJSONString(session), JSON.toJSONString(reason), onlineNum);
         close(session, source);
         log.error("连接关闭:>>>>" + this.sid, reason);
         String message = JSON.toJSONString(new BaseCommand(WsConstant.updateOnline.name(), "", ""));
@@ -365,7 +367,7 @@ public class WebSocketServer {
         }
     }
 
-    @Scheduled(fixedRate = 30 * 1000)
+    //    @Scheduled(fixedRate = 30 * 1000)
     private void heartCheck() {
         log.info("30s定时检查心跳更改用户状态");
         log.info("+++++++++{}", baseCommands);
