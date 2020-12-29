@@ -18,23 +18,25 @@ import com.wyfx.business.service.TalkBackService;
 import com.wyfx.business.service.shiro.BusinessUserService;
 import com.wyfx.business.utils.ConstantList;
 import com.wyfx.business.utils.UserTypeAndStatus;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 @ServerEndpoint(value = "/video/{source}/{bid}")
 @Slf4j
+@Data
 public class WebSocketServer {
 
     //concurrent包的线程安全Set，用来存放每个客户端对应的MyWebSocket对象。
@@ -45,18 +47,38 @@ public class WebSocketServer {
     private static RecordManagerService recordManagerService;
     private static OfflineBroadcastMessageService offlineBroadcastMessageService;
     private static TalkBackService talkBackService;
+
+    //  初始化静态变量
+    @Autowired
+    public void setBusinessUserService(BusinessUserService businessUserService) {
+        WebSocketServer.businessUserService = businessUserService;
+    }
+
+    @Autowired
+    public void setTalkBackGroupMemberService(TalkBackGroupMemberService talkBackGroupMemberService) {
+        WebSocketServer.talkBackGroupMemberService = talkBackGroupMemberService;
+    }
+
+    @Autowired
+    public void setRecordManagerService(RecordManagerService recordManagerService) {
+        WebSocketServer.recordManagerService = recordManagerService;
+    }
+
+    @Autowired
+    public void setOfflineBroadcastMessageService(OfflineBroadcastMessageService offlineBroadcastMessageService) {
+        WebSocketServer.offlineBroadcastMessageService = offlineBroadcastMessageService;
+    }
+
+    @Autowired
+    public void setTalkBackService(TalkBackService talkBackService) {
+        WebSocketServer.talkBackService = talkBackService;
+    }
+
     //与某个客户端的连接会话，需要通过它来给客户端发送数据 control
     private Session session;
     private String sid;
     private String source;
     private BusinessUser businessUser;
-
-    //静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
-    private static AtomicInteger onlineNum = new AtomicInteger();
-
-    //concurrent包的线程安全Set，用来存放每个客户端对应的WebSocketServer对象。
-    private static ConcurrentHashMap<String, Session> sessionPools = new ConcurrentHashMap<>();
-
 
     /**
      * 给所有(android)用户发送消息
@@ -160,62 +182,32 @@ public class WebSocketServer {
         }
     }
 
-    @Autowired
-    public void setBusinessUserService(BusinessUserService businessUserService) {
-        WebSocketServer.businessUserService = businessUserService;
-    }
-
-    @Autowired
-    public void setTalkBackGroupMemberService(TalkBackGroupMemberService talkBackGroupMemberService) {
-        WebSocketServer.talkBackGroupMemberService = talkBackGroupMemberService;
-    }
-
-    @Autowired
-    public void setRecordManagerService(RecordManagerService recordManagerService) {
-        WebSocketServer.recordManagerService = recordManagerService;
-    }
-
-    @Autowired
-    public void setOfflineBroadcastMessageService(OfflineBroadcastMessageService offlineBroadcastMessageService) {
-        WebSocketServer.offlineBroadcastMessageService = offlineBroadcastMessageService;
-    }
-
-    @Autowired
-    public void setTalkBackService(TalkBackService talkBackService) {
-        WebSocketServer.talkBackService = talkBackService;
-    }
-
     @OnOpen
     public void onOpen(Session session, @PathParam("bid") String sid, @PathParam("source") String source) {
-        onlineNum.incrementAndGet();
-        log.info("建立链接,现有链接:{}个", onlineNum);
+        log.info("session超时时间为:{}", session.getMaxIdleTimeout());
         try {
-            if (sid == null) {
+            if (sid == null && session != null) {
                 session.close();
                 log.debug(sid);
                 return;
             }
             businessUser = businessUserService.findByUserName(sid);
-            if (businessUser == null) {
+            if (businessUser == null && session != null) {
                 log.debug(sid + ":用户不存在!");
                 session.close();
                 return;
             }
             System.out.println("用户[" + sid + "]建立了连接,SessionId:" + session.getId() + "\n" + businessUser);
             Map<String, Session> map = ConstantList.sessionMap.get(sid);
-
-
-            if (map != null && map.get(source) != null) {
-                if (map.get(source) != session) {
-                    try {
-                        map.get(source).close();//将之前的连接强制关闭
-                    } catch (Exception e) {
-                        log.debug("关闭上一个连接异常！" + e.toString());
-                    }
-                }
+//            map为null,说明以前未登陆过
+            if (map == null) {
+                map = new HashMap<String, Session>();
+                //将当前session存入
+                map.put(source, session);
+            } else if (!session.equals(map.get(source))) {
+                //将之前终端连接强制关闭
+                map.get(source).close();
             }
-            map = (map == null) ? new HashMap<>() : map;
-            map.put(source, session);//将当前session存入
 
             this.session = session;
             this.sid = sid;
@@ -250,7 +242,8 @@ public class WebSocketServer {
             }
             String message = JSON.toJSONString(new BaseCommand(WsConstant.updateOnline.name(), "", ""));
             WebSocketServer.sendAllMessage(message, null, businessUser.getProjectId(), null, null);
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             log.error("建立webSocket连接异常:" + sid, e);
             //检测是否存入数组中
             Map<String, Session> map = ConstantList.sessionMap.get(sid);
@@ -269,6 +262,7 @@ public class WebSocketServer {
 
             }
         }
+
     }
 
     /**
@@ -279,55 +273,46 @@ public class WebSocketServer {
      */
     @OnMessage
     public void onMessage(String message, Session session, @PathParam("source") String source) {
-        log.debug("收到消息:" + message);
-        JSONObject jsonObject = JSON.parseObject(message);
-        BaseCommand command = jsonObject.toJavaObject(BaseCommand.class);
-
-        handler(command);
+        try {
+            log.debug("收到消息:" + message);
+            JSONObject jsonObject = JSON.parseObject(message);
+            BaseCommand command = jsonObject.toJavaObject(BaseCommand.class);
+            handler(command);
+        } catch (Exception e) {
+            log.error("OnMessage发生异常");
+            e.printStackTrace();
+        }
     }
 
     @OnError
     public void onError(Session session, Throwable t, @PathParam("source") String source) {
-        log.error(this.sid + ":>>>>连接异常", t);
-        //fixme 连接都出现异常了，是否还需要关闭
-        //onClose(session, null, source);
+//        发生异常必然会导致断开连接
+        if (t instanceof EOFException) {
+            log.info("流读取结束");
+        }
+        log.error(this.sid + ":>>>>连接异常" + t.getMessage());
     }
 
     @OnClose
     public void onClose(Session session, CloseReason reason, @PathParam("source") String source) {
-        int i = onlineNum.decrementAndGet();
-        log.info("session:{}断开链接,reason:{},现有链接:{}个", JSON.toJSONString(session), JSON.toJSONString(reason), onlineNum);
-        close(session, source);
-        log.error("连接关闭:>>>>" + this.sid, reason);
+        //从set中删除
+        webSocketSet.remove(this);
+        ConstantList.removeSession(sid, source);//移除保存的当前异常连接
+        ConstantList.removeAnsweringUserList(sid);//连接断开时主动移除
+        // 修改用户的离线状态
+        int onlineStatus = 0;
+        int size = (ConstantList.sessionMap.get(sid) == null) ? 0 : ConstantList.sessionMap.get(sid).size();
+        if (size == 1) {
+            onlineStatus = (source.equals(UserTypeAndStatus.sourceOfAndroid)) ? UserTypeAndStatus.WEB_ONLINE : UserTypeAndStatus.WEB_MOBILE_ONLINE;
+        }
+        if (size == 0) {
+            onlineStatus = UserTypeAndStatus.OFF_LINE;
+        }
+        businessUserService.updateOnlineStatus(sid, onlineStatus);
+
         String message = JSON.toJSONString(new BaseCommand(WsConstant.updateOnline.name(), "", ""));
         Long projectId = businessUser == null ? null : businessUser.getProjectId();
         WebSocketServer.sendAllMessage(message, null, projectId, null, null);
-
-    }
-
-    public void close(Session session, String source) {
-        try {
-            webSocketSet.remove(this);  //从set中删除
-            log.error("webSocket连接关闭(sessionId)：" + session + ";用户:" + sid);
-            session.close();//关闭webSocket连接
-            if (sid == null) {
-                return;
-            }
-            ConstantList.removeSession(sid, source);//移除保存的当前异常连接
-            ConstantList.removeAnsweringUserList(sid);//连接断开时主动移除
-            // 修改用户的离线状态
-            int onlineStatus = 0;
-            int size = (ConstantList.sessionMap.get(sid) == null) ? 0 : ConstantList.sessionMap.get(sid).keySet().size();
-            if (size == 1) {
-                onlineStatus = (source.equals(UserTypeAndStatus.sourceOfAndroid)) ? UserTypeAndStatus.WEB_ONLINE : UserTypeAndStatus.WEB_MOBILE_ONLINE;
-            }
-            if (size == 0) {
-                onlineStatus = UserTypeAndStatus.OFF_LINE;
-            }
-            businessUserService.updateOnlineStatus(sid, onlineStatus);
-        } catch (Exception e) {
-            log.error("webSocket关闭异常", e);
-        }
     }
 
     /**
@@ -346,10 +331,9 @@ public class WebSocketServer {
                     log.debug("发送消息成功：" + sid + " >>>>SessionId:" + session.getId());
                     baseCommands.add(baseCommand);
                 }
-                log.error("--------" + baseCommands);
+                log.info("--------" + baseCommands);
             } catch (Exception e) {
                 e.printStackTrace();
-                onClose(session, null, "android");
             }
             return;
         }
@@ -364,25 +348,6 @@ public class WebSocketServer {
                 return;
             }*/
             throw e;
-        }
-    }
-
-    //    @Scheduled(fixedRate = 30 * 1000)
-    private void heartCheck() {
-        log.info("30s定时检查心跳更改用户状态");
-        log.info("+++++++++{}", baseCommands);
-        if (baseCommands == null) {
-            return;
-        }
-        for (BaseCommand baseCommand : baseCommands) {
-            if (baseCommand.getTime() < System.currentTimeMillis() - 3000) {
-                if (ConstantList.sessionMap.isEmpty()) {
-                    return;
-                }
-                Session session = ConstantList.sessionMap.get(baseCommand.getSessionId()).get("android");
-                onClose(session, null, "android");
-
-            }
         }
     }
 
@@ -418,7 +383,7 @@ public class WebSocketServer {
     }
 
     public void handler(BaseCommand message) {
-        log.error(message.toString());
+        log.info(message.toString());
         try {
             JSONObject data = null;
             String type = message.getType();
@@ -1245,5 +1210,22 @@ public class WebSocketServer {
         return resCloseCmd;
     }
 
+    /**
+     * 定时检测异常掉线的终端,比如网络中断导致后台无法知道连接是否中断
+     */
+    @Scheduled(fixedRate = 30 * 1000)
+    private void configureTasks() throws Exception {
+        BaseCommand command = new BaseCommand();
+        command.setEventName("心跳测试");
+        command.setType("-1");
+        command.setData("");
+        command.setTime((new Date()).getTime());
+        String message = JSONObject.toJSONString(command);
+        log.info("WebSocketScheduleTask每{}秒执行一次", 30);
+        for (WebSocketServer webSocketServer : webSocketSet) {
+            Session session = webSocketServer.getSession();
+            session.getBasicRemote().sendText(message);
+        }
+    }
 
 }
