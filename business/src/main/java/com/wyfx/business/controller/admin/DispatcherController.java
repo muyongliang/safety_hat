@@ -120,7 +120,7 @@ public class DispatcherController extends BaseController {
      */
     @RequestMapping(value = "/editDispatcher", method = RequestMethod.POST)
 //    @RequiresPermissions("dispatcher:edit")
-    @AopLog(describe = "编辑调度员账号：", targetParamName = "account", operationType = OperationType.INSERT)
+    @AopLog(describe = "编辑调度员账号：", targetParamName = "account", operationType = OperationType.UPDATE)
     public Object editDispatcher(Integer bid, String account, String pwd, String name, String tel) {
         if (!AccountUtil.checkAccountName(account) || name.length() > 20) {
             return new MyResponseEntity(ResponseCode.ERROR_PARAM.getValue(), "输入账号/姓名不符合要求");
@@ -209,6 +209,7 @@ public class DispatcherController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/moveDispatcher", method = RequestMethod.POST)
+    @AopLog(describe = "移动调度员：", targetParamName = "account", operationType = OperationType.MOVE)
 //    @RequiresPermissions("dispatcher:move")
     public Object moveDispatcher(Long[] bid, Integer projectId) {
         ProjectInfo projectInfo = projectService.findByProjectId(projectId.longValue());

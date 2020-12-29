@@ -7,6 +7,8 @@ import com.github.pagehelper.PageInfo;
 import com.wyfx.business.alarmRange.util.TrackUtils;
 import com.wyfx.business.app.service.ContactService;
 import com.wyfx.business.app.vo.MemberDetailVo;
+import com.wyfx.business.config.annotation.AopLog;
+import com.wyfx.business.config.annotation.OperationType;
 import com.wyfx.business.controller.commons.MyResponseEntity;
 import com.wyfx.business.controller.commons.ResponseCode;
 import com.wyfx.business.entity.BugLog;
@@ -114,6 +116,7 @@ public class FileController extends BaseController {
      * @param param
      * @return
      */
+    @AopLog(describe = "上传数据：", targetParamName = "", operationType = OperationType.INSERT)
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public Object upload(MultipartFileParam param, HttpServletRequest request) {
         BusinessUser user = getCurrentUser();
@@ -257,12 +260,14 @@ public class FileController extends BaseController {
 
     @RequestMapping(value = "/editFileName", method = RequestMethod.POST)
 //    @RequiresPermissions("file:edit")
+    @AopLog(describe = "修改文件名称：", targetParamName = "fid", operationType = OperationType.UPDATE)
     public Object editFileName(Long fid, String fileName) {
         fileService.updateFileName(fid, fileName);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
     }
 
     @RequestMapping(value = "/deleteFile", method = RequestMethod.POST)
+    @AopLog(describe = "删除数据：", targetParamName = "fid", operationType = OperationType.DELETE)
 //    @RequiresPermissions("file:delete")
     public Object deleteFile(Long fid) {
         fileService.deleteFile(fid);
@@ -271,6 +276,7 @@ public class FileController extends BaseController {
 
     @RequestMapping(value = "/deleteFiles", method = RequestMethod.POST)
 //    @RequiresPermissions("file:delete")
+    @AopLog(describe = "删除数据：", targetParamName = "fids", operationType = OperationType.DELETE)
     public Object deleteFile(String fids) {
         fileService.deleteFile(fids);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());

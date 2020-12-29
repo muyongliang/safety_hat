@@ -1216,7 +1216,7 @@ public class WebSocketServer {
     @Scheduled(fixedRate = 30 * 1000)
     private void configureTasks() throws Exception {
         BaseCommand command = new BaseCommand();
-        command.setEventName("心跳测试");
+        command.setEventName("heartCheck");
         command.setType("-1");
         command.setData("");
         command.setTime((new Date()).getTime());

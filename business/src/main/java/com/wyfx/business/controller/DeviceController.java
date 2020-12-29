@@ -165,6 +165,7 @@ public class DeviceController extends BaseController {
      */
     @RequestMapping(value = "/deleteDevice", method = RequestMethod.GET)
 //    @RequiresPermissions("device:delete")
+    @AopLog(describe = "删除设备：", targetParamName = "imei", operationType = OperationType.DELETE)
     public Object deleteDevice(Integer deviceId) {
         deviceService.deleteDeviceInfo(deviceId);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
