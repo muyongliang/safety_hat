@@ -6,6 +6,7 @@ import com.wyfx.business.dao.FileInfoMapper;
 import com.wyfx.business.entity.FileInfo;
 import com.wyfx.business.utils.DateUtil;
 import com.wyfx.business.utils.FilePathUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -148,5 +149,22 @@ public class FileServiceImpl implements FileService {
     public List<FileInfo> selectFileList(List<Long> fileIds, Integer type) {
         List<FileInfo> fileInfos = fileInfoMapper.selectListByFileIds(fileIds, type);
         return fileInfos;
+    }
+
+    /**
+     * 根据文件名批量删除文件
+     *
+     * @param fileNames
+     * @return
+     */
+    @Override
+    public Boolean deleteByFileNames(String fileNames) {
+        String[] split = fileNames.split(",");
+        for (String s : split) {
+            if (StringUtils.isNotBlank(s)) {
+                fileInfoMapper.deleteByFileName(s);
+            }
+        }
+        return true;
     }
 }

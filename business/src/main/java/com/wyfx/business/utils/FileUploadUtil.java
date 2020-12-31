@@ -68,7 +68,7 @@ public class FileUploadUtil {
         File tempFile = new File(baseDir + File.separator + md5 + "_temp");
         long offset = (param.getChunk() - 1) * sliceSize;
         String path = null;
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         try {
             RandomAccessFile accessTmpFile = new RandomAccessFile(tempFile, "rw");
             RandomAccessFile accessConfFile = new RandomAccessFile(confFile, "rw");
@@ -94,6 +94,8 @@ public class FileUploadUtil {
                 /*String suffix= fileInfoService.getFileSuffix(flag);*/
                 /*renameFile(tempFile,flag+suffix);*/
                 /*int index= param.getFileName().lastIndexOf(".");*/
+                long length = tempFile.length();
+                map.put("fileSize", length);
                 path = renameFile(tempFile, param.getFileName());
                 confFile.delete();//删除零时配置文件
                 System.out.println("文件上传成功,保存路径:" + path);

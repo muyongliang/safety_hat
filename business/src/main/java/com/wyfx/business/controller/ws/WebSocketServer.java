@@ -197,7 +197,7 @@ public class WebSocketServer {
                 session.close();
                 return;
             }
-            System.out.println("用户[" + sid + "]建立了连接,SessionId:" + session.getId() + "\n" + businessUser);
+           log.info("用户[" + sid + "]建立了连接,SessionId:" + session.getId());
             Map<String, Session> map = ConstantList.sessionMap.get(sid);
 //            map为null,说明以前未登陆过
             if (map == null) {
@@ -208,7 +208,7 @@ public class WebSocketServer {
                 //将之前终端连接强制关闭
                 map.get(source).close();
             }
-
+//          spring对象默认为单例模式,所以此处的引用会被持续修改为最新的session连接
             this.session = session;
             this.sid = sid;
             this.source = source;
@@ -296,6 +296,7 @@ public class WebSocketServer {
     @OnClose
     public void onClose(Session session, CloseReason reason, @PathParam("source") String source) {
         //从set中删除
+        log.info("用户:{},source:{}断开连接", sid, source);
         webSocketSet.remove(this);
         ConstantList.removeSession(sid, source);//移除保存的当前异常连接
         ConstantList.removeAnsweringUserList(sid);//连接断开时主动移除
@@ -1213,7 +1214,7 @@ public class WebSocketServer {
     /**
      * 定时检测异常掉线的终端,比如网络中断导致后台无法知道连接是否中断
      */
-    @Scheduled(fixedRate = 30 * 1000)
+    @Scheduled(fixedRate = 10 * 1000)
     private void configureTasks() throws Exception {
         BaseCommand command = new BaseCommand();
         command.setEventName("heartCheck");
@@ -1221,11 +1222,14 @@ public class WebSocketServer {
         command.setData("");
         command.setTime((new Date()).getTime());
         String message = JSONObject.toJSONString(command);
-        log.info("WebSocketScheduleTask每{}秒执行一次", 30);
+        log.info("WebSocketScheduleTask每{}秒执行一次", 10);
+        log.info("检测前有连接{}个", webSocketSet.size());
         for (WebSocketServer webSocketServer : webSocketSet) {
+            log.info("检测连接:{}", webSocketServer.getSid());
             Session session = webSocketServer.getSession();
             session.getBasicRemote().sendText(message);
         }
+        log.info("检测后仍有连接{}个", webSocketSet.size());
     }
 
 }

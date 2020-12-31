@@ -11,6 +11,8 @@ import java.util.List;
 public interface FileInfoMapper {
     int deleteByPrimaryKey(Long fid);
 
+    int deleteByFileName(@Param("fileName") String fileName);
+
     int insert(FileInfo record);
 
     int insertSelective(FileInfo record);

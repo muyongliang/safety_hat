@@ -9,6 +9,7 @@
             <arg column="upload_by_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="user_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="file_size" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="duration" javaType="java.lang.Long" jdbcType="BIGINT"/>
             <arg column="upload_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
             <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="project_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
@@ -16,7 +17,7 @@
         </constructor>
     </resultMap>
     <sql id="Base_Column_List">
-        fid, file_name, upload_by_account, upload_by_name, user_type, file_size, upload_time,
+        fid, file_name, upload_by_account, upload_by_name, user_type, file_size,duration, upload_time,
         type, project_id, url
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -28,6 +29,10 @@
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete from fileinfo
         where fid = #{fid,jdbcType=BIGINT}
+    </delete>
+    <delete id="deleteByFileName">
+        delete from fileinfo
+        where file_name = #{fileName}
     </delete>
     <insert id="insert" parameterType="com.wyfx.business.entity.FileInfo">
         insert into fileinfo (fid, file_name, upload_by_account,
@@ -60,6 +65,9 @@
             <if test="fileSize != null">
                 file_size,
             </if>
+            <if test="duration != null">
+                duration,
+            </if>
             <if test="uploadTime != null">
                 upload_time,
             </if>
@@ -91,6 +99,9 @@
             </if>
             <if test="fileSize != null">
                 #{fileSize,jdbcType=BIGINT},
+            </if>
+            <if test="duration != null">
+                #{duration,jdbcType=BIGINT},
             </if>
             <if test="uploadTime != null">
                 #{uploadTime,jdbcType=TIMESTAMP},

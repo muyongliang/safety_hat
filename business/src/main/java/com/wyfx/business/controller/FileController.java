@@ -148,6 +148,9 @@ public class FileController extends BaseController {
                     case 2:
                     case 3:
                         JSONObject jsonObject = FileUploadUtil.uploadVideo(user.getUserName(), Long.valueOf(sliceSize) * 1024 * 1024, param);
+//                        重置视频文件大小
+                        Long fileSize = jsonObject.getLong("fileSize");
+                        param.setSize(fileSize);
                         if (!String.valueOf(Byte.MAX_VALUE).equals(jsonObject.getString("isComplete"))) {
                             flag = false;
                         } else {
@@ -158,7 +161,7 @@ public class FileController extends BaseController {
                 if (flag) {
                     if (isPic == 1 || isPic == 2) {
                         //更新数据库文件记录
-                        FileInfo fileInfo = new FileInfo(null, param.getFileName(), user.getUserName(), user.getName(), user.getUserType(), param.getSize(), new Date(), isPic, user.getProjectId(), path);
+                        FileInfo fileInfo = new FileInfo(null, param.getFileName(), user.getUserName(), user.getName(), user.getUserType(), param.getSize(), param.getDuration(), new Date(), isPic, user.getProjectId(), path);
                         fileService.addFileInfo(fileInfo);
                     }
                     url = path;
@@ -279,6 +282,13 @@ public class FileController extends BaseController {
     @AopLog(describe = "删除数据：", targetParamName = "fids", operationType = OperationType.DELETE)
     public Object deleteFile(String fids) {
         fileService.deleteFile(fids);
+        return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
+    }
+
+    @RequestMapping(value = "/deleteByFileNames", method = RequestMethod.POST)
+    @AopLog(describe = "删除数据：", targetParamName = "fileNames", operationType = OperationType.DELETE)
+    public MyResponseEntity deleteByFileNames(String fileNames) {
+        fileService.deleteByFileNames(fileNames);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
     }
 
