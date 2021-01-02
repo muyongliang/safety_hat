@@ -50,5 +50,5 @@ public interface FileService {
      */
     List<FileInfo> selectFileList(List<Long> fileIds, Integer type);
 
-    Boolean deleteByFileNames(String fileNames);
+    Boolean deleteByFileNames(String fileNames, Integer fileType, String token);
 }

@@ -12,6 +12,7 @@ import com.wyfx.business.controller.commons.SafetyHatException;
 import com.wyfx.business.controller.ws.WebSocketServer;
 import com.wyfx.business.controller.ws.pojo.BaseCommand;
 import com.wyfx.business.controller.ws.pojo.WsConstant;
+import com.wyfx.business.dao.FileInfoMapper;
 import com.wyfx.business.entity.*;
 import com.wyfx.business.entity.vo.DiskSpaceVo;
 import com.wyfx.business.entity.vo.DiySetVo;
@@ -66,6 +67,8 @@ public class SystemController extends BaseController {
     private IExcelService iExcelService;
     @Autowired
     private IAppUpdateService iAppUpdateService;
+    @Autowired
+    private FileInfoMapper fileInfoMapper;
 
     /**
      * 查询所有未读的消息详情
@@ -431,7 +434,10 @@ public class SystemController extends BaseController {
                     File[] dateFiles = file.listFiles();
                     for (int i = 0; dateFiles != null && i < dateFiles.length; i++) {
                         if (!DateUtil.compareDate(dateFiles[i].getName(), appointDate)) {
-                            FilePathUtil.deleteFile(dateFiles[i]);
+                            List<String> fileNames = FilePathUtil.deleteFile(dateFiles[i]);
+                            for (String name : fileNames) {
+                                fileInfoMapper.deleteByFileName(name);
+                            }
                         }
                     }
                 }

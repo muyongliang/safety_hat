@@ -16,6 +16,8 @@ import javax.sound.sampled.Clip;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -218,29 +220,35 @@ public class FilePathUtil {
 
     /**
      * 删除某一文件或某一目录
+     * 并返回删除的文件名集合
      *
      * @param file
      */
-    public static void deleteFile(File file) {
+    public static List<String> deleteFile(File file) {
+        ArrayList<String> fileNames = new ArrayList<>();
         try {
             if (file.isDirectory()) {
                 File[] files = file.listFiles();
                 if (files == null) {
-                    return;
+                    return fileNames;
                 }
                 for (int i = 0; i < files.length; i++) {
                     if (files[i].isDirectory()) {
                         deleteFile(files[i]);
                     }
                     Files.delete(files[i].toPath());
+                    String name = files[i].getName();
+                    fileNames.add(name);
                 }
             } else {
                 file.deleteOnExit();
+                fileNames.add(file.getName());
                 System.out.println("文件删除成功");
             }
         } catch (Exception e) {
             logger.error("文件/文件夹删除失败", e);
         }
+        return fileNames;
     }
 
     /**

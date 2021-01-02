@@ -496,7 +496,6 @@ public class EnterpriseManagementController extends BaseController {
     public String handleSelectBusinessManagerDiySetting(@RequestBody String token) {
         logger.info("企业后台-----请求查看总后台企业的自定义设置信息==" + token);
         String s = JSON.parse(token).toString();
-        // String t="10b6a448436c4fe1b690f44a99d19078";
         DiySetVo diySetVo = enterpriseManagementService.selectBusinessDiySettingByBid(s);
         logger.info("企业后台查询的自定义设置==" + diySetVo);
         String jsonString = JSON.toJSONString(diySetVo);

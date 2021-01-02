@@ -214,7 +214,8 @@ public class LoginController extends BaseController {
 
     private Map getBusinessOfSetting(BusinessUser user) {
         String token = JSON.toJSONString(iBusinessInfoService.findByBusinessId(user.getBusinessId()).getToken());
-        String s = HttpClientUtil.doPostJson("http://" + remoteUrl + "/enterprise/handleSelectBusinessManagerDiySetting", token);
+        String url = "http://" + remoteUrl + "/enterprise/handleSelectBusinessManagerDiySetting";
+        String s = HttpClientUtil.doPostJson(url, token);
         DiySetVo diySetVo = JSON.parseObject(s, DiySetVo.class);
         Map map = null;
         try {

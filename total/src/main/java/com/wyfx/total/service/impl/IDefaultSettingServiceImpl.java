@@ -42,15 +42,13 @@ public class IDefaultSettingServiceImpl implements IDefaultSettingService {
     @Override
     public boolean updateDefaultSetting(DefaultSetting defaultSetting) throws UpdateDataException {
         //默认只有条设置记录
+        defaultSetting.setId(1L);
         DefaultSetting defaultSetting1 = defaultSettingMapper.selectByPrimaryKey(1L);
         if (defaultSetting1 == null) {
             defaultSettingMapper.insertSelective(defaultSetting);
+            return true;
         }
-        defaultSetting.setId(1L);
-        int i = defaultSettingMapper.updateByPrimaryKeySelective(defaultSetting);
-        if (i < 0) {
-            throw new UpdateDataException("更新错误，联系管理员");
-        }
+        defaultSettingMapper.updateByPrimaryKeySelective(defaultSetting);
         return true;
     }
 

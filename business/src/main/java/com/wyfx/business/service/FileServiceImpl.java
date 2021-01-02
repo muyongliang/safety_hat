@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.wyfx.business.dao.FileInfoMapper;
 import com.wyfx.business.entity.FileInfo;
+import com.wyfx.business.service.common.IBusinessInfoService;
 import com.wyfx.business.utils.DateUtil;
 import com.wyfx.business.utils.FilePathUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +31,9 @@ public class FileServiceImpl implements FileService {
 
     @Autowired
     private FileInfoMapper fileInfoMapper;
+
+    @Autowired
+    private IBusinessInfoService iBusinessInfoService;
 
     /**
      * 新增文件信息
@@ -158,13 +163,31 @@ public class FileServiceImpl implements FileService {
      * @return
      */
     @Override
-    public Boolean deleteByFileNames(String fileNames) {
+    public Boolean deleteByFileNames(String fileNames, Integer fileType, String token) {
+        String mainAccount = iBusinessInfoService.findByToken(token).getMainAccount();
         String[] split = fileNames.split(",");
         for (String s : split) {
             if (StringUtils.isNotBlank(s)) {
+                s.trim();
+//                删除fileinfo表中的数据文件
                 fileInfoMapper.deleteByFileName(s);
+//                删除文件系统中的数据文件
+                String filePath = FilePathUtil.getExcuteJarPath() + File.separator + "safety-hat" + File.separator + mainAccount + fileType;
+                deleteFile(new File(filePath), s);
             }
         }
         return true;
+    }
+
+    private void deleteFile(File file, String targetFileName) {
+        File[] files = file.listFiles();
+        for (File file1 : files) {
+            if (file1.isDirectory()) {
+                deleteFile(file1, targetFileName);
+            }
+            if (file1.getName().equalsIgnoreCase(targetFileName)) {
+                file1.delete();
+            }
+        }
     }
 }
