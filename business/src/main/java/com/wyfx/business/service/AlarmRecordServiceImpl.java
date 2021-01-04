@@ -29,7 +29,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class AlarmRecordServiceImpl implements AlarmRecordService {
     private static final Logger logger = LoggerFactory.getLogger(AlarmRecordServiceImpl.class);
 

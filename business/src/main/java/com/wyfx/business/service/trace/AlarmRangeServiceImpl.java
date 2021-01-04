@@ -36,7 +36,7 @@ import java.util.Map;
  * @description 电子围栏业务处理
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class AlarmRangeServiceImpl implements AlarmRangeService {
 
     @Autowired

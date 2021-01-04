@@ -27,7 +27,7 @@ import java.util.Map;
  * 用于总后台向企业后台推送消息
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class IBusinessMessagesCenterServiceImpl implements IBusinessMessagesCenterService {
     private final Logger logger = LoggerFactory.getLogger(IBusinessMessagesCenterServiceImpl.class);
     @Autowired

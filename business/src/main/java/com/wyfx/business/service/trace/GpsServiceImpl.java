@@ -18,7 +18,7 @@ import java.util.Date;
  * @description 定位业务处理类
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class GpsServiceImpl implements GpsService {
 
     @Autowired

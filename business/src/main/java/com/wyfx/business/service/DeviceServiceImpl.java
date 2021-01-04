@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @description 设备业务类
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class DeviceServiceImpl implements DeviceService {
     private static final Logger logger = LoggerFactory.getLogger(DeviceServiceImpl.class);
     @Autowired

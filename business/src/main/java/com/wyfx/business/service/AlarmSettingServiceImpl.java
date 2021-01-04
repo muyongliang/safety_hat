@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @description 报警设置业务类
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class AlarmSettingServiceImpl implements AlarmSettingService {
 
     @Autowired

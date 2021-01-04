@@ -31,7 +31,7 @@ import java.util.Map;
  * @description 用户管理
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
+@Transactional
 public class BusinessUserServiceImpl implements BusinessUserService {
 
     private static final Logger logger = LoggerFactory.getLogger(BusinessUserServiceImpl.class);

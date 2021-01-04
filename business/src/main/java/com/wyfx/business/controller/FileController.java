@@ -287,9 +287,8 @@ public class FileController extends BaseController {
 
     @RequestMapping(value = "/deleteByFileNames", method = RequestMethod.POST)
     @AopLog(describe = "删除数据：", targetParamName = "fileNames", operationType = OperationType.DELETE)
-    public MyResponseEntity deleteByFileNames(String fileNames, Integer fileType, String token) {
-        fileService.deleteByFileNames(fileNames, fileType, token);
-        return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
+    public MyResponseEntity deleteByFileNames(String fileNames, String fileType, String token) {
+        return new MyResponseEntity(ResponseCode.SUCCESS.getValue(), fileService.deleteByFileNames(fileNames, fileType, token));
     }
 
     /**

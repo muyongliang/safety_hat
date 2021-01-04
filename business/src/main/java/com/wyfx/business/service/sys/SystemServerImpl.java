@@ -28,7 +28,7 @@ import java.util.Map;
  * @description 系统设置业务处理
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class SystemServerImpl implements SystemServer {
 
     @Autowired

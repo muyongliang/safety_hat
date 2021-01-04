@@ -26,7 +26,7 @@ import java.util.List;
  * @description 客户端通讯录
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class ContactServiceImpl implements ContactService {
 
     @Autowired

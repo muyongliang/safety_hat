@@ -26,7 +26,7 @@ import java.util.List;
  * @description 权限管理
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class MenuManagerServiceImpl implements MenuManagerService {
 
     @Autowired

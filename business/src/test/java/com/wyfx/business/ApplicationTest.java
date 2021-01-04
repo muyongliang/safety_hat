@@ -57,9 +57,9 @@ public class ApplicationTest {
      */
     @Test
     public void test2() {
-        Long parentId = 5l;
-        int begin = 27;
-        int end = 32;
+        Long parentId = 20l;
+        int begin = 124;
+        int end = 127;
         int type = 1;
         for (int i = begin; i <= end; i++) {
             MenuManager menuManager = new MenuManager();
@@ -67,6 +67,7 @@ public class ApplicationTest {
             menuManager.setParentId(parentId);
             menuManager.setType(type);
             menuManager.setOrderNum(1);
+            menuManager.setName("角色权限管理");
             int insert = menuManagerMapper.insert(menuManager);
             System.out.println(insert);
         }

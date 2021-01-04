@@ -22,7 +22,7 @@ import java.util.Map;
  * create by wsm on 2019-12-5
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class IBusinessInfoServiceImpl implements IBusinessInfoService {
 
     private static final Logger logger = LoggerFactory.getLogger(IBusinessInfoServiceImpl.class);

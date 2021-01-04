@@ -22,6 +22,10 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.DefaultSessionManager;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +36,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,15 +123,7 @@ public class LoginController extends BaseController {
         password = MD5Util.encrypt(username.toLowerCase(), password);
         System.out.println(password);
         String userName = (String) getSubject().getPrincipal();
-        BusinessUser byUserName = businessUserService.findByUserName(userName);
-        Boolean isLogin = byUserName != null && byUserName.getUserName().equals(username);
-        //判断是否有用户登录
-
-
-        if (getSubject().isAuthenticated() && isLogin) {
-            getSubject().logout();//退出之前登录账号
-        }
-
+        logOutLoginedSession(getSubject(), userName);
         if (!getSubject().isAuthenticated()) {
             /*UsernamePasswordToken token = new UsernamePasswordToken(username, password);*/
             MyUsernamePasswordToken token = new MyUsernamePasswordToken(username, password, source);
@@ -271,7 +268,7 @@ public class LoginController extends BaseController {
             return new MyResponseEntity(ResponseCode.ERROR_PARAM.getValue(), "参数不能为空");
         }
         password = MD5Util.encrypt(username.toLowerCase(), password);
-
+        logOutLoginedSession(getSubject(), username);
         //判断用户是否登录
         if (!getSubject().isAuthenticated()) {
             /*UsernamePasswordToken token = new UsernamePasswordToken(username, password);*/
@@ -371,5 +368,22 @@ public class LoginController extends BaseController {
     public Object getAccount(String imei) {
         Map<String, String> account = businessUserService.getClientAccountByImei(imei);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue(), account);
+    }
+
+    public void logOutLoginedSession(Subject subject, String userName) {
+        DefaultSecurityManager securityManager = (DefaultSecurityManager) SecurityUtils.getSecurityManager();
+        DefaultSessionManager sessionManager = (DefaultSessionManager) securityManager.getSessionManager();
+        Collection<Session> list = sessionManager.getSessionDAO().getActiveSessions();
+        for (Session session : list) {
+            Subject s = new Subject.Builder().session(session).buildSubject();
+            if (s.isAuthenticated()) {
+                String loginName = s.getPrincipal().toString();
+                if (loginName.equalsIgnoreCase(userName)) {
+                    if (!session.getId().equals(subject.getSession().getId())) {
+                        s.logout();// 把除当前登录用户的其他的同名用户session信息加入集合
+                    }
+                }
+            }
+        }
     }
 }

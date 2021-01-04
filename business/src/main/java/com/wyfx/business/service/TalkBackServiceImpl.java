@@ -31,7 +31,7 @@ import java.util.*;
  * @description 对讲组业务类
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class TalkBackServiceImpl implements TalkBackService {
 
     private static final Logger logger = LoggerFactory.getLogger(TalkBackServiceImpl.class);

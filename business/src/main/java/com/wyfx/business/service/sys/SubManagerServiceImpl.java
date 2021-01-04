@@ -24,7 +24,7 @@ import java.util.Map;
  * crete by wsm on 2019-11-29
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class SubManagerServiceImpl implements SubManagerService {
 
 

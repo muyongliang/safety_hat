@@ -24,7 +24,7 @@ import java.util.Map;
  * @description 终端账号业务类
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class ClientAccountServiceImpl implements ClientAccountService, DefaultClientVideoService {
 
     @Autowired

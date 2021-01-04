@@ -18,7 +18,7 @@ import java.util.List;
  * @description 未接来电记录
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class MissedCallServerImpl implements MissedCallServer {
 
     @Autowired

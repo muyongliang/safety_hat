@@ -1214,7 +1214,7 @@ public class WebSocketServer {
     /**
      * 定时检测异常掉线的终端,比如网络中断导致后台无法知道连接是否中断
      */
-    @Scheduled(fixedRate = 10 * 1000)
+    @Scheduled(fixedRate = 30 * 1000)
     private void configureTasks() throws Exception {
         BaseCommand command = new BaseCommand();
         command.setEventName("heartCheck");
@@ -1222,7 +1222,7 @@ public class WebSocketServer {
         command.setData("");
         command.setTime((new Date()).getTime());
         String message = JSONObject.toJSONString(command);
-        log.info("WebSocketScheduleTask每{}秒执行一次", 10);
+        log.info("WebSocketScheduleTask每{}秒执行一次", 30);
         log.info("检测前有连接{}个", webSocketSet.size());
         for (WebSocketServer webSocketServer : webSocketSet) {
             log.info("检测连接:{}", webSocketServer.getSid());

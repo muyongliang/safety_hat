@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * @description 文件业务类
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class FileServiceImpl implements FileService {
 
     @Autowired
@@ -163,16 +163,16 @@ public class FileServiceImpl implements FileService {
      * @return
      */
     @Override
-    public Boolean deleteByFileNames(String fileNames, Integer fileType, String token) {
+    public Boolean deleteByFileNames(String fileNames, String fileType, String token) {
         String mainAccount = iBusinessInfoService.findByToken(token).getMainAccount();
         String[] split = fileNames.split(",");
         for (String s : split) {
             if (StringUtils.isNotBlank(s)) {
                 s.trim();
 //                删除fileinfo表中的数据文件
-                fileInfoMapper.deleteByFileName(s);
+                int i = fileInfoMapper.deleteByFileName(s);
 //                删除文件系统中的数据文件
-                String filePath = FilePathUtil.getExcuteJarPath() + File.separator + "safety-hat" + File.separator + mainAccount + fileType;
+                String filePath = FilePathUtil.getExcuteJarPath() + File.separator + "safety-hat" + File.separator + mainAccount  + File.separator+ fileType;
                 deleteFile(new File(filePath), s);
             }
         }

@@ -18,7 +18,7 @@ import java.util.List;
  * @description 对讲组成员业务类
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class TalkBackGroupMemberServiceImpl implements TalkBackGroupMemberService {
 
     @Autowired

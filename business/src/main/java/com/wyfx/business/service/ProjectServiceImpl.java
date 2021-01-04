@@ -25,7 +25,7 @@ import java.util.Map;
  * @description 项目业务处理类
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private ProjectInfoMapper projectInfoMapper;

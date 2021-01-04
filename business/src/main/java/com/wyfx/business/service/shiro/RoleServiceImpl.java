@@ -27,7 +27,7 @@ import java.util.Map;
  * @description 角色管理
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class RoleServiceImpl implements RoleService, UserRoleService {
     private final Logger logger = LoggerFactory.getLogger(RoleServiceImpl.class);
 

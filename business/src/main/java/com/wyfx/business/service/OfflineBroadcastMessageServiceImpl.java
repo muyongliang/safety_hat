@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Transactional
 public class OfflineBroadcastMessageServiceImpl implements OfflineBroadcastMessageService {
     @Autowired
     private OfflineBroadcastMessageMapper offlineBroadcastMessageMapper;
