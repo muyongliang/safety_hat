@@ -30,15 +30,6 @@ public interface MenuManagerMapper {
      */
     List<MenuManager> selectByParentIdAndBid(@Param("parentId") int parentId, @Param("bid") Long bid, @Param("type") int type);
 
-    /**
-     * 查询子管理员可配置权限
-     *
-     * @param parentId
-     * @param bid
-     * @param type
-     * @return
-     */
-    List<MenuManager> selectByParentIdAndBidForSub(@Param("parentId") int parentId, @Param("bid") Long bid, @Param("type") int type);
 
     List<MenuManager> selectByParentId(@Param("parentId") int parentId, @Param("type") int type);
 

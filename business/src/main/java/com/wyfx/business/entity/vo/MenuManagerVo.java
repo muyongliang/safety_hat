@@ -3,6 +3,7 @@ package com.wyfx.business.entity.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 /**
  * @author johnson liu
@@ -10,6 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @description MenuManager的VO类, 接收前端请求
  */
 @ApiModel("权限配置信息")
+@Data
 public class MenuManagerVo {
     @ApiModelProperty(value = "角色Id", example = "1")
     private Long roleId;
@@ -30,83 +32,4 @@ public class MenuManagerVo {
     @ApiModelProperty("是否具有该权限：true有，false无")
     private Boolean isAllowed;
 
-    public Long getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Long parentId) {
-        this.parentId = parentId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public Integer getOrderNum() {
-        return orderNum;
-    }
-
-    public void setOrderNum(Integer orderNum) {
-        this.orderNum = orderNum;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
-
-    public Long getMid() {
-        return mid;
-    }
-
-    public void setMid(Long mid) {
-        this.mid = mid;
-    }
-
-    public Boolean getIsAllowed() {
-        return isAllowed;
-    }
-
-    public void setIsAllowed(Boolean isAllowed) {
-        this.isAllowed = isAllowed;
-    }
-
-    public Long getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
-    }
-
-    public Boolean getAllowed() {
-        return isAllowed;
-    }
-
-    public void setAllowed(Boolean allowed) {
-        isAllowed = allowed;
-    }
 }

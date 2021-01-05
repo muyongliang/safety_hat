@@ -197,17 +197,6 @@
         meun_manager.mid,
         meun_manager.order_num
     </select>
-    <select id="selectByParentIdAndBidForSub" resultMap="selectMap">
-        select m.mid,m.parent_id,m.name,m.type,m.order_num from meun_manager m
-        where m.type=#{type} and m.parent_id=#{parentId} and m.mid in (
-        select DISTINCT rm.menu_id from role_menu rm
-        left join role r on (r.role_id=rm.role_id)
-        left join user_role ur on (ur.role_id=r.role_id)
-        LEFT JOIN business_user u on (u.bid=ur.user_id)
-        where u.user_name=(select create_person from business_user where bid=#{bid})
-        )
-        order by m.mid,m.order_num
-    </select>
 
     <select id="selectByParentId" resultMap="BaseResultMap">
         select m.* from meun_manager m

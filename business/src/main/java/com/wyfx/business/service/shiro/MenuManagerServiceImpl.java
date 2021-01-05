@@ -12,7 +12,6 @@ import com.wyfx.business.entity.vo.RoleMenuVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -140,10 +139,10 @@ public class MenuManagerServiceImpl implements MenuManagerService {
     @Override
     public List<MenuManagerVo> getRolePermissions(int mid, BusinessUser businessUser, Long roleId, int type) {
         Long bid = businessUser.getBid();
-        List<MenuManager> menuManagerList = (businessUser.getUserType() == 3) ? meunManagerMapper.selectByParentIdAndBidForSub(mid, bid, type) : meunManagerMapper.selectByParentIdAndBid(mid, bid, type);
+        List<MenuManager> menuManagerList = meunManagerMapper.selectByParentIdAndBid(mid, bid, type);
         List<RoleMenuVo> roleMenuVoList = roleMenuMapper.findUserPermissions(roleId.intValue());
         List<MenuManagerVo> menuManagerVoList = new ArrayList<>();
-        Boolean flag = false;
+        Boolean flag;
         if (menuManagerList != null) {
             for (MenuManager menuManager : menuManagerList) {
                 MenuManagerVo menuManagerVo = new MenuManagerVo();
@@ -158,9 +157,6 @@ public class MenuManagerServiceImpl implements MenuManagerService {
                 menuManagerVo.setIsAllowed(flag);
                 menuManagerVoList.add(menuManagerVo);
             }
-        } else {
-            MenuManagerVo menuManagerVo = new MenuManagerVo();
-            menuManagerVoList.add(menuManagerVo);
         }
         return menuManagerVoList;
     }
