@@ -113,19 +113,12 @@ public class LoginController extends BaseController {
             return new MyResponseEntity(ResponseCode.ERROR_PARAM.getValue(), "参数不能为空");
         }
         if (source == 0) {
-            /*if (!RandomValidateCode.verify(verifyCode,getSubject())) {
-                System.out.println("shiro验证为通过");
-            }*/
             if (!RandomValidateCode.verify(verifyCode, request)) {
                 return new MyResponseEntity(ResponseCode.ERROR_PARAM.getValue(), "验证码错误");
             }
         }
-        password = MD5Util.encrypt(username.toLowerCase(), password);
-        System.out.println(password);
-        String userName = (String) getSubject().getPrincipal();
-        logOutLoginedSession(getSubject(), userName);
+        logOutLoginedSession(getSubject(), username);
         if (!getSubject().isAuthenticated()) {
-            /*UsernamePasswordToken token = new UsernamePasswordToken(username, password);*/
             MyUsernamePasswordToken token = new MyUsernamePasswordToken(username, password, source);
             try {
                 super.login(token);
@@ -323,7 +316,8 @@ public class LoginController extends BaseController {
      */
     @ApiOperation(value = "获取验证码", httpMethod = "GET", produces = "form-data")
     @RequestMapping(value = "/captcha", method = RequestMethod.GET)
-    public Object captcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @ResponseBody
+    public void captcha(HttpServletRequest request, HttpServletResponse response) {
         /*CaptchaUtil.outPng(110, 34, 4, Captcha.TYPE_ONLY_NUMBER, request, response);*/
         response.setContentType("image/jpeg");//设置响应类型，告知浏览器输出的是图片
         response.setHeader("Pragma", "No-cache");//设置响应头信息，告诉浏览器不要缓存此内容
@@ -336,7 +330,6 @@ public class LoginController extends BaseController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "";
     }
 
     @ApiOperation(value = "退出登录", httpMethod = "GET", produces = "form-data")
@@ -345,7 +338,6 @@ public class LoginController extends BaseController {
     public Object logout() {
         super.getSubject().logout();
         //重定向到登录页面
-        /*return "redirect:/login.html";*/
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
     }
 
@@ -371,6 +363,7 @@ public class LoginController extends BaseController {
     }
 
     public void logOutLoginedSession(Subject subject, String userName) {
+        log.info("当前登录sessionId:{}", subject.getSession().getId());
         DefaultSecurityManager securityManager = (DefaultSecurityManager) SecurityUtils.getSecurityManager();
         DefaultSessionManager sessionManager = (DefaultSessionManager) securityManager.getSessionManager();
         Collection<Session> list = sessionManager.getSessionDAO().getActiveSessions();
@@ -380,6 +373,7 @@ public class LoginController extends BaseController {
                 String loginName = s.getPrincipal().toString();
                 if (loginName.equalsIgnoreCase(userName)) {
                     if (!session.getId().equals(subject.getSession().getId())) {
+                        log.info("退出之前的登录会话,host:{},sessionId:{}", session.getHost(), session.getId());
                         s.logout();// 把除当前登录用户的其他的同名用户session信息加入集合
                     }
                 }
