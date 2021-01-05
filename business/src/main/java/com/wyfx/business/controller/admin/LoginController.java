@@ -373,9 +373,10 @@ public class LoginController extends BaseController {
                 String loginName = s.getPrincipal().toString();
                 if (loginName.equalsIgnoreCase(userName)) {
                     if (!session.getId().equals(subject.getSession().getId())) {
+                        sessionManager.getSessionDAO().delete(session);
                         log.info("退出之前的登录会话,host:{},sessionId:{}", session.getHost(), session.getId());
-                        s.logout();// 把除当前登录用户的其他的同名用户session信息加入集合
                     }
+
                 }
             }
         }

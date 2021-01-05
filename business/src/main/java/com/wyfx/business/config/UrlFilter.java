@@ -1,5 +1,6 @@
 package com.wyfx.business.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.*;
@@ -17,6 +18,7 @@ import java.io.IOException;
  */
 @Configuration
 @WebFilter(filterName = "UrlFilter", urlPatterns = "/*")
+@Slf4j
 public class UrlFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -49,6 +51,7 @@ public class UrlFilter implements Filter {
             return;
         }
         String uri = request.getRequestURI();
+        log.info("请求路径:{}",uri);
         String contentPath = request.getContextPath();
         String actionParam = request.getParameter("action");
         String idParam = request.getParameter("id");
