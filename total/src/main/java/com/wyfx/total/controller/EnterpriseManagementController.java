@@ -182,9 +182,10 @@ public class EnterpriseManagementController extends BaseController {
         for (Field declaredField : declaredFields) {
             declaredField.setAccessible(true);
             Object o = declaredField.get(diySetting);
-            if (o.equals(-2)) {
+            if ((new Integer(-2).equals(o))||o==null) {
                 String fieldName = declaredField.getName();
                 Field field = DefaultSetting.class.getDeclaredField(fieldName);
+                field.setAccessible(true);
                 if (field!=null) {
                     declaredField.set(diySetting, field.get(defaultSetting));
                 }

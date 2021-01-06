@@ -11,7 +11,7 @@
             <arg column="dispatcher_log" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="tip_time" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="third_tip_time" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="store_tip" javaType="java.lang.Double" jdbcType="DOUBLE"/>
+            <arg column="store_tip" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         </constructor>
     </resultMap>
     <sql id="Base_Column_List">
@@ -35,7 +35,7 @@
         )
         values (#{id,jdbcType=BIGINT}, #{vedioTimeLimit,jdbcType=INTEGER}, #{isAutoUpload,jdbcType=INTEGER},
         #{dispatcherUploadLimit,jdbcType=INTEGER}, #{appLog,jdbcType=INTEGER}, #{dispatcherLog,jdbcType=INTEGER},
-        #{tipTime,jdbcType=INTEGER}, #{thirdTipTime,jdbcType=INTEGER}, #{storeTip,jdbcType=DOUBLE}
+        #{tipTime,jdbcType=INTEGER}, #{thirdTipTime,jdbcType=INTEGER},#{storeTip,jdbcType=INTEGER}
         )
     </insert>
     <insert id="insertSelective" parameterType="com.wyfx.total.entity.DefaultSetting">
@@ -95,7 +95,7 @@
                 #{thirdTipTime,jdbcType=INTEGER},
             </if>
             <if test="storeTip != null">
-                #{storeTip,jdbcType=DOUBLE},
+               #{storeTip,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
@@ -124,7 +124,7 @@
                 third_tip_time = #{thirdTipTime,jdbcType=INTEGER},
             </if>
             <if test="storeTip != null">
-                store_tip = #{storeTip,jdbcType=DOUBLE},
+                store_tip =#{storeTip,jdbcType=INTEGER},
             </if>
         </set>
         where id = #{id,jdbcType=BIGINT}
@@ -138,7 +138,7 @@
         dispatcher_log = #{dispatcherLog,jdbcType=INTEGER},
         tip_time = #{tipTime,jdbcType=INTEGER},
         third_tip_time = #{thirdTipTime,jdbcType=INTEGER},
-        store_tip = #{storeTip,jdbcType=DOUBLE}
+        store_tip =#{storeTip,jdbcType=INTEGER}
         where id = #{id,jdbcType=BIGINT}
     </update>
 </mapper>

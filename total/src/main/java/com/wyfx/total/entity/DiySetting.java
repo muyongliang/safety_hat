@@ -2,11 +2,15 @@ package com.wyfx.total.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 //自定义设置
 @ApiModel()
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class DiySetting {
 
     @ApiModelProperty(hidden = true)

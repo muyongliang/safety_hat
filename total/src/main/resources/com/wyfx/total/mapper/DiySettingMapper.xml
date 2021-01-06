@@ -13,24 +13,20 @@
             <arg column="listener" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="bid" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="vedio_time_limit" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="vedio_time_limit_sys" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="is_auto_upload" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="is_auto_upload_sys" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="dispatcher_upload_limit" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="dispatcher_upload_limit_sys" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="app_log" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="app_log_sys" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="dispatcher_log" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="dispatcher_log_sys" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+
             <arg column="store_tip" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="store_tip_sys" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+
         </constructor>
     </resultMap>
     <sql id="Base_Column_List">
         did, is_call, talkback, vedio, broadcast, map_range, trail, listener, bid, vedio_time_limit,
-        vedio_time_limit_sys, is_auto_upload, is_auto_upload_sys, dispatcher_upload_limit,
-        dispatcher_upload_limit_sys, app_log, app_log_sys, dispatcher_log, dispatcher_log_sys,
-        store_tip, store_tip_sys
+        is_auto_upload, dispatcher_upload_limit,
+        app_log,dispatcher_log,
+        store_tip
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
@@ -88,39 +84,27 @@
             <if test="vedioTimeLimit != null">
                 and vedio_time_limit = #{vedioTimeLimit,jdbcType=INTEGER}
             </if>
-            <if test="vedioTimeLimitSys != null">
-                and vedio_time_limit_sys = #{vedioTimeLimitSys,jdbcType=INTEGER}
-            </if>
+
             <if test="isAutoUpload != null">
                 and is_auto_upload = #{isAutoUpload,jdbcType=INTEGER}
             </if>
-            <if test="isAutoUploadSys != null">
-                and is_auto_upload_sys = #{isAutoUploadSys,jdbcType=INTEGER}
-            </if>
+
             <if test="dispatcherUploadLimit != null">
                 and dispatcher_upload_limit = #{dispatcherUploadLimit,jdbcType=INTEGER}
             </if>
-            <if test="dispatcherUploadLimitSys != null">
-                and dispatcher_upload_limit_sys = #{dispatcherUploadLimitSys,jdbcType=INTEGER}
-            </if>
+
             <if test="appLog != null">
                 and app_log = #{appLog,jdbcType=INTEGER}
             </if>
-            <if test="appLogSys != null">
-                and app_log_sys = #{appLogSys,jdbcType=INTEGER}
-            </if>
+
             <if test="dispatcherLog != null">
                 and dispatcher_log = #{dispatcherLog,jdbcType=INTEGER}
             </if>
-            <if test="dispatcherLogSys != null">
-                and dispatcher_log_sys = #{dispatcherLogSys,jdbcType=INTEGER}
-            </if>
+
             <if test="storeTip != null">
                 and store_tip = #{storeTip,jdbcType=INTEGER}
             </if>
-            <if test="storeTipSys != null">
-                and store_tip_sys = #{storeTipSys,jdbcType=INTEGER}
-            </if>
+
         </where>
     </select>
 
@@ -133,19 +117,19 @@
         insert into diy_setting (did, is_call, talkback,
         vedio, broadcast, map_range,
         trail, listener, bid,
-        vedio_time_limit, vedio_time_limit_sys, is_auto_upload,
-        is_auto_upload_sys, dispatcher_upload_limit,
-        dispatcher_upload_limit_sys, app_log, app_log_sys,
-        dispatcher_log, dispatcher_log_sys, store_tip,
-        store_tip_sys)
+        vedio_time_limit, is_auto_upload,
+        dispatcher_upload_limit,
+        app_log,
+        dispatcher_log, store_tip,
+        )
         values (#{did,jdbcType=BIGINT}, #{isCall,jdbcType=INTEGER}, #{talkback,jdbcType=INTEGER},
         #{vedio,jdbcType=INTEGER}, #{broadcast,jdbcType=INTEGER}, #{mapRange,jdbcType=INTEGER},
         #{trail,jdbcType=INTEGER}, #{listener,jdbcType=INTEGER}, #{bid,jdbcType=VARCHAR},
-        #{vedioTimeLimit,jdbcType=INTEGER}, #{vedioTimeLimitSys,jdbcType=INTEGER}, #{isAutoUpload,jdbcType=INTEGER},
-        #{isAutoUploadSys,jdbcType=INTEGER}, #{dispatcherUploadLimit,jdbcType=INTEGER},
-        #{dispatcherUploadLimitSys,jdbcType=INTEGER}, #{appLog,jdbcType=INTEGER}, #{appLogSys,jdbcType=INTEGER},
-        #{dispatcherLog,jdbcType=INTEGER}, #{dispatcherLogSys,jdbcType=INTEGER}, #{storeTip,jdbcType=INTEGER},
-        #{storeTipSys,jdbcType=INTEGER})
+        #{vedioTimeLimit,jdbcType=INTEGER},#{isAutoUpload,jdbcType=INTEGER},
+        #{dispatcherUploadLimit,jdbcType=INTEGER},
+        #{appLog,jdbcType=INTEGER},
+        #{dispatcherLog,jdbcType=INTEGER}, #{storeTip,jdbcType=INTEGER}
+        )
     </insert>
 
     <insert id="insertSelective" parameterType="com.wyfx.total.entity.DiySetting">
@@ -181,39 +165,27 @@
             <if test="vedioTimeLimit != null">
                 vedio_time_limit,
             </if>
-            <if test="vedioTimeLimitSys != null">
-                vedio_time_limit_sys,
-            </if>
+
             <if test="isAutoUpload != null">
                 is_auto_upload,
             </if>
-            <if test="isAutoUploadSys != null">
-                is_auto_upload_sys,
-            </if>
+
             <if test="dispatcherUploadLimit != null">
                 dispatcher_upload_limit,
             </if>
-            <if test="dispatcherUploadLimitSys != null">
-                dispatcher_upload_limit_sys,
-            </if>
+
             <if test="appLog != null">
                 app_log,
             </if>
-            <if test="appLogSys != null">
-                app_log_sys,
-            </if>
+
             <if test="dispatcherLog != null">
                 dispatcher_log,
             </if>
-            <if test="dispatcherLogSys != null">
-                dispatcher_log_sys,
-            </if>
+
             <if test="storeTip != null">
                 store_tip,
             </if>
-            <if test="storeTipSys != null">
-                store_tip_sys,
-            </if>
+
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="did != null">
@@ -246,39 +218,27 @@
             <if test="vedioTimeLimit != null">
                 #{vedioTimeLimit,jdbcType=INTEGER},
             </if>
-            <if test="vedioTimeLimitSys != null">
-                #{vedioTimeLimitSys,jdbcType=INTEGER},
-            </if>
+
             <if test="isAutoUpload != null">
                 #{isAutoUpload,jdbcType=INTEGER},
             </if>
-            <if test="isAutoUploadSys != null">
-                #{isAutoUploadSys,jdbcType=INTEGER},
-            </if>
+
             <if test="dispatcherUploadLimit != null">
                 #{dispatcherUploadLimit,jdbcType=INTEGER},
             </if>
-            <if test="dispatcherUploadLimitSys != null">
-                #{dispatcherUploadLimitSys,jdbcType=INTEGER},
-            </if>
+
             <if test="appLog != null">
                 #{appLog,jdbcType=INTEGER},
             </if>
-            <if test="appLogSys != null">
-                #{appLogSys,jdbcType=INTEGER},
-            </if>
+
             <if test="dispatcherLog != null">
                 #{dispatcherLog,jdbcType=INTEGER},
             </if>
-            <if test="dispatcherLogSys != null">
-                #{dispatcherLogSys,jdbcType=INTEGER},
-            </if>
+
             <if test="storeTip != null">
                 #{storeTip,jdbcType=INTEGER},
             </if>
-            <if test="storeTipSys != null">
-                #{storeTipSys,jdbcType=INTEGER},
-            </if>
+
         </trim>
     </insert>
 
@@ -312,39 +272,27 @@
             <if test="vedioTimeLimit != null">
                 vedio_time_limit = #{vedioTimeLimit,jdbcType=INTEGER},
             </if>
-            <if test="vedioTimeLimitSys != null">
-                vedio_time_limit_sys = #{vedioTimeLimitSys,jdbcType=INTEGER},
-            </if>
+
             <if test="isAutoUpload != null">
                 is_auto_upload = #{isAutoUpload,jdbcType=INTEGER},
             </if>
-            <if test="isAutoUploadSys != null">
-                is_auto_upload_sys = #{isAutoUploadSys,jdbcType=INTEGER},
-            </if>
+
             <if test="dispatcherUploadLimit != null">
                 dispatcher_upload_limit = #{dispatcherUploadLimit,jdbcType=INTEGER},
             </if>
-            <if test="dispatcherUploadLimitSys != null">
-                dispatcher_upload_limit_sys = #{dispatcherUploadLimitSys,jdbcType=INTEGER},
-            </if>
+
             <if test="appLog != null">
                 app_log = #{appLog,jdbcType=INTEGER},
             </if>
-            <if test="appLogSys != null">
-                app_log_sys = #{appLogSys,jdbcType=INTEGER},
-            </if>
+
             <if test="dispatcherLog != null">
                 dispatcher_log = #{dispatcherLog,jdbcType=INTEGER},
             </if>
-            <if test="dispatcherLogSys != null">
-                dispatcher_log_sys = #{dispatcherLogSys,jdbcType=INTEGER},
-            </if>
+
             <if test="storeTip != null">
                 store_tip = #{storeTip,jdbcType=INTEGER},
             </if>
-            <if test="storeTipSys != null">
-                store_tip_sys = #{storeTipSys,jdbcType=INTEGER},
-            </if>
+
         </set>
         where did = #{did,jdbcType=BIGINT}
     </update>
@@ -360,17 +308,12 @@
         listener = #{listener,jdbcType=INTEGER},
         bid = #{bid,jdbcType=VARCHAR},
         vedio_time_limit = #{vedioTimeLimit,jdbcType=INTEGER},
-        vedio_time_limit_sys = #{vedioTimeLimitSys,jdbcType=INTEGER},
+
         is_auto_upload = #{isAutoUpload,jdbcType=INTEGER},
-        is_auto_upload_sys = #{isAutoUploadSys,jdbcType=INTEGER},
         dispatcher_upload_limit = #{dispatcherUploadLimit,jdbcType=INTEGER},
-        dispatcher_upload_limit_sys = #{dispatcherUploadLimitSys,jdbcType=INTEGER},
         app_log = #{appLog,jdbcType=INTEGER},
-        app_log_sys = #{appLogSys,jdbcType=INTEGER},
         dispatcher_log = #{dispatcherLog,jdbcType=INTEGER},
-        dispatcher_log_sys = #{dispatcherLogSys,jdbcType=INTEGER},
         store_tip = #{storeTip,jdbcType=INTEGER},
-        store_tip_sys = #{storeTipSys,jdbcType=INTEGER}
         where did = #{did,jdbcType=BIGINT}
     </update>
 </mapper>

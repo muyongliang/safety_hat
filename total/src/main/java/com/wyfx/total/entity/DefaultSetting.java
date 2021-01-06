@@ -1,5 +1,12 @@
 package com.wyfx.total.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class DefaultSetting {
     private Long id;
 
@@ -17,108 +24,5 @@ public class DefaultSetting {
 
     private Integer thirdTipTime;
 
-    private Double storeTip;
-
-    public DefaultSetting(Long id, Integer vedioTimeLimit, Integer isAutoUpload, Integer dispatcherUploadLimit, Integer appLog, Integer dispatcherLog, Integer tipTime, Integer thirdTipTime, Double storeTip) {
-        this.id = id;
-        this.vedioTimeLimit = vedioTimeLimit;
-        this.isAutoUpload = isAutoUpload;
-        this.dispatcherUploadLimit = dispatcherUploadLimit;
-        this.appLog = appLog;
-        this.dispatcherLog = dispatcherLog;
-        this.tipTime = tipTime;
-        this.thirdTipTime = thirdTipTime;
-        this.storeTip = storeTip;
-    }
-
-    public DefaultSetting() {
-        super();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Integer getVedioTimeLimit() {
-        return vedioTimeLimit;
-    }
-
-    public void setVedioTimeLimit(Integer vedioTimeLimit) {
-        this.vedioTimeLimit = vedioTimeLimit;
-    }
-
-    public Integer getIsAutoUpload() {
-        return isAutoUpload;
-    }
-
-    public void setIsAutoUpload(Integer isAutoUpload) {
-        this.isAutoUpload = isAutoUpload;
-    }
-
-    public Integer getDispatcherUploadLimit() {
-        return dispatcherUploadLimit;
-    }
-
-    public void setDispatcherUploadLimit(Integer dispatcherUploadLimit) {
-        this.dispatcherUploadLimit = dispatcherUploadLimit;
-    }
-
-    public Integer getAppLog() {
-        return appLog;
-    }
-
-    public void setAppLog(Integer appLog) {
-        this.appLog = appLog;
-    }
-
-    public Integer getDispatcherLog() {
-        return dispatcherLog;
-    }
-
-    public void setDispatcherLog(Integer dispatcherLog) {
-        this.dispatcherLog = dispatcherLog;
-    }
-
-    public Integer getTipTime() {
-        return tipTime;
-    }
-
-    public void setTipTime(Integer tipTime) {
-        this.tipTime = tipTime;
-    }
-
-    public Integer getThirdTipTime() {
-        return thirdTipTime;
-    }
-
-    public void setThirdTipTime(Integer thirdTipTime) {
-        this.thirdTipTime = thirdTipTime;
-    }
-
-    public Double getStoreTip() {
-        return storeTip;
-    }
-
-    public void setStoreTip(Double storeTip) {
-        this.storeTip = storeTip;
-    }
-
-    @Override
-    public String toString() {
-        return "DefaultSetting{" +
-                "id=" + id +
-                ", vedioTimeLimit=" + vedioTimeLimit +
-                ", isAutoUpload=" + isAutoUpload +
-                ", dispatcherUploadLimit=" + dispatcherUploadLimit +
-                ", appLog=" + appLog +
-                ", dispatcherLog=" + dispatcherLog +
-                ", tipTime=" + tipTime +
-                ", thirdTipTime=" + thirdTipTime +
-                ", storeTip=" + storeTip +
-                '}';
-    }
+    private Integer storeTip;
 }
