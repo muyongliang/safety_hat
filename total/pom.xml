@@ -22,7 +22,12 @@
     <packaging>jar</packaging>
 
     <dependencies>
-
+        <!-- lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!--httpUtils -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

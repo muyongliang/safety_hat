@@ -627,9 +627,10 @@ public class SystemController extends BaseController {
      */
     @RequestMapping(value = "/updateBusinessOfSetting", method = RequestMethod.POST)
     public Object updateBusinessOfSetting(@RequestBody DiySetVo diySetVo) {
-        logger.info("总后台修改配置,并通知在线设备");
+        BusinessInfo byToken = iBusinessInfoService.findByToken(diySetVo.getToken());
+        logger.info("接收到总后台配置修改,企业:{},token:{},修改详情:{},并通知在线设备", byToken.getBusinessName(), diySetVo.getToken(), JSON.toJSONString(diySetVo));
         try {
-            WebSocketServer.sendAllMessage(JSONObject.toJSONString(ConstantList.buildBaseCommand(diySetVo, WsConstant.config.name(), "")));//给所有在线用户发送修改后的配置消息
+            WebSocketServer.sendAllMessage(JSONObject.toJSONString(ConstantList.buildBaseCommand(diySetVo, WsConstant.config.name(), "")), null, null, diySetVo.getToken());//给所有在线用户发送修改后的配置消息
         } catch (Exception e) {
             e.printStackTrace();
         }

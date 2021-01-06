@@ -22,10 +22,12 @@ import com.wyfx.total.utile.ResponseCode;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -51,6 +53,7 @@ public class EnterpriseManagementController extends BaseController {
      */
     @Autowired
     private AreasService areasService;
+
 
     /**
      * 默认设置
@@ -167,10 +170,26 @@ public class EnterpriseManagementController extends BaseController {
             @ApiResponse(code = 501, message = "手机或坐机号码格式错误"),
             @ApiResponse(code = 201, message = "添加失败"),
     })
-    public RespBean editEnterpriseDetail(@ApiParam BusinessManager businessManager, @ApiParam DiySetting diySetting) {
+    public RespBean editEnterpriseDetail(@ApiParam BusinessManager businessManager, @ApiParam DiySetting diySetting) throws Exception {
 
         logger.info("编辑企业详情=businessManager=========" + businessManager);
         logger.info("diySetting==========" + diySetting);
+
+//        把所有跟随系统的配置转化为系统配置的实际值
+        DefaultSetting defaultSetting = iDefaultSettingService.findDefaultSetting();
+        Class<DiySetting> diySettingClass = DiySetting.class;
+        Field[] declaredFields = diySettingClass.getDeclaredFields();
+        for (Field declaredField : declaredFields) {
+            declaredField.setAccessible(true);
+            Object o = declaredField.get(diySetting);
+            if (o.equals(-2)) {
+                String fieldName = declaredField.getName();
+                Field field = DefaultSetting.class.getDeclaredField(fieldName);
+                if (field!=null) {
+                    declaredField.set(diySetting, field.get(defaultSetting));
+                }
+            }
+        }
         String mobilePhoneRegex = "^(1[3-9])\\d{9}$";
         String phoneRegex = "^0[0-9]{2,3}-[0-9]{8}";
         String phone = businessManager.getPicPhone();
@@ -186,9 +205,6 @@ public class EnterpriseManagementController extends BaseController {
             if (!matches) {
                 return new RespBean(501, "手机号码格式错误");
             }
-        }
-        if (diySetting.getIsAutoUpload() == 0 || diySetting.getIsAutoUpload() == null) {
-            diySetting.setIsAutoUpload(2048);
         }
         Map map = new HashMap();
         //判断主账号合法性 3-10位字母数字字符

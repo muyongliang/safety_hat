@@ -290,82 +290,7 @@ public class EnterpriseManagementServiceImp implements EnterpriseManagementServi
         DiySetting diy = diySettingMapper.selectByBid(businessManager.getBid());
         DefaultSetting defaultSetting = defaultSettingMapper.selectByPrimaryKey(1L);
 
-        //获取返回自定义设置信息  调度员上传限制
-        if (diy.getDispatcherUploadLimitSys() == 0) {//{0:跟随系统配置;1:无限制;2:限制}
-            if (defaultSetting.getDispatcherUploadLimit() == 0) {//系统默认设置----无限制提交0
-//                diy.setDispatcherUploadLimitSys(1);
-                diy.setDispatcherUploadLimit(0);//0 代表无限制  todo 可以不返回
-            } else {//系统默认设置 --有限制提交限制值
-                diy.setDispatcherUploadLimit(defaultSetting.getDispatcherUploadLimit()); //todo 可以不返回
-            }
-        } else if (diy.getDispatcherUploadLimitSys() == 1) {//自定义无限制
-            diy.setDispatcherUploadLimit(0); //todo 可以不返回
-        } else {//自定义限制
-            diy.setDispatcherUploadLimit(diy.getDispatcherUploadLimit());//todo 必须返回  以下同理
-        }
 
-        //视频录制限制
-        if (diy.getVedioTimeLimitSys() == 0) {//{0:跟随系统配置;1:无限制;2:限制}
-            if (defaultSetting.getVedioTimeLimit() == 0) {//系统默认设置无限制提交0
-//                diy.setVedioTimeLimitSys(1);
-                diy.setVedioTimeLimit(0);
-            } else {//系统默认设置 有限制提交限制值
-                diy.setVedioTimeLimit(defaultSetting.getVedioTimeLimit());
-            }
-        } else if (diy.getVedioTimeLimitSys() == 1) {//自定义无限制
-            diy.setVedioTimeLimit(0);
-        } else {//自定义限制
-            diy.setVedioTimeLimit(diy.getVedioTimeLimit());
-        }
-
-        //视频上传限制
-        if (diy.getIsAutoUploadSys() == 0) {//{0:跟随系统配置;1:无限制;2:限制}
-            if (defaultSetting.getIsAutoUpload() == 0) {//系统默认设置无限制提交0
-//                diy.setIsAutoUploadSys(1);
-                diy.setIsAutoUpload(0);
-            } else {//系统默认设置 有限制提交限制值
-                diy.setIsAutoUpload(defaultSetting.getIsAutoUpload());
-            }
-        } else if (diy.getIsAutoUploadSys() == 1) {//自定义无限制
-            diy.setIsAutoUpload(0);
-        } else {//自定义限制
-            diy.setIsAutoUpload(diy.getIsAutoUpload());
-        }
-
-        //终端日志清理设置
-        if (diy.getAppLogSys() == 0) {//{0:跟随系统配置;1:不自动清理日志2开 自动清理日志的天数}
-            if (defaultSetting.getAppLog() == 0) {//系统默认设置 0不自动清理日志
-//                diy.setAppLogSys(1);
-                diy.setAppLog(0);
-            } else {//系统默认设置  自动清理日志的天数
-                diy.setAppLog(defaultSetting.getAppLog());
-            }
-        } else if (diy.getIsAutoUploadSys() == 1) {//1 自定义不自动清理日志
-            diy.setIsAutoUpload(0);
-        } else {//自定义 自动清理日志的天数
-            diy.setIsAutoUpload(diy.getIsAutoUpload());
-        }
-
-        //调度员日志清理设置
-        if (diy.getDispatcherLogSys() == 0) {//{0:跟随系统配置;1:不自动清理日志2开 自动清理日志的天数}
-            if (defaultSetting.getDispatcherLog() == 0) {//系统默认设置 0不自动清理日志
-//                diy.setDispatcherLogSys(1);
-                diy.setDispatcherLog(0);
-            } else {//系统默认设置  自动清理日志的天数
-                diy.setDispatcherLog(defaultSetting.getDispatcherLog());
-            }
-        } else if (diy.getDispatcherLogSys() == 1) {//1 自定义不自动清理日志
-            diy.setDispatcherLog(0);
-        } else {//自定义 自动清理日志的天数
-            diy.setDispatcherLog(diy.getDispatcherLog());
-        }
-
-        //企业存储空间限制
-        if (diy.getStoreTipSys() == 0) {//企业存储空间报警配置{0:跟随系统配置;1:自定义;}
-            diy.setStoreTip(defaultSetting.getStoreTip().intValue());
-        } else {//
-            diy.setStoreTip(diy.getStoreTip());
-        }
         map.put("businessManager", businessManager);
         map.put("diySettingMapper", diy);
         return map;
@@ -587,95 +512,18 @@ public class EnterpriseManagementServiceImp implements EnterpriseManagementServi
         BusinessManager businessManager = businessManagerMapper.selectByBusinessKey(bid);
         //查询企业默认设置
         DefaultSetting defaultSetting = defaultSettingMapper.selectByPrimaryKey(1L);
-
-        if (diy.getDispatcherUploadLimitSys() == 0) {//{0:跟随系统配置;1:无限制;2:限制}
-            if (defaultSetting.getDispatcherUploadLimit() == 0) {//系统默认设置//无限制提交0
-                diy.setDispatcherUploadLimitSys(1);
-                diy.setDispatcherUploadLimit(0);//限制大小为0 代表无限制
-            } else {//系统默认设置 有限制提交限制值
-                diy.setDispatcherUploadLimit(defaultSetting.getDispatcherUploadLimit());
-            }
-        } else if (diy.getDispatcherUploadLimitSys() == 1) {//自定义无限制
-            diy.setDispatcherUploadLimit(0);
-        } else {//自定义限制
-            diy.setDispatcherUploadLimit(diy.getDispatcherUploadLimit());
-        }
-
-        //视频录制限制
-        if (diy.getVedioTimeLimitSys() == 0) {//{0:跟随系统配置;1:无限制;2:限制}
-            if (defaultSetting.getVedioTimeLimit() == 0) {//系统默认设置无限制提交0
-                diy.setVedioTimeLimitSys(1);
-                diy.setVedioTimeLimit(0);
-            } else {//系统默认设置 有限制提交限制值
-                diy.setVedioTimeLimit(defaultSetting.getVedioTimeLimit());
-            }
-        } else if (diy.getVedioTimeLimitSys() == 1) {//自定义无限制
-            diy.setVedioTimeLimit(0);
-        } else {//自定义限制
-            diy.setVedioTimeLimit(diy.getVedioTimeLimit());
-        }
-
-        //视频上传限制
-        if (diy.getIsAutoUploadSys() == 0) {//{0:跟随系统配置;1:无限制;2:限制}
-            if (defaultSetting.getIsAutoUpload() == 0) {//系统默认设置无限制提交0
-                diy.setIsAutoUploadSys(1);
-                diy.setIsAutoUpload(0);
-            } else {//系统默认设置 有限制提交限制值
-                diy.setIsAutoUpload(defaultSetting.getIsAutoUpload());
-            }
-        } else if (diy.getIsAutoUploadSys() == 1) {//自定义无限制
-            diy.setIsAutoUpload(0);
-        } else {//自定义限制
-            diy.setIsAutoUpload(diy.getIsAutoUpload());
-        }
-
-        //终端日志清理设置
-        if (diy.getAppLogSys() == 0) {//{0:跟随系统配置;1:不自动清理日志2开 自动清理日志的天数}
-            if (defaultSetting.getAppLog() == 0) {//系统默认设置 0不自动清理日志
-                diy.setAppLogSys(1);
-                diy.setAppLog(0);
-            } else {//系统默认设置  自动清理日志的天数
-                diy.setAppLog(defaultSetting.getAppLog());
-            }
-        } else if (diy.getIsAutoUploadSys() == 1) {//1 自定义不自动清理日志
-            diy.setIsAutoUpload(0);
-        } else {//自定义 自动清理日志的天数
-            diy.setIsAutoUpload(diy.getIsAutoUpload());
-        }
-
-        //调度员日志清理设置
-        if (diy.getDispatcherLogSys() == 0) {//{0:跟随系统配置;1:不自动清理日志2开 自动清理日志的天数}
-            if (defaultSetting.getDispatcherLog() == 0) {//系统默认设置 0不自动清理日志
-                diy.setDispatcherLogSys(1);
-                diy.setDispatcherLog(0);
-            } else {//系统默认设置  自动清理日志的天数
-                diy.setDispatcherLog(defaultSetting.getDispatcherLog());
-            }
-        } else if (diy.getDispatcherLogSys() == 1) {//1 自定义不自动清理日志
-            diy.setDispatcherLog(0);
-        } else {//自定义 自动清理日志的天数
-            diy.setDispatcherLog(diy.getDispatcherLog());
-        }
-
-        //企业存储空间限制
-        if (diy.getStoreTipSys() == 0) {//企业存储空间报警配置{0:跟随系统配置;1:自定义;}
-            diy.setStoreTip(defaultSetting.getStoreTip().intValue());
-        } else {//
-            diy.setStoreTip(diy.getStoreTip());
-        }
-
         DiySetVo diySetVo = new DiySetVo(bid,
                 businessManager.getDeviceNumLimit(), businessManager.getMainAccount(),
                 businessManager.getValidityTime(),
                 diy.getIsCall(), diy.getTalkback(), diy.getVedio(),
                 diy.getBroadcast(), diy.getMapRange(),
                 diy.getTrail(), diy.getListener(),
-                diy.getVedioTimeLimit(), diy.getVedioTimeLimitSys(),
-                diy.getIsAutoUpload(), diy.getIsAutoUploadSys(),
-                diy.getDispatcherUploadLimit(), diy.getDispatcherUploadLimitSys(),
-                diy.getAppLog(), diy.getAppLogSys(),
-                diy.getDispatcherLog(), diy.getDispatcherLogSys(),
-                diy.getStoreTip(), diy.getStoreTipSys()
+                diy.getVedioTimeLimit(),
+                diy.getIsAutoUpload(),
+                diy.getDispatcherUploadLimit(),
+                diy.getAppLog(),
+                diy.getDispatcherLog(),
+                diy.getStoreTip()
         );
         System.err.println("获取DiySetVo=" + diySetVo);
         return diySetVo;

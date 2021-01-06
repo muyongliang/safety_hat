@@ -100,9 +100,6 @@ public class SystemController extends BaseController {
     @RequestMapping("/handleUpdateDefaultSetting")
     public RespBean handleUpdateDefaultSetting(DefaultSetting defaultSetting) {
         logger.info("添加和编辑系统默认设置===" + defaultSetting.toString());
-        if (defaultSetting.getIsAutoUpload() == 0) {
-            defaultSetting.setIsAutoUpload(2048);
-        }
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         iDefaultSettingService.updateDefaultSetting(defaultSetting);
         iLogInfService.addLogInfRecord("更新企业默认设置", 0, "更新人：" + request.getSession().getAttribute("userName"));
