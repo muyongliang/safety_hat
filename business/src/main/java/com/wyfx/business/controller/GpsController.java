@@ -45,6 +45,7 @@ public class GpsController extends BaseController {
         gpsService.addGpsInfo(gpsVo, user);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
     }
+
     @GetMapping(value = "/selectByClientId")
     public MyResponseEntity selectByClientId(Long client_id) {
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue(),gpsMapper.selectByClientId(client_id));
