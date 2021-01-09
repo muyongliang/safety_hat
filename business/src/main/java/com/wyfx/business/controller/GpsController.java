@@ -3,6 +3,7 @@ package com.wyfx.business.controller;
 import com.wyfx.business.alarmRange.util.TrackUtils;
 import com.wyfx.business.controller.commons.MyResponseEntity;
 import com.wyfx.business.controller.commons.ResponseCode;
+import com.wyfx.business.dao.GpsMapper;
 import com.wyfx.business.entity.BusinessUser;
 import com.wyfx.business.entity.vo.GpsVo;
 import com.wyfx.business.service.trace.GpsService;
@@ -10,10 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author johnson liu
@@ -27,6 +25,8 @@ public class GpsController extends BaseController {
 
     @Autowired
     private GpsService gpsService;
+    @Autowired
+    private GpsMapper gpsMapper;
 
     /**
      * 上传终端采集的定位信息/气压等
@@ -45,6 +45,8 @@ public class GpsController extends BaseController {
         gpsService.addGpsInfo(gpsVo, user);
         return new MyResponseEntity(ResponseCode.SUCCESS.getValue());
     }
-
-
+    @GetMapping(value = "/selectByClientId")
+    public MyResponseEntity selectByClientId(Long client_id) {
+        return new MyResponseEntity(ResponseCode.SUCCESS.getValue(),gpsMapper.selectByClientId(client_id));
+    }
 }
