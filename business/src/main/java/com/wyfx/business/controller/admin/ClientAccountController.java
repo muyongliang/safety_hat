@@ -208,7 +208,7 @@ public class ClientAccountController extends BaseController {
         }
         if (clientAccountVo.getDeviceId() != null && clientAccountVo.getDeviceId() != 0) {
             List<ClientAccount> list = clientAccountService.findByDeviceId(clientAccountVo.getDeviceId().intValue());
-            if (list.size() > 0 && list.get(0).getBid() != clientAccountVo.getClientId()) {
+            if (list.size() > 0 && !list.get(0).getBid() .equals(clientAccountVo.getClientId()) ) {
                 return new MyResponseEntity(ResponseCode.ERROR_SYS.getValue(), "该账号已经绑定了设备,请重新选择");
             }
         }

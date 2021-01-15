@@ -76,7 +76,7 @@ public class WebSocketServer {
 
     //与某个客户端的连接会话，需要通过它来给客户端发送数据 control
     private Session session;
-    private String sid;
+    private String bid;
     private String source;
     private BusinessUser businessUser;
 
@@ -91,7 +91,7 @@ public class WebSocketServer {
                 if ("web".equals(item.source)) {
                     continue;
                 }
-                item.sendMessage(message, item.sid);
+                item.sendMessage(message, item.bid);
 
             } catch (IOException e) {
                 log.info("发送消息失败", e);
@@ -141,7 +141,7 @@ public class WebSocketServer {
                 if (token != null && !token.equals(item.businessUser.getToken())) {
                     continue;
                 }
-                item.sendMessage(message, item.sid);
+                item.sendMessage(message, item.bid);
             } catch (IOException e) {
                 log.info("发送消息失败", e);
 
@@ -169,8 +169,8 @@ public class WebSocketServer {
                 if (token != null && !token.equals(item.businessUser.getToken())) {
                     continue;
                 }
-                if (item.sid.equals(sid)) {
-                    item.sendMessage(message, item.sid);
+                if (item.bid.equals(sid)) {
+                    item.sendMessage(message, item.bid);
                 }
             } catch (IOException e) {
                 log.info("发送消息失败", e);
@@ -183,22 +183,22 @@ public class WebSocketServer {
     }
 
     @OnOpen
-    public void onOpen(Session session, @PathParam("bid") String sid, @PathParam("source") String source) {
+    public void onOpen(Session session, @PathParam("bid") String bid, @PathParam("source") String source) {
         log.info("session超时时间为:{}", session.getMaxIdleTimeout());
         try {
-            if (sid == null && session != null) {
+            if (bid == null && session != null) {
                 session.close();
-                log.debug(sid);
+                log.debug(bid);
                 return;
             }
-            businessUser = businessUserService.findByUserName(sid);
+            businessUser = businessUserService.findByUserName(bid);
             if (businessUser == null && session != null) {
-                log.debug(sid + ":用户不存在!");
+                log.debug(bid + ":用户不存在!");
                 session.close();
                 return;
             }
-            log.info("用户[" + sid + "]建立了连接,SessionId:" + session.getId());
-            Map<String, Session> map = ConstantList.sessionMap.get(sid);
+            log.info("用户[" + bid + "]建立了连接,SessionId:" + session.getId());
+            Map<String, Session> map = ConstantList.sessionMap.get(bid);
 //            map为null,说明以前未登陆过
             if (map == null) {
                 map = new HashMap<String, Session>();
@@ -210,11 +210,11 @@ public class WebSocketServer {
             }
 //          spring对象默认为单例模式,所以此处的引用会被持续修改为最新的session连接
             this.session = session;
-            this.sid = sid;
+            this.bid = bid;
             this.source = source;
 
             webSocketSet.add(this);     //加入set中
-            ConstantList.sessionMap.put(sid, map);
+            ConstantList.sessionMap.put(bid, map);
             // 修改用户在线状态
             int onlineStatus = 0;
             int size = map.keySet().size();
@@ -225,32 +225,32 @@ public class WebSocketServer {
                 onlineStatus = UserTypeAndStatus.WEB_MOBILE_ONLINE;
             }
 
-            log.debug("websocket中查询到用户:" + sid);
-            businessUserService.updateOnlineStatus(sid, onlineStatus);
+            log.debug("websocket中查询到用户:" + bid);
+            businessUserService.updateOnlineStatus(bid, onlineStatus);
 
             if (businessUser.getUserType() == 2) {
-                List<OfflineBroadcastVo> offlineBroadcastMessages = offlineBroadcastMessageService.findMessageByAccount(sid);
-                log.debug(sid + ":检测离线广播消息:" + offlineBroadcastMessages.size());
+                List<OfflineBroadcastVo> offlineBroadcastMessages = offlineBroadcastMessageService.findMessageByAccount(bid);
+                log.debug(bid + ":检测离线广播消息:" + offlineBroadcastMessages.size());
                 if (null != offlineBroadcastMessages && offlineBroadcastMessages.size() > 0) {
                     BaseCommand sendCmd = new BaseCommand();
                     sendCmd.setEventName(WsConstant.broadcast.name());
                     sendCmd.setType("offline");
                     sendCmd.setData(offlineBroadcastMessages);
                     session.getBasicRemote().sendText(JSONObject.toJSONString(sendCmd));//发送离线广播消息
-                    offlineBroadcastMessageService.deleteMessageByAccount(sid);
+                    offlineBroadcastMessageService.deleteMessageByAccount(bid);
                 }
             }
             String message = JSON.toJSONString(new BaseCommand(WsConstant.updateOnline.name(), "", ""));
             WebSocketServer.sendAllMessage(message, null, businessUser.getProjectId(), null, null);
         } catch (
                 Exception e) {
-            log.info("建立webSocket连接异常:" + sid, e);
+            log.info("建立webSocket连接异常:" + bid, e);
             //检测是否存入数组中
-            Map<String, Session> map = ConstantList.sessionMap.get(sid);
+            Map<String, Session> map = ConstantList.sessionMap.get(bid);
             if (map != null && map.get(source) != null) {
                 if (session != null && map.get(source) == session) {
                     //移除掉已经存在的Session
-                    ConstantList.sessionMap.put(sid, new HashMap<>());
+                    ConstantList.sessionMap.put(bid, new HashMap<>());
                 }
                 if (session != null && map.get(source) != session) {
                     try {
@@ -290,26 +290,26 @@ public class WebSocketServer {
         if (t instanceof EOFException) {
             log.info("流读取结束");
         }
-        log.info(this.sid + ":>>>>连接异常" + t.getMessage());
+        log.info(this.bid + ":>>>>连接异常" + t.getMessage());
     }
 
     @OnClose
     public void onClose(Session session, CloseReason reason, @PathParam("source") String source) {
         //从set中删除
-        log.info("用户:{},source:{}断开连接", sid, source);
+        log.info("用户:{},source:{}断开连接", bid, source);
         webSocketSet.remove(this);
-        ConstantList.removeSession(sid, source);//移除保存的当前异常连接
-        ConstantList.removeAnsweringUserList(sid);//连接断开时主动移除
+        ConstantList.removeSession(bid, source);//移除保存的当前异常连接
+        ConstantList.removeAnsweringUserList(bid);//连接断开时主动移除
         // 修改用户的离线状态
         int onlineStatus = 0;
-        int size = (ConstantList.sessionMap.get(sid) == null) ? 0 : ConstantList.sessionMap.get(sid).size();
+        int size = (ConstantList.sessionMap.get(bid) == null) ? 0 : ConstantList.sessionMap.get(bid).size();
         if (size == 1) {
             onlineStatus = (source.equals(UserTypeAndStatus.sourceOfAndroid)) ? UserTypeAndStatus.WEB_ONLINE : UserTypeAndStatus.WEB_MOBILE_ONLINE;
         }
         if (size == 0) {
             onlineStatus = UserTypeAndStatus.OFF_LINE;
         }
-        businessUserService.updateOnlineStatus(sid, onlineStatus);
+        businessUserService.updateOnlineStatus(bid, onlineStatus);
 
         String message = JSON.toJSONString(new BaseCommand(WsConstant.updateOnline.name(), "", ""));
         Long projectId = businessUser == null ? null : businessUser.getProjectId();
@@ -545,7 +545,7 @@ public class WebSocketServer {
             if ("1".equals(resAccount.getState())) {
                 //PC跟移动端同时在线时,判断是否已经被接听，如果当前接听
                 /*boolean flag=true;*/
-                if (ConstantList.answeringUserList.contains(sid)) {
+                if (ConstantList.answeringUserList.contains(bid)) {
                     sendBeInvitedCloseCmd(true, message, resTime, wsConstant, resAccount);
                     flag = false;
                 }
@@ -561,7 +561,7 @@ public class WebSocketServer {
                     for (BusinessUser user : dispatcherList) {
                         //给其他在线的调度员发送挂断命令
                         accountList.clear();
-                        if (user.getOnlineStatus() == 0 || this.sid.equals(user.getUserName())) {
+                        if (user.getOnlineStatus() == 0 || this.bid.equals(user.getUserName())) {
                             continue;
                         }
                         accountList.add(new Account("z", null, user.getUserName(), user.getName(), "0"));
@@ -946,9 +946,9 @@ public class WebSocketServer {
         StringBuffer t_sendToName = new StringBuffer();
         StringBuffer t_sendToBid = new StringBuffer();
         if (contactsVoList != null) {
-            Map onlineMap = ConstantList.sessionMap.get(this.sid);
+            Map onlineMap = ConstantList.sessionMap.get(this.bid);
             for (ContactsVo contactsVo : contactsVoList) {
-                if (onlineMap != null && !contactsVo.getUserName().equals(this.sid)) {
+                if (onlineMap != null && !contactsVo.getUserName().equals(this.bid)) {
                     //只给在线设备发送对讲消息
                     Account account = new Account(null, null, contactsVo.getUserName(), null, null);
                     /*resTargetBeanList.add(account);*/
@@ -963,7 +963,7 @@ public class WebSocketServer {
         }
         if (talkBackService.findByGroupId(Long.valueOf(talkbackCmd.getGroupId())).getIsRecording() == 1) {
             // 添加对讲记录
-            findUser = businessUserService.findByUserName(this.sid);
+            findUser = businessUserService.findByUserName(this.bid);
 
             RecordManager recordManagerOfTalkBack = new RecordManager(null, new Date(), findUser.getProjectId(), findUser.getBid(), findUser.getName(), t_sendToBid.toString(), t_sendToName.toString(), talkbackCmd.getUrl(), 2, Long.valueOf(talkbackCmd.getGroupId()), 3, null, null, null);
             recordManagerService.addRecord(recordManagerOfTalkBack);
@@ -999,7 +999,7 @@ public class WebSocketServer {
             b_sendToBid.append(findUser.getBid() + ",");
         }
         // 添加广播记录
-        findUser = businessUserService.findByUserName(this.sid);
+        findUser = businessUserService.findByUserName(this.bid);
         Integer messageType = (message.getType().equals("voice")) ? 2 : 1;
         RecordManager recordManagerOfBroadcast = new RecordManager(null, new Date(), findUser.getProjectId(), findUser.getBid(), findUser.getName(), b_sendToBid.toString(), b_sendToName.toString(), broadCastCmd.getContent(), messageType, null, 1, null, null, null);
         recordManagerService.addRecord(recordManagerOfBroadcast);
@@ -1123,7 +1123,7 @@ public class WebSocketServer {
             jsonArraySend = new JSONArray();
             jsonArraySend.add(callFunctionCtrled);
             sendCmd.setData(jsonArraySend);
-            sendInfo(wsConstant, JSONObject.toJSONString(sendCmd), this.sid, null);
+            sendInfo(wsConstant, JSONObject.toJSONString(sendCmd), this.bid, null);
         }
     }
 
@@ -1157,7 +1157,7 @@ public class WebSocketServer {
      * @throws IOException
      */
     private void sendBeInvitedCloseCmd(boolean answering, BaseCommand message, String resTime, WsConstant wsConstant, Account resAccount) throws IOException {
-        businessUser = businessUserService.findByUserName(sid);
+        businessUser = businessUserService.findByUserName(bid);
         if (businessUser.getOnlineStatus() == UserTypeAndStatus.WEB_MOBILE_ONLINE) {
             //如果PC跟移动端同时在线时，一方接听后，另一方将主动挂断
             String fromSource = null;
@@ -1169,7 +1169,7 @@ public class WebSocketServer {
                 fromSource = ("web".equals(source)) ? "android" : "web";
             }
 
-            Session session = (answering) ? this.session : ConstantList.sessionMap.get(sid).get(fromSource);
+            Session session = (answering) ? this.session : ConstantList.sessionMap.get(bid).get(fromSource);
             List<Account> accountList = new ArrayList<>();
             Account account = new Account();
             BeanUtils.copyProperties(resAccount, account);
@@ -1227,7 +1227,7 @@ public class WebSocketServer {
         log.info("WebSocketScheduleTask每{}秒执行一次", 30);
         log.info("检测前有连接{}个", webSocketSet.size());
         for (WebSocketServer webSocketServer : webSocketSet) {
-            log.info("检测连接:{}", webSocketServer.getSid());
+            log.info("检测连接:{}", webSocketServer.getBid());
             Session session = webSocketServer.getSession();
             session.getBasicRemote().sendText(message);
         }
