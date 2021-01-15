@@ -94,10 +94,10 @@ public class WebSocketServer {
                 item.sendMessage(message, item.sid);
 
             } catch (IOException e) {
-                log.error("发送消息失败", e);
+                log.info("发送消息失败", e);
                 continue;
             } catch (Exception e) {
-                log.error("发送消息失败", e);
+                log.info("发送消息失败", e);
                 continue;
             }
         }
@@ -143,11 +143,11 @@ public class WebSocketServer {
                 }
                 item.sendMessage(message, item.sid);
             } catch (IOException e) {
-                log.error("发送消息失败", e);
+                log.info("发送消息失败", e);
 
                 continue;
             } catch (Exception e) {
-                log.error("发送消息失败", e);
+                log.info("发送消息失败", e);
                 continue;
             }
         }
@@ -173,10 +173,10 @@ public class WebSocketServer {
                     item.sendMessage(message, item.sid);
                 }
             } catch (IOException e) {
-                log.error("发送消息失败", e);
+                log.info("发送消息失败", e);
                 continue;
             } catch (Exception e) {
-                log.error("发送消息失败", e);
+                log.info("发送消息失败", e);
                 continue;
             }
         }
@@ -197,7 +197,7 @@ public class WebSocketServer {
                 session.close();
                 return;
             }
-           log.info("用户[" + sid + "]建立了连接,SessionId:" + session.getId());
+            log.info("用户[" + sid + "]建立了连接,SessionId:" + session.getId());
             Map<String, Session> map = ConstantList.sessionMap.get(sid);
 //            map为null,说明以前未登陆过
             if (map == null) {
@@ -244,7 +244,7 @@ public class WebSocketServer {
             WebSocketServer.sendAllMessage(message, null, businessUser.getProjectId(), null, null);
         } catch (
                 Exception e) {
-            log.error("建立webSocket连接异常:" + sid, e);
+            log.info("建立webSocket连接异常:" + sid, e);
             //检测是否存入数组中
             Map<String, Session> map = ConstantList.sessionMap.get(sid);
             if (map != null && map.get(source) != null) {
@@ -279,18 +279,18 @@ public class WebSocketServer {
             BaseCommand command = jsonObject.toJavaObject(BaseCommand.class);
             handler(command);
         } catch (Exception e) {
-            log.error("OnMessage发生异常");
+            log.info("OnMessage发生异常");
             e.printStackTrace();
         }
     }
 
     @OnError
-    public void onError(Session session, Throwable t, @PathParam("source") String source) {
+    public void OnError(Session session, Throwable t, @PathParam("source") String source) {
 //        发生异常必然会导致断开连接
         if (t instanceof EOFException) {
             log.info("流读取结束");
         }
-        log.error(this.sid + ":>>>>连接异常" + t.getMessage());
+        log.info(this.sid + ":>>>>连接异常" + t.getMessage());
     }
 
     @OnClose
@@ -476,7 +476,7 @@ public class WebSocketServer {
                     break;
             }
         } catch (Exception e) {
-            log.error("处理消息失败", e);
+            log.info("处理消息失败", e);
         }
     }
 
@@ -866,12 +866,12 @@ public class WebSocketServer {
         //如果是调度员主动挂断,则将该房间中所有的通话挂断
         //将用户从接听状态移除
         Object data = message.getData();
-        log.error(data.toString());
+        log.info(data.toString());
         ObjectMapper objectMapper = new ObjectMapper();
         MessageVo messageVo = objectMapper.convertValue(data, MessageVo.class);
         if (messageVo.getTarget().size() == 1) {
             for (MemberBeanVo memberBeanVo : messageVo.getTarget()) {
-                log.error("是否移除" + resRoomBean.getRoomId() + "-------------" + resAccount.getId());
+                log.info("是否移除" + resRoomBean.getRoomId() + "-------------" + resAccount.getId());
                 ConstantList.removeAnsweringUserList(memberBeanVo.getId());
                 ConstantList.removeMembersByRoom(resRoomBean.getRoomId(), memberBeanVo.getId());
                 //会话发起人结束通话时，关闭所有通话
@@ -921,6 +921,8 @@ public class WebSocketServer {
         } else {
             //将用户从房间中移除
             ConstantList.removeMembersByRoom(resRoomBean.getRoomId(), resAccount.getId());
+//            bug修复:被调用者挂断后,由于没有移除AnsweringUserList,导致以后再也无法接听语音,所以在此从列表中删除挂断的终端.   author:muyongliang
+            ConstantList.removeAnsweringUserList(resAccount.getId());
         }
     }
 

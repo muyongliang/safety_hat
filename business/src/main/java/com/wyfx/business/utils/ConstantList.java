@@ -30,6 +30,10 @@ public class ConstantList {
 
 
     public synchronized static void removeAnsweringUserList(String userName) {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        for (int i = 0; i < 6; i++) {
+            logger.info("方法栈:{},{}",stackTrace[i].getMethodName(),stackTrace[i].getLineNumber());
+        }
         answeringUserList.remove(userName);
     }
 
