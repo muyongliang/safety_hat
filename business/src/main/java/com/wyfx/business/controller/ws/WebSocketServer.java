@@ -153,7 +153,7 @@ public class WebSocketServer {
         }
     }
 
-    public static void sendAllMessage(String sid, String message, Integer userType, Long projectId, String toWay, String token) {
+    public static void sendAllMessage(String bid, String message, Integer userType, Long projectId, String toWay, String token) {
         log.info("等待发送消息:" + message);
         for (WebSocketServer item : webSocketSet) {
             try {
@@ -169,7 +169,7 @@ public class WebSocketServer {
                 if (token != null && !token.equals(item.businessUser.getToken())) {
                     continue;
                 }
-                if (item.bid.equals(sid)) {
+                if (item.bid.equals(bid)) {
                     item.sendMessage(message, item.bid);
                 }
             } catch (IOException e) {
@@ -319,17 +319,17 @@ public class WebSocketServer {
     /**
      * 实现服务器主动推送  todo
      */
-    public synchronized void sendMessage(Object message, String sid) throws Exception {
+    public synchronized void sendMessage(Object message, String bid) throws Exception {
         if (message instanceof String) {
             try {
                 BaseCommand baseCommand = JSON.parseObject((String) message, BaseCommand.class);
-                baseCommand.setSessionId(sid);
+                baseCommand.setSessionId(bid);
                 String s = JSONObject.toJSONString(baseCommand);
                 this.session.getBasicRemote().sendText(s);
                 log.debug("发送消息成功：" + s);
                 baseCommands = new ArrayList<>();
                 if (baseCommand.getEventName().equals("heartCheck")) {
-                    log.debug("发送消息成功：" + sid + " >>>>SessionId:" + session.getId());
+                    log.debug("发送消息成功：" + bid + " >>>>SessionId:" + session.getId());
                     baseCommands.add(baseCommand);
                 }
                 log.info("--------" + baseCommands);
@@ -338,7 +338,7 @@ public class WebSocketServer {
             }
             return;
         }
-        log.debug("发送消息成功：" + sid + " >>>>SessionId:" + session.getId());
+        log.debug("发送消息成功：" + bid + " >>>>SessionId:" + session.getId());
         try {
             this.session.getBasicRemote().sendObject(message);
         } catch (Exception e) {
@@ -355,17 +355,17 @@ public class WebSocketServer {
     /**
      * 自定义消息消息发送
      */
-    public void sendInfo(BaseCommand message, String sid) throws IOException {
-        sendAllTypeInfo(null, message, sid, null);
+    public void sendInfo(BaseCommand message, String bid) throws IOException {
+        sendAllTypeInfo(null, message, bid, null);
     }
 
-    public void sendInfo(WsConstant wsConstant, String message, String sid, String toWay) throws IOException {
-        sendAllTypeInfo(wsConstant, message, sid, toWay);
+    public void sendInfo(WsConstant wsConstant, String message, String bid, String toWay) throws IOException {
+        sendAllTypeInfo(wsConstant, message, bid, toWay);
     }
 
-    public void sendAllTypeInfo(WsConstant wsConstant, Object message, String sid, String toWay) {
-        if (ConstantList.sessionMap.get(sid) == null) {
-            log.debug("设备【" + sid + "】不在线");
+    public void sendAllTypeInfo(WsConstant wsConstant, Object message, String bid, String toWay) {
+        if (ConstantList.sessionMap.get(bid) == null) {
+            log.debug("设备【" + bid + "】不在线");
             if (wsConstant != null && wsConstant.equals(WsConstant.broadcast)) {
                 //保存离线广播消息
                 OfflineBroadcastMessage offlineBroadcastMessage = new OfflineBroadcastMessage();
@@ -374,13 +374,13 @@ public class WebSocketServer {
                 int type = sendCmd.getType().equals("voice") ? 1 : 2;
                 String offlineMessage = sendCmd.getData().toString();
                 offlineBroadcastMessage.setMessage(offlineMessage);
-                offlineBroadcastMessage.setTargetAccount(sid);
+                offlineBroadcastMessage.setTargetAccount(bid);
                 offlineBroadcastMessage.setType(type);
                 offlineBroadcastMessageService.saveMessage(offlineBroadcastMessage);
             }
             return;
         }
-        sendAllMessage(sid, message.toString(), null, null, toWay, null);
+        sendAllMessage(bid, message.toString(), null, null, toWay, null);
     }
 
     public void handler(BaseCommand message) {
@@ -845,7 +845,7 @@ public class WebSocketServer {
             str = JSONObject.toJSONString(sendCmd);
             /*str=(beInvitedFlag)?JSONObject.toJSONString(sendCmdOfBeInvited):JSONObject.toJSONString(sendCmd);*/
             System.out.println("发送信息:\n" + str);
-            /*if(toWay!=null && targetId.equals(sid)){
+            /*if(toWay!=null && targetId.equals(bid)){
                 continue;
             }*/
             sendInfo(wsConstant, JSONObject.toJSONString(sendCmd), targetId, toWay);
