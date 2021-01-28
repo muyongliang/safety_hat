@@ -275,6 +275,24 @@ public class WebSocketServer {
     public void onMessage(String message, Session session, @PathParam("source") String source) {
         try {
             log.debug("收到消息:" + message);
+//            收到消息成功,说明该连接存活,用于解决断网重连导致用户状态不准确问题
+            ConstantList.sessionMap.get(bid).put(source, session);
+            int onlineStatus = 0;
+            int size = 0;
+            if (ConstantList.sessionMap.get(bid) != null) {
+                size = ConstantList.sessionMap.get(bid).size();
+            }
+            if (size == 1) {
+                if (source.equals(UserTypeAndStatus.sourceOfAndroid)) {
+                    onlineStatus = UserTypeAndStatus.MOBILE_ONLINE;
+                } else if (source.equals(UserTypeAndStatus.sourceOfWeb)) {
+                    onlineStatus = UserTypeAndStatus.WEB_ONLINE;
+                }
+            }
+            if (size == 2) {
+                onlineStatus = UserTypeAndStatus.WEB_MOBILE_ONLINE;
+            }
+            businessUserService.updateOnlineStatus(bid, onlineStatus);
             JSONObject jsonObject = JSON.parseObject(message);
             BaseCommand command = jsonObject.toJavaObject(BaseCommand.class);
             handler(command);
