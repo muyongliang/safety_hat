@@ -41,6 +41,8 @@ public class WebSocketServer {
 
     //concurrent包的线程安全Set，用来存放每个客户端对应的MyWebSocket对象。
     private static final CopyOnWriteArraySet<WebSocketServer> webSocketSet = new CopyOnWriteArraySet<>();
+    //    用于心跳检测排除由于断网等原因造成session假在线
+    private static final HashSet<Session> heartCheck = new HashSet<>();
     public static List<BaseCommand> baseCommands;
     private static BusinessUserService businessUserService;
     private static TalkBackGroupMemberService talkBackGroupMemberService;
@@ -276,6 +278,7 @@ public class WebSocketServer {
         try {
             log.debug("收到消息:" + message);
 //            收到消息成功,说明该连接存活,用于解决断网重连导致用户状态不准确问题
+            heartCheck.remove(session);
             ConstantList.sessionMap.get(bid).put(source, session);
             int onlineStatus = 0;
             int size = 0;
@@ -1247,9 +1250,19 @@ public class WebSocketServer {
         for (WebSocketServer webSocketServer : webSocketSet) {
             log.info("检测连接:{}", webSocketServer.getBid());
             Session session = webSocketServer.getSession();
+            heartCheck.add(session);
             session.getBasicRemote().sendText(message);
         }
-        log.info("检测后仍有连接{}个", webSocketSet.size());
+//        延迟5秒后检查还有哪些session没有回复消息,则说明该session已经断开连接,并清理该session
+        Thread.sleep(5 * 1000);
+        Iterator<Session> iterator = heartCheck.iterator();
+        while (iterator.hasNext()) {
+            Session next = iterator.next();
+            next.close();
+            iterator.remove();
+        }
+        Thread.sleep(1 * 1000);
+        log.info("检测后有连接{}个", webSocketSet.size());
     }
 
 }
